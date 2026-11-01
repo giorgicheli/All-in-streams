@@ -1,0 +1,54 @@
+{
+  "author": "Freepik",
+  "author_url": "https://www.flaticon.com/authors/freepik",
+  "style": "Flags Rectangular",
+  "license": "Flaticon Free License with attribution",
+  "license_url": "https://www.flaticon.com/media/license/license.pdf",
+  "required_credit": "Flags designed by Freepik from Flaticon",
+  "format": "PNG",
+  "dimensions": [128, 128],
+  "assets": {
+    "de": {
+      "name": "Germany",
+      "source": "https://www.flaticon.com/free-icon/germany_206690",
+      "download": "https://cdn-icons-png.flaticon.com/128/206/206690.png",
+      "pack": "https://www.flaticon.com/packs/international-flags",
+      "sha256": "47623a9c24c0295022ecd3008db938481820cd4b0e888d8505d3941c2c4a93c3"
+    },
+    "fr": {
+      "name": "France",
+      "source": "https://www.flaticon.com/free-icon/france_206657",
+      "download": "https://cdn-icons-png.flaticon.com/128/206/206657.png",
+      "pack": "https://www.flaticon.com/packs/international-flags",
+      "sha256": "3068c370834325d4370381f68e6c4dd372a450497d9ca1939ccc3a2a14003ba2"
+    },
+    "pl": {
+      "name": "Poland",
+      "source": "https://www.flaticon.com/free-icon/poland_206641",
+      "download": "https://cdn-icons-png.flaticon.com/128/206/206641.png",
+      "pack": "https://www.flaticon.com/packs/international-flags",
+      "sha256": "22706276ce07b6ade0d9c2c9765ee274d36ea2ea822eb8810b43c9e3d449a001"
+    },
+    "br": {
+      "name": "Brazil",
+      "source": "https://www.flaticon.com/free-icon/brazil_206597",
+      "download": "https://cdn-icons-png.flaticon.com/128/206/206597.png",
+      "pack": "https://www.flaticon.com/packs/international-flags",
+      "sha256": "d959309af734dc5d584975597ac51dafa514a99ce36dd52fe7adfaeaf4bf80f9"
+    },
+    "ca": {
+      "name": "Canada",
+      "source": "https://www.flaticon.com/free-icon/canada_555473",
+      "download": "https://cdn-icons-png.flaticon.com/128/555/555473.png",
+      "pack": "https://www.flaticon.com/packs/rectangular-country-simple-flags",
+      "sha256": "6fb56712c97bb600294043cba0075db855810351979394bfe210027a4d2f427e"
+    },
+    "mx": {
+      "name": "Mexico",
+      "source": "https://www.flaticon.com/free-icon/mexico_206600",
+      "download": "https://cdn-icons-png.flaticon.com/128/206/206600.png",
+      "pack": "https://www.flaticon.com/packs/international-flags",
+      "sha256": "957eae0f2ccb1930a87ddf4b3447c59883b0d742db7f09d60b164bf5cb6636ef"
+    }
+  }
+}

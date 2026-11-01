@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PortalController;
+use App\Http\Controllers\WebsiteController;
 use App\Http\Middleware\EnsureRole;
 use App\Livewire\BriefWizard;
 use App\Livewire\CreatorApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'landing')->name('home');
+Route::get('/', [WebsiteController::class, 'home'])->name('home');
+Route::get('/admin/website-preview/{page}', [WebsiteController::class, 'preview'])
+    ->whereIn('page', ['home', 'settings'])->middleware('auth')->name('website.preview');
 Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
     Route::post('/login', [AuthController::class, 'login']);

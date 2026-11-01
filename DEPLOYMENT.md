@@ -53,3 +53,11 @@ The command adds only its own marked sample records, preserves existing administ
 Company and agency accounts use business permissions and see only their own campaigns. Creator signup requires a valid Twitch or Kick channel URL; both can be saved. Channel identities remain hidden from businesses until staff authorizes an introduction.
 
 Staff can enter or correct daily reports under `/admin/campaign-metrics`. Dashboards aggregate recorded impressions, clicks, conversions and delivered streams over an inclusive 30-day window. CTR is total clicks divided by total impressions. Currency budgets remain separate; they are planned brief budgets, not collected revenue. Sample figures are simulated, and no streaming-platform analytics API is connected.
+
+## Website content
+
+Administrators manage the public website at `/admin/website-editor`. Home-page sections can be edited, reordered and hidden. Site settings cover branding, navigation, footer and sign-in/registration copy. Images use the public disk's `site-content` directory; `php artisan storage:link` must expose only `storage/app/public`, keeping campaign documents on the private disk.
+
+`Save draft & preview` updates the private preview. `Publish changes` updates the public content. Published versions can be restored to a draft and reviewed before publishing again. Preview URLs require an administrator session and are never cacheable public pages. The renderer uses typed blocks and escaped text rather than user-supplied HTML or scripts.
+
+Country flags use locally served Flaticon PNGs with visible author attribution. The source/checksum manifest and [asset credits](platform/docs/ASSET-CREDITS.md) are committed; the licensed PNGs are deployed separately and excluded from Git. Preserve the visible attribution when changing the site footer.

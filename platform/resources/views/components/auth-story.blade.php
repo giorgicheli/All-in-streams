@@ -1,1 +1,10 @@
-<aside class="auth-story"><x-brand/><div class="auth-story-content"><span class="eyebrow"><span class="live-dot"></span> Creator partnerships. All in.</span><h1>Great people.<br>Real connections.<br><span class="lime">All in.</span></h1><p>The right creators. The right communities. One team to bring it all together.</p><div class="auth-perks"><span><x-ui-icon name="target"/> Matched to your audience and ambition</span><span><x-ui-icon name="layers"/> Every partnership, managed end to end</span><span><x-ui-icon name="shield"/> A private space for every partner</span></div></div><div class="auth-story-footer">© {{ date('Y') }} All In Streams <span>·</span> Local voices. Global ambition.</div></aside>
+@php $story = $site['auth_story']; @endphp
+<aside class="auth-story"><x-brand/>
+    <div class="auth-story-content">
+        <span class="eyebrow"><span class="live-dot"></span> {{ $story['eyebrow'] }}</span>
+        <h1>{{ $story['title_line_1'] }}<br>{{ $story['title_line_2'] }}<br><span class="lime">{{ $story['highlight'] }}</span></h1>
+        <p>{{ $story['description'] }}</p>
+        <div class="auth-perks">@foreach($story['perks'] as $perk)<span><x-ui-icon :name="$perk['icon']"/> {{ $perk['text'] }}</span>@endforeach</div>
+    </div>
+    <div class="auth-story-footer">© {{ date('Y') }} {{ $site['brand_name'] }} <span>·</span> {{ $site['footer']['statement'] }}</div>
+</aside>
