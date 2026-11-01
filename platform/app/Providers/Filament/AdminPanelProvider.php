@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('All In Streams')
+            ->favicon(asset('favicon.svg?v=2'))
             ->brandLogo(fn () => view('filament.brand'))
             ->brandLogoHeight('2.25rem')
             ->font('Inter')
