@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\CreatorProfile;
 use App\Rules\StreamingChannelUrl;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -14,6 +16,8 @@ class CreatorApplication extends Component
     public int $step = 1;
     #[Locked]
     public bool $acceptLegacyChannel = false;
+    #[Locked]
+    public bool $profileCommitted = false;
     public string $public_name = '';
     public string $country = '';
     public string $language = 'English';
@@ -34,6 +38,9 @@ class CreatorApplication extends Component
     {
         abort_unless(Auth::user()?->role === 'creator', 403);
         if ($profile = Auth::user()->creatorProfile) {
+            abort_if($profile->trashed(), 403);
+            $this->profileCommitted = $profile->invitations()->where('selection_status', 'selected')->whereHas('brief', fn ($query) => $query->whereIn('status', ['contracts', 'live']))->exists();
+            if ($this->profileCommitted) $this->step = 5;
             $this->acceptLegacyChannel = ! $profile->twitch_url && ! $profile->kick_url;
             foreach (array_keys($this->rules()) as $field) {
                 if (! str_contains($field, '*') && $profile->{$field} !== null) {
@@ -98,11 +105,20 @@ class CreatorApplication extends Component
     public function submit()
     {
         abort_unless(Auth::user()?->role === 'creator', 403);
+        abort_if(Auth::user()->creatorProfile?->trashed(), 403);
         $this->syncPrimaryChannel();
         $data = $this->validate();
         $data['twitch_url'] = StreamingChannelUrl::canonicalize($data['twitch_url'], 'Twitch');
         $data['kick_url'] = StreamingChannelUrl::canonicalize($data['kick_url'], 'Kick');
-        CreatorProfile::updateOrCreate(['user_id' => Auth::id()], $data + ['status' => 'pending']);
+        DB::transaction(function () use ($data) {
+            $profile = CreatorProfile::withTrashed()->where('user_id', Auth::id())->lockForUpdate()->first();
+            abort_if($profile?->trashed(), 403);
+            if ($profile?->invitations()->where('selection_status', 'selected')->whereHas('brief', fn ($query) => $query->whereIn('status', ['contracts', 'live']))->exists()) {
+                throw ValidationException::withMessages(['profile' => 'Your profile is committed to a contract or live campaign. Ask All In Streams before changing the agreed creator identity or channels.']);
+            }
+            if ($profile) $profile->update($data + ['status' => 'pending']);
+            else CreatorProfile::create($data + ['user_id' => Auth::id(), 'status' => 'pending']);
+        });
         session()->flash('status', 'Your creator profile is submitted for review. All In Streams will contact you with suitable opportunities.');
         return $this->redirectRoute('creator.opportunities', navigate: false);
     }

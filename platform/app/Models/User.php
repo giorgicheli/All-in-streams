@@ -68,14 +68,19 @@ class User extends Authenticatable implements FilamentUser
 
     public function creatorProfile(): HasOne
     {
-        return $this->hasOne(CreatorProfile::class);
+        return $this->hasOne(CreatorProfile::class)->withTrashed();
     }
+
+    public function agencyProfile(): HasOne { return $this->hasOne(AgencyProfile::class); }
+
+    public function agencyTalent(): HasMany { return $this->hasMany(AgencyTalent::class, 'agency_user_id'); }
 
     public function getAccountTypeLabelAttribute(): string
     {
         return match ($this->role) {
             'admin' => 'Administrator',
             'creator' => 'Creator',
+            'agency' => 'Agency',
             default => $this->account_type === 'agency' ? 'Agency' : 'Business',
         };
     }

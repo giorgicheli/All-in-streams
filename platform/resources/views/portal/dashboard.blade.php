@@ -1,9 +1,9 @@
 <x-portal-layout title="Overview">
-    <div class="page-heading"><div><span class="eyebrow">YOUR PARTNERSHIP HQ</span><h1>Welcome back, {{ explode(' ',auth()->user()->name)[0] }}<span class="lime">.</span></h1><p>Your campaigns, recorded results, and next steps in one private workspace.</p></div><a href="/briefs/create" class="btn btn-primary"><x-ui-icon name="plus" size="15"/> New campaign brief</a></div>
+    <div class="page-heading"><div><span class="eyebrow">YOUR PARTNERSHIP HQ</span><h1>Welcome back, {{ explode(' ',auth()->user()->name)[0] }}<span class="lime">.</span></h1><p>Your campaigns, recorded results, and next steps in one private workspace.</p></div><a href="{{ auth()->user()->role === 'agency' ? '/agency' : '' }}/briefs/create" class="btn btn-primary"><x-ui-icon name="plus" size="15"/> New campaign brief</a></div>
 
     @if($stats['contains_demo'] && !auth()->user()->is_demo)<div class="privacy-note"><x-ui-icon name="eye"/><span><strong>Sample data included.</strong> {{ $stats['demo_briefs'] }} sample briefs are included in your workspace figures.</span></div>@endif
 
-    <div class="overview-banner"><div><span class="eyebrow"><span class="live-dot"></span> YOUR NEXT BIG MOVE</span><h2>The right creators. A world of possibility.</h2><p>Share your goals. We’ll take care of matching, coordination, and delivery.</p></div><a href="/briefs/create" class="btn btn-secondary btn-small">Build your campaign <x-ui-icon name="arrow" size="15"/></a></div>
+    <div class="overview-banner"><div><span class="eyebrow"><span class="live-dot"></span> YOUR NEXT BIG MOVE</span><h2>The right creators. A world of possibility.</h2><p>Share your goals. We’ll take care of matching, coordination, and delivery.</p></div><a href="{{ auth()->user()->role === 'agency' ? '/agency' : '' }}/briefs/create" class="btn btn-secondary btn-small">Build your campaign <x-ui-icon name="arrow" size="15"/></a></div>
 
     <div class="stats-grid">
         @foreach([['Active campaigns',$stats['active'],'briefcase','Matching, proposal, contracts and live'],['Needing review',$stats['review'],'clock','Submitted, review and changes requested'],['Completed',$stats['completed'],'check','Campaigns marked completed'],['EUR brief budget','€'.number_format($stats['budget_eur'],0),'wallet','EUR briefs only; declined excluded']] as [$label,$value,$icon,$note])
@@ -15,7 +15,7 @@
         <div class="privacy-note"><x-ui-icon name="wallet"/><span>Planned brief budgets, excluding declined: @foreach($stats['budgets'] as $currency=>$amount)<strong>{{ $currency }} {{ number_format($amount,2) }}</strong>{{ !$loop->last ? ' · ' : '' }}@endforeach. Currencies are kept separate; these figures are not spend or revenue.</span></div>
     @endif
 
-    <section class="panel"><div class="panel-header"><h2><x-ui-icon name="briefcase"/> Your campaigns <span class="tag">{{ $briefs->count() }}</span></h2><a href="/campaigns" class="text-link">View all campaigns <x-ui-icon name="right" size="13"/></a></div>@include('portal.partials.campaign-table',['briefs'=>$briefs->take(5)])</section>
+    <section class="panel"><div class="panel-header"><h2><x-ui-icon name="briefcase"/> Your campaigns <span class="tag">{{ $briefs->count() }}</span></h2><a href="{{ auth()->user()->role === 'agency' ? '/agency' : '' }}/campaigns" class="text-link">View all campaigns <x-ui-icon name="right" size="13"/></a></div>@include('portal.partials.campaign-table',['briefs'=>$briefs->take(5)])</section>
 
     @include('portal.partials.performance-summary',['performance'=>$stats['performance']])
 

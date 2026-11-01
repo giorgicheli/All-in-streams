@@ -50,7 +50,15 @@ umask 0007
 
 The command adds only its own marked sample records, preserves existing administrator accounts, passwords and edited workflow states, and saves newly generated sample login details in a private file outside the web root. Repeating it does not reset passwords or duplicate campaigns. The regular `DatabaseSeeder` remains blocked on production.
 
-Company and agency accounts use business permissions and see only their own campaigns. Creator signup requires a valid Twitch or Kick channel URL; both can be saved. Channel identities remain hidden from businesses until staff authorizes an introduction.
+Companies, agencies and creators have separate roles and directories. Agencies can request creators for their clients, supply an independently reviewed talent roster, or do both. Client briefs and provider invitations use separate screens and permissions. Creator signup requires a valid Twitch or Kick channel URL; both can be saved. Channel identities remain hidden from businesses until staff authorizes an introduction.
+
+## Provider offers and delivery
+
+See [the workflow guide](platform/docs/WORKFLOW.md). Staff can send a reviewed brief to several approved independent creators or agencies, with a neutral scope and a private fixed fee plus an optional CPA unit rate. Provider screens receive a restricted data projection, with no client identity, contacts, private brief, total budget or other providers' terms. The provider accepts, declines or proposes a price/scope change with a note. Staff can accept an exact counterproposal or revise the offer for fresh acceptance. Each change retains negotiation history and checks the accepted offer version.
+
+Exactly one provider must be selected before contracts. Separate client and selected-provider agreements, verified signatures and payment readiness are required for launch. Selected live providers submit private delivery evidence; staff approval is required before completion. Payment milestones are a manual ledger with pending, approved and paid states; recording a payment does not transfer funds. Provider-reported metrics do not change staff-verified campaign reports.
+
+Creator deletion archives the profile and retains campaign history. Selected providers in contracts or live delivery cannot be deleted or have their committed identity changed. Restored creators need staff review again. Migration `000005` preserves one deterministic lead for existing contracts/live/completed campaigns; new campaigns require the explicit staff selection action. Migration `000006` converts former business/agency accounts to the dedicated agency role without changing their login credentials.
 
 Staff can enter or correct daily reports under `/admin/campaign-metrics`. Dashboards aggregate recorded impressions, clicks, conversions and delivered streams over an inclusive 30-day window. CTR is total clicks divided by total impressions. Currency budgets remain separate; they are planned brief budgets, not collected revenue. Sample figures are simulated, and no streaming-platform analytics API is connected.
 

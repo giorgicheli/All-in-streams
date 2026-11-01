@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BriefResource\Pages\ManageBriefs;
 use App\Models\Brief;
 use App\Services\CampaignWorkflow;
+use App\Filament\Support\ProviderOfferActions;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -59,6 +60,7 @@ class BriefResource extends ManagedResource
                 TextEntry::make('user.email')->label('Business contact'), TextEntry::make('vertical'),
                 TextEntry::make('geos')->badge()->label('Audience GEOs'), TextEntry::make('language'),
                 TextEntry::make('platform'), TextEntry::make('commercial_model')->label('Commercial model'),
+                TextEntry::make('provider_type')->label('Requested provider')->formatStateUsing(fn (string $state) => match ($state) { 'creator' => 'Individual creator', 'agency' => 'Agency', default => 'Creator or agency' }),
                 TextEntry::make('budget')->money(fn (Brief $record) => $record->currency),
                 TextEntry::make('status')->badge()->formatStateUsing(fn (string $state) => str($state)->replace('_', ' ')->title()),
             ])->columns(2),
@@ -91,6 +93,12 @@ class BriefResource extends ManagedResource
             ->filters([SelectFilter::make('status')->options(self::statuses())])
             ->recordActions([
                 ViewAction::make()->label('Review'),
+                Action::make('downloadBrief')->label('Private brief PDF')->icon('heroicon-o-arrow-down-tray')->visible(fn (Brief $record) => filled($record->attachment_path))->url(fn (Brief $record) => route('briefs.attachment', $record))->openUrlInNewTab(),
+                Action::make('sendOffers')->label('Send provider offers')->icon('heroicon-o-paper-airplane')
+                    ->visible(fn (Brief $record) => $record->status === 'matching')
+                    ->modalDescription('Send separate private quotes to several independent creators or agencies. Recipients never receive the company name, contact details, total budget or other recipients’ quotes.')
+                    ->schema([...ProviderOfferActions::recipientFields(), ...ProviderOfferActions::terms()])
+                    ->action(fn (Brief $record, array $data) => ProviderOfferActions::send($record, $data['creator_ids'] ?? [], $data['agency_ids'] ?? [], $data)),
                 Action::make('approve')->label('Approve for matching')->icon('heroicon-o-check')->color('primary')
                     ->visible(fn (Brief $record) => in_array($record->status, ['submitted', 'review', 'changes_requested']))
                     ->requiresConfirmation()->modalDescription('This approves the brief for creator matching. It does not activate the campaign.')
@@ -99,7 +107,7 @@ class BriefResource extends ManagedResource
                     EditAction::make()->label('Payment readiness')->icon('heroicon-o-banknotes'),
                     Action::make('advance')->label(fn (Brief $record) => match ($record->status) {'matching' => 'Prepare client proposal', 'proposal' => 'Move to contracts', 'contracts' => 'Launch campaign', 'live' => 'Complete campaign', default => 'Advance campaign'})
                         ->icon('heroicon-o-arrow-right')->visible(fn (Brief $record) => in_array($record->status, ['matching', 'proposal', 'contracts', 'live']))
-                        ->requiresConfirmation()->modalDescription('The campaign workflow checks creator interest, signed agreements and payment readiness at the relevant stage.')
+                        ->requiresConfirmation()->modalDescription('Contracts require one admin-approved provider. Launch also requires separate signed agreements and payment readiness; completion requires approved delivery evidence.')
                         ->action(fn (Brief $record) => self::transition($record, match ($record->status) {'matching' => 'proposal', 'proposal' => 'contracts', 'contracts' => 'live', 'live' => 'completed'})),
                     Action::make('requestChanges')->label('Request changes')->icon('heroicon-o-pencil-square')->color('warning')
                         ->visible(fn (Brief $record) => in_array($record->status, ['submitted', 'review']))

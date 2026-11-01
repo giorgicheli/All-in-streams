@@ -33,9 +33,10 @@ class AdminPortalTest extends TestCase
     {
         $business = User::factory()->create(['role' => 'business']);
         $creator = User::factory()->create(['role' => 'creator']);
+        $agency = User::factory()->create(['role' => 'agency']);
         $admin = User::factory()->create(['role' => 'admin']);
 
-        foreach ([$business, $creator] as $user) {
+        foreach ([$business, $creator, $agency] as $user) {
             foreach (['/admin', BriefResource::getUrl(), CreatorProfileResource::getUrl(), InvitationResource::getUrl(), CampaignDocumentResource::getUrl()] as $url) {
                 $this->actingAs($user)->get($url)->assertForbidden();
             }
@@ -93,7 +94,7 @@ class AdminPortalTest extends TestCase
     {
         $brief = $this->brief();
         $brief->update(['status' => 'contracts']);
-        $brief->invitations()->create(['creator_profile_id' => $this->creator()->id, 'status' => 'interested', 'compensation' => 2400, 'deliverables' => '4 streams']);
+        $brief->invitations()->create(['creator_profile_id' => $this->creator()->id, 'status' => 'interested', 'selection_status' => 'selected', 'offer_version' => 1, 'accepted_offer_version' => 1, 'compensation' => 2400, 'currency' => 'EUR', 'deliverables' => '4 streams']);
         $this->actingAs(User::factory()->create(['role' => 'admin']));
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 

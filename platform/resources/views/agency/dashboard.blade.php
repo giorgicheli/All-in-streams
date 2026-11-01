@@ -1,0 +1,12 @@
+<x-portal-layout title="Agency overview">
+    <div class="page-heading"><div><span class="eyebrow">YOUR AGENCY WORKSPACE</span><h1>{{ auth()->user()->company ?: auth()->user()->name }}</h1><p>Supply your reviewed roster, request creators for your clients, and keep each side’s commercial terms private.</p></div><a href="{{ route('agency.profile') }}" class="btn btn-secondary">Agency profile <x-ui-icon name="right" size="15"/></a></div>
+    <div class="stats-grid">
+        @foreach([['Roster talent',$counts['talent'],'users'],['Staff-approved talent',$counts['approved'],'shield'],['Awaiting your response',$counts['offers'],'mail'],['Client campaign briefs',$counts['briefs'],'briefcase']] as [$label,$value,$icon])<div class="stat-card"><div class="stat-label">{{ $label }}<x-ui-icon :name="$icon"/></div><div class="stat-value">{{ $value }}</div></div>@endforeach
+    </div>
+    @if(!$profile || in_array($profile->status,['draft','pending','declined'],true))<div class="privacy-note"><x-ui-icon name="clock"/><span>Your agency profile must be completed and approved before your agency receives talent-supply invitations. Client briefs are reviewed separately.</span></div>@endif
+    <div class="audience-cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+        <a class="audience-card" href="{{ route('agency.roster') }}"><div class="card-top"><x-ui-icon name="users" size="26"/></div><h3>Supply roster talent</h3><p>Add the creators you represent. All In Streams reviews each roster entry before it can be proposed for a campaign.</p><span class="text-link">Manage your roster <x-ui-icon name="right" size="15"/></span></a>
+        <a class="audience-card" href="{{ route('agency.opportunities') }}"><div class="card-top"><x-ui-icon name="star" size="26"/></div><h3>Agency opportunities</h3><p>Review your agency’s private scope and compensation, nominate approved talent, and accept or propose changes.</p><span class="text-link">Review invitations <x-ui-icon name="right" size="15"/></span></a>
+        <a class="audience-card" href="{{ route('agency.briefs.create') }}"><div class="card-top"><x-ui-icon name="briefcase" size="26"/></div><h3>Find talent for clients</h3><p>Submit a client campaign brief. Your private client details stay with your agency and All In Streams.</p><span class="text-link">Create a client brief <x-ui-icon name="right" size="15"/></span></a>
+    </div>
+</x-portal-layout>

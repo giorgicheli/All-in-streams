@@ -7,9 +7,14 @@ use App\Models\Brief;
 use App\Models\CreatorProfile;
 use App\Rules\StreamingChannelUrl;
 use App\Services\CampaignWorkflow;
+use App\Filament\Support\ProviderOfferActions;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -20,8 +25,12 @@ use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use UnitEnum;
 
@@ -33,6 +42,11 @@ class CreatorProfileResource extends ManagedResource
     protected static string|UnitEnum|null $navigationGroup = 'Network';
     protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'public_name';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class]);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -76,6 +90,7 @@ class CreatorProfileResource extends ManagedResource
                 TextColumn::make('status')->badge()->color(fn (string $state) => $state === 'approved' ? 'success' : 'warning'),
             ])
             ->filters([
+                TrashedFilter::make(),
                 SelectFilter::make('country')->options(fn () => CreatorProfile::query()->distinct()->orderBy('country')->pluck('country', 'country')->all())->searchable(),
                 SelectFilter::make('language')->options(fn () => CreatorProfile::query()->distinct()->orderBy('language')->pluck('language', 'language')->all())->searchable(),
                 SelectFilter::make('platform')->options(['Twitch' => 'Twitch', 'Kick' => 'Kick', 'YouTube' => 'YouTube', 'TikTok' => 'TikTok']),
@@ -83,16 +98,20 @@ class CreatorProfileResource extends ManagedResource
                 SelectFilter::make('availability')->options(['Open' => 'Open', 'Opening soon' => 'Opening soon', 'Unavailable' => 'Unavailable']),
             ])
             ->recordActions([
-                EditAction::make()->label('Profile'),
+                EditAction::make()->label('Profile')->visible(fn (?CreatorProfile $record) => $record && !$record->trashed() && !self::committed($record))
+                    ->using(function (CreatorProfile $record, array $data): CreatorProfile {
+                        return DB::transaction(function () use ($record, $data) {
+                            $record = CreatorProfile::withTrashed()->lockForUpdate()->findOrFail($record->id);
+                            if ($record->trashed() || self::committed($record)) throw ValidationException::withMessages(['status' => 'Resolve this creator\'s contract or live campaign before changing the profile.']);
+                            $record->update($data);
+                            return $record;
+                        });
+                    }),
+                ViewAction::make()->label('Profile')->visible(fn (?CreatorProfile $record) => $record && self::committed($record)),
                 Action::make('invite')->label('Send invitation')->icon('heroicon-o-paper-airplane')->color('primary')
-                    ->visible(fn (CreatorProfile $record) => $record->status === 'approved')
+                    ->visible(fn (CreatorProfile $record) => $record->status === 'approved' && !$record->trashed())
                     ->modalDescription('The creator receives your invitation and compensation terms. Their identity stays private until you authorize an introduction.')
-                    ->schema([
-                        Select::make('brief_id')->label('Campaign in matching')->options(fn () => Brief::where('status', 'matching')->pluck('title', 'id')->all())->searchable()->required(),
-                        TextInput::make('compensation')->label('Creator compensation')->numeric()->minValue(0)->required()->default(fn (CreatorProfile $record) => $record->rate),
-                        Textarea::make('deliverables')->required()->maxLength(1000)->default('4 live streams'),
-                        Textarea::make('notes')->label('Requirements for the creator')->maxLength(3000),
-                    ])
+                    ->schema([ProviderOfferActions::campaignField(), ...ProviderOfferActions::terms()])
                     ->action(function (CreatorProfile $record, array $data) {
                         try {
                             app(CampaignWorkflow::class)->invite(Brief::findOrFail($data['brief_id']), $record, auth()->user(), $data);
@@ -102,6 +121,23 @@ class CreatorProfileResource extends ManagedResource
                         }
                         Notification::make()->title('Invitation sent')->body('The opportunity is now available in the creator portal.')->success()->send();
                     }),
+                DeleteAction::make()->label('Delete creator')->requiresConfirmation()
+                    ->modalDescription('Removes the creator from matching and retains past campaign history. A provider selected for contracts or a live campaign cannot be deleted until that work is resolved.')
+                    ->using(function (CreatorProfile $record): bool {
+                        ProviderOfferActions::run(fn () => app(CampaignWorkflow::class)->deleteCreator($record, auth()->user()), 'Creator deleted');
+                        return true;
+                    }),
+                RestoreAction::make()->label('Restore creator')->using(fn (CreatorProfile $record): bool => DB::transaction(function () use ($record) {
+                    $record = CreatorProfile::withTrashed()->lockForUpdate()->findOrFail($record->id);
+                    $record->status = 'pending';
+                    return (bool)$record->restore();
+                })),
+            ])
+            ->toolbarActions([
+                BulkAction::make('inviteMany')->label('Send invitations to selected')->icon('heroicon-o-paper-airplane')
+                    ->schema([ProviderOfferActions::campaignField(), ...ProviderOfferActions::terms()])
+                    ->action(fn (Collection $records, array $data) => ProviderOfferActions::send(Brief::findOrFail($data['brief_id']), $records->modelKeys(), [], $data))
+                    ->deselectRecordsAfterCompletion(),
             ])
             ->emptyStateHeading('Build your creator network')->emptyStateDescription('Creator applications appear here for review and campaign matching.');
     }
@@ -109,5 +145,10 @@ class CreatorProfileResource extends ManagedResource
     public static function getPages(): array
     {
         return ['index' => ManageCreators::route('/')];
+    }
+
+    private static function committed(CreatorProfile $record): bool
+    {
+        return $record->invitations()->where('selection_status', 'selected')->whereHas('brief', fn ($query) => $query->whereIn('status', ['contracts', 'live']))->exists();
     }
 }

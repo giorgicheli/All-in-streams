@@ -11,6 +11,6 @@ class ListPartners extends ListRecords
 
     public function getSubheading(): ?string
     {
-        return 'Company contacts, agency accounts and their campaign activity. Demo accounts are clearly marked.';
+        return 'Business contacts and their campaign activity. Agencies and independent creators have their own directories.';
     }
 }

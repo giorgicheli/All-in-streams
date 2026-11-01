@@ -1,0 +1,5 @@
+<x-portal-layout title="Agency opportunities">
+    <div class="page-heading"><div><span class="eyebrow">PRIVATE AGENCY INVITATIONS</span><h1>Agency opportunities</h1><p>Review the scope and your agency’s compensation. Business identity, contacts and total budgets remain private.</p></div><a href="{{ route('agency.roster') }}" class="btn btn-secondary">Your approved talent <x-ui-icon name="users" size="16"/></a></div>
+    @if($errors->any())<div class="alert error"><span>{{ $errors->first() }}</span></div>@endif
+    <div class="invite-list">@forelse($offers as $offer)@include('portal.partials.provider-offer',['responseRoute'=>'agency.respond'])@empty<section class="panel empty-state"><x-ui-icon name="star"/><h3>Your next agency opportunity starts here.</h3><p>Complete your agency profile and add reviewed roster talent. All In Streams will send suitable invitations here.</p><a href="{{ route('agency.profile') }}" class="btn btn-secondary">Review your agency profile</a></section>@endforelse</div>
+</x-portal-layout>

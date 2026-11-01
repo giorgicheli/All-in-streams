@@ -8,6 +8,7 @@
         <span class="status"><span></span> Creator profile</span>
     </div>
 
+    @if($profileCommitted)<div class="privacy-note"><x-ui-icon name="shield"/><span>This profile is committed to a contract or live campaign. Contact All In Streams to coordinate any identity or channel changes.</span></div>@endif
     <ol class="wizard-steps" aria-label="Application progress">
         @foreach(['About you', 'Your channel', 'Audience', 'Partnerships', 'Review'] as $label)
             <li class="wizard-step {{ $step === $loop->iteration ? 'active' : ($step > $loop->iteration ? 'complete' : '') }}" @if($step === $loop->iteration) aria-current="step" @endif>
@@ -149,12 +150,14 @@
         </div>
 
         <div class="wizard-actions">
+            @if($profileCommitted)<a href="{{ route('creator.opportunities') }}" class="btn btn-secondary">Back to opportunities</a>@else
             @if($step > 1)<button type="button" class="btn btn-secondary" wire:click="back" wire:loading.attr="disabled"><x-ui-icon name="left" size="16"/> Back</button>@else<a href="/creator/opportunities" class="btn btn-secondary">Cancel</a>@endif
             <span>Step {{ $step }} of 5 · Your next opportunity awaits</span>
             @if($step < 5)
                 <button type="button" class="btn btn-primary" wire:click="next" wire:loading.attr="disabled"><span wire:loading.remove wire:target="next">Continue</span><span wire:loading wire:target="next">Checking…</span><x-ui-icon name="right" size="16"/></button>
             @else
                 <button type="submit" class="btn btn-primary" wire:loading.attr="disabled"><span wire:loading.remove wire:target="submit">Submit profile for review</span><span wire:loading wire:target="submit">Submitting…</span><x-ui-icon name="right" size="16"/></button>
+            @endif
             @endif
         </div>
     </form>

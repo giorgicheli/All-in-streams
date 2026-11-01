@@ -33,15 +33,18 @@ class AuthController extends Controller
 
     public function register(Request $request): RedirectResponse
     {
-        $creator = $request->input('role') === 'creator';
+        $role = $request->input('role');
+        if ($role === 'business' && $request->input('account_type') === 'agency') $role = 'agency';
+        $creator = $role === 'creator';
         $request->merge([
             'email' => Str::lower(trim((string) $request->input('email'))),
-            'account_type' => $creator ? null : ($request->input('account_type') ?: 'business'),
+            'role' => $role,
+            'account_type' => $creator ? null : ($role === 'agency' ? 'agency' : 'business'),
         ]);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'], 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'company' => ['nullable', 'string', 'max:180'], 'password' => ['required', 'confirmed', Password::min(10)->letters()->numbers()],
-            'role' => ['required', 'in:business,creator'],
+            'role' => ['required', 'in:business,agency,creator'],
             'account_type' => ['nullable', 'in:business,agency'],
             'twitch_url' => $creator ? ['nullable', 'required_without:kick_url', 'string', 'max:255', new StreamingChannelUrl('Twitch')] : ['exclude'],
             'kick_url' => $creator ? ['nullable', 'required_without:twitch_url', 'string', 'max:255', new StreamingChannelUrl('Kick')] : ['exclude'],
@@ -60,13 +63,18 @@ class AuthController extends Controller
                     'vertical' => 'Gaming', 'rate' => 0, 'commercial_model' => 'Open',
                     'availability' => 'Open', 'status' => 'draft',
                 ]);
+            } elseif ($user->role === 'agency') {
+                $user->agencyProfile()->create([
+                    'services' => ['supply', 'request'], 'country' => '', 'languages' => [],
+                    'audience_geos' => [], 'platforms' => [], 'status' => 'draft',
+                ]);
             }
 
             return $user;
         });
         Auth::login($user);
         $request->session()->regenerate();
-        return redirect($user->role === 'creator' ? '/creator/apply' : '/dashboard');
+        return redirect(match ($user->role) { 'creator' => '/creator/apply', 'agency' => '/agency/dashboard', default => '/dashboard' });
     }
 
     public function logout(Request $request): RedirectResponse
@@ -79,6 +87,6 @@ class AuthController extends Controller
 
     public function home(User $user): string
     {
-        return match ($user->role) { 'admin' => '/admin', 'creator' => '/creator/opportunities', default => '/dashboard' };
+        return match ($user->role) { 'admin' => '/admin', 'creator' => '/creator/opportunities', 'agency' => '/agency/dashboard', default => '/dashboard' };
     }
 }

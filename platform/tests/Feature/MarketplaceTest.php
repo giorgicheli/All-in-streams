@@ -11,6 +11,7 @@ use App\Models\Invitation;
 use App\Models\User;
 use App\Services\CampaignWorkflow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -59,6 +60,7 @@ class MarketplaceTest extends TestCase
     {
         $brief = Brief::findOrFail(839);
         $workflow = app(CampaignWorkflow::class);
+        $workflow->selectProvider($brief->invitations()->where('status', 'interested')->firstOrFail(), $this->user('admin'));
         $workflow->transition($brief, 'contracts', $this->user('admin'));
         $brief->refresh()->update(['payment_ready' => true]);
         CampaignDocument::create(['brief_id' => $brief->id, 'title' => 'Uploaded agreement', 'audience' => 'business', 'signature_status' => 'uploaded']);
@@ -71,14 +73,15 @@ class MarketplaceTest extends TestCase
         $this->assertSame('contracts', $brief->fresh()->status);
     }
 
-    public function test_launch_requires_and_accepts_separate_signed_documents_for_all_parties(): void
+    public function test_launch_requires_and_accepts_separate_signed_documents_for_business_and_selected_provider(): void
     {
         $brief = Brief::findOrFail(839);
         $workflow = app(CampaignWorkflow::class);
+        $workflow->selectProvider($brief->invitations()->where('status', 'interested')->firstOrFail(), $this->user('admin'));
         $workflow->transition($brief, 'contracts', $this->user('admin'));
         $brief->refresh()->update(['payment_ready' => true]);
         CampaignDocument::create(['brief_id' => $brief->id, 'title' => 'Business agreement', 'audience' => 'business', 'signature_status' => 'signed', 'file_path' => 'campaign-documents/demo-business-agreement.txt']);
-        foreach ($brief->invitations as $invitation) {
+        foreach ($brief->invitations()->where('selection_status', 'selected')->get() as $invitation) {
             CampaignDocument::create(['brief_id' => $brief->id, 'creator_profile_id' => $invitation->creator_profile_id, 'title' => 'Creator agreement', 'audience' => 'creator', 'signature_status' => 'signed', 'file_path' => 'campaign-documents/demo-creator-agreement.txt']);
         }
         $this->assertSame('live', $workflow->transition($brief, 'live', $this->user('admin'))->status);
@@ -87,7 +90,7 @@ class MarketplaceTest extends TestCase
     public function test_creator_response_cannot_launch_or_modify_business_terms(): void
     {
         $invitation = Invitation::where('brief_id', 831)->firstOrFail();
-        $this->actingAs($this->user('creator'))->post(route('creator.respond', $invitation), ['status' => 'interested', 'compensation' => 1, 'brief_id' => 842])->assertRedirect();
+        $this->actingAs($this->user('creator'))->post(route('creator.respond', $invitation), ['status' => 'interested', 'offer_version' => $invitation->offer_version, 'compensation' => 1, 'brief_id' => 842])->assertRedirect();
         $this->assertSame('interested', $invitation->fresh()->status);
         $this->assertSame('2400.00', $invitation->fresh()->compensation);
         $this->assertSame('matching', $invitation->brief->fresh()->status);
@@ -123,7 +126,15 @@ class MarketplaceTest extends TestCase
         $this->get(route('documents.download', $businessDoc))->assertOk();
         $this->actingAs($this->user('creator'))->get(route('documents.download', $businessDoc))->assertForbidden();
         $this->get(route('documents.download', $creatorDoc))->assertOk();
-        $mismatched = CampaignDocument::create(['brief_id' => 842, 'creator_profile_id' => 24, 'title' => 'Incorrectly linked', 'audience' => 'creator', 'signature_status' => 'uploaded', 'file_path' => $creatorDoc->file_path]);
+        $mismatchedData = ['brief_id' => 842, 'creator_profile_id' => 24, 'title' => 'Incorrectly linked', 'audience' => 'creator', 'signature_status' => 'uploaded', 'file_path' => $creatorDoc->file_path];
+        try {
+            CampaignDocument::create($mismatchedData);
+            $this->fail('Provider documents require the selected campaign recipient.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('creator_profile_id', $exception->errors());
+        }
+        // A corrupted legacy row must still fail the independent download authorization.
+        $mismatched = CampaignDocument::findOrFail(DB::table('campaign_documents')->insertGetId($mismatchedData));
         $this->get(route('documents.download', $mismatched))->assertForbidden();
     }
 
@@ -198,14 +209,19 @@ class MarketplaceTest extends TestCase
     {
         Brief::findOrFail(831)->update(['notes' => 'PRIVATE_BUSINESS_NOTE_67', 'budget' => 876543.21]);
         $response = $this->actingAs($this->user('creator'))->get('/creator/opportunities')->assertOk()->assertSee('2,400')->assertDontSee('PRIVATE_BUSINESS_NOTE_67')->assertDontSee('876543')->assertDontSee('876,543');
-        $brief = $response->viewData('invitations')->firstWhere('brief_id', 831)->brief;
-        $this->assertArrayNotHasKey('budget', $brief->getAttributes());
-        $this->assertArrayNotHasKey('notes', $brief->getAttributes());
+        $invitation = Invitation::where('brief_id', 831)->where('creator_profile_id', $this->user('creator')->creatorProfile->id)->firstOrFail();
+        $opportunity = $response->viewData('invitations')->firstWhere('id', $invitation->id);
+        $this->assertIsArray($opportunity);
+        foreach (['brief', 'budget', 'brand', 'title', 'user', 'email'] as $privateKey) {
+            $this->assertArrayNotHasKey($privateKey, $opportunity);
+        }
+        $this->assertStringNotContainsString('PRIVATE_BUSINESS_NOTE_67', json_encode($opportunity));
     }
 
     public function test_profile_changes_await_reapproval_before_publication_or_advancement(): void
     {
         $invitation = Invitation::where('brief_id', 839)->firstOrFail();
+        app(CampaignWorkflow::class)->selectProvider($invitation, $this->user('admin'));
         $invitation->creatorProfile->update(['status' => 'pending', 'public_name' => 'UNREVIEWED_CREATOR_23', 'followers' => 987654321]);
         $this->actingAs($this->user('business'))->get('/proposals')->assertOk()->assertDontSee($invitation->creatorProfile->code)->assertDontSee('UNREVIEWED_CREATOR_23')->assertDontSee('987654321');
         try {

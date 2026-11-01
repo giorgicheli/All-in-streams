@@ -1,8 +1,8 @@
 @php
     $copy = $site['auth']['register'];
     $labels = $site['auth']['labels'];
-    $role = old('role', request('role') === 'creator' ? 'creator' : 'business');
-    $kind = $role === 'creator' ? 'creator' : old('account_type', request('account_type') === 'agency' ? 'agency' : 'business');
+    $role = old('role', in_array(request('role'), ['creator', 'agency'], true) ? request('role') : (request('account_type') === 'agency' ? 'agency' : 'business'));
+    $kind = $role === 'creator' ? 'creator' : ($role === 'agency' ? 'agency' : old('account_type', 'business'));
 @endphp
 <x-layout :title="$copy['page_title']">
     <div class="auth-page">
@@ -15,7 +15,7 @@
                 <p class="muted">{{ $copy['description'] }}</p>
                 <form method="POST" action="/register">
                     @csrf
-                    <input type="hidden" name="role" value="{{ $role }}" :value="kind === 'creator' ? 'creator' : 'business'">
+                    <input type="hidden" name="role" value="{{ $role }}" :value="kind">
                     <input type="hidden" name="account_type" value="{{ $kind === 'creator' ? '' : $kind }}" :value="kind === 'creator' ? '' : kind">
                     <div class="choice-grid mb-6">
                         @foreach(['business' => ['briefcase', $labels['company_choice']], 'agency' => ['briefcase', $labels['agency_choice']], 'creator' => ['user', $labels['creator_choice']]] as $value => [$icon, $label])

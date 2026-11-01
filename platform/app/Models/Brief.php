@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Brief extends Model
 {
-    protected $fillable = ['user_id', 'title', 'brand', 'vertical', 'geos', 'language', 'platform', 'budget', 'currency', 'commercial_model', 'deliverables', 'start_date', 'end_date', 'kpis', 'notes', 'status', 'payment_ready', 'is_demo', 'demo_key'];
+    protected $fillable = ['user_id', 'title', 'brand', 'vertical', 'geos', 'language', 'platform', 'budget', 'currency', 'commercial_model', 'deliverables', 'start_date', 'end_date', 'kpis', 'notes', 'status', 'payment_ready', 'is_demo', 'demo_key', 'provider_type', 'attachment_path'];
 
     protected function casts(): array
     {
@@ -17,6 +17,7 @@ class Brief extends Model
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function invitations(): HasMany { return $this->hasMany(Invitation::class); }
+    public function selectedInvitations(): HasMany { return $this->hasMany(Invitation::class)->where('selection_status', 'selected'); }
     public function documents(): HasMany { return $this->hasMany(CampaignDocument::class); }
     public function activities(): HasMany { return $this->hasMany(Activity::class); }
     public function metrics(): HasMany { return $this->hasMany(CampaignMetric::class); }

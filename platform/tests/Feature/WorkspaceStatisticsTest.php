@@ -131,7 +131,7 @@ class WorkspaceStatisticsTest extends TestCase
         $admin=User::factory()->create(['role'=>'admin']);
         $company=$this->partner();
         $this->partner(['account_type'=>null]);
-        $this->partner(['account_type'=>'agency']);
+        $this->partner(['role'=>'agency','account_type'=>'agency']);
         $this->partner(['is_demo'=>true]);
         foreach(['approved','pending','declined'] as $status){$this->creator(['status'=>$status]);}
         User::factory()->create(['role'=>'creator']);
@@ -165,6 +165,27 @@ class WorkspaceStatisticsTest extends TestCase
         }
     }
 
+    public function test_agencies_see_only_their_own_client_brief_statistics(): void
+    {
+        $agency = $this->partner(['role' => 'agency', 'account_type' => 'agency']);
+        $own = $this->brief($agency, ['budget' => 1200]);
+        $other = $this->brief($this->partner(), ['budget' => 888888]);
+        $this->metric($own, '2026-11-01', ['impressions' => 12000, 'clicks' => 100]);
+        $this->metric($other, '2026-11-01', ['impressions' => 987654, 'clicks' => 400]);
+        $statistics = app(WorkspaceStatistics::class);
+        $stats = $statistics->business($agency);
+        $this->assertSame(1, $stats['total_briefs']);
+        $this->assertSame(1200.0, $stats['budget_eur']);
+        $this->assertSame(12000, $stats['performance']['impressions']);
+        $this->assertSame(12000, $statistics->campaign($own, $agency)['performance']['impressions']);
+        try {
+            $statistics->campaign($other, $agency);
+            $this->fail('An agency must not read another client campaign aggregate.');
+        } catch (HttpException $exception) {
+            $this->assertSame(403, $exception->getStatusCode());
+        }
+    }
+
     public function test_business_pages_render_only_their_own_recorded_campaign_figures(): void
     {
         $owner=$this->partner();
@@ -179,9 +200,11 @@ class WorkspaceStatisticsTest extends TestCase
     public function test_creator_profile_and_invitation_counts_do_not_attribute_campaign_aggregate_performance(): void
     {
         $profile=$this->creator();
-        $brief=$this->brief($this->partner());
+        $brief=$this->brief($this->partner(), ['status' => 'matching']);
         $this->metric($brief,'2026-11-01',['impressions'=>987654,'clicks'=>777,'conversions'=>333,'streams'=>9]);
         $profile->invitations()->create(['brief_id'=>$brief->id,'status'=>'pending','compensation'=>2400,'deliverables'=>'4 live streams']);
+        $profile->invitations()->create(['brief_id'=>$this->brief($this->partner(), ['status'=>'matching'])->id,'status'=>'pending','selection_status'=>'not_selected','compensation'=>2400,'deliverables'=>'Closed offer']);
+        $profile->invitations()->create(['brief_id'=>$this->brief($this->partner(), ['status'=>'live'])->id,'status'=>'pending','compensation'=>2400,'deliverables'=>'Past matching stage']);
         $response=$this->actingAs($profile->user)->get('/creator/opportunities')->assertOk()->assertSee('1,337')->assertSee('Self-reported profile figure')->assertDontSee('987,654');
         $data=$response->viewData('creatorStats');
         $this->assertSame(1,$data['pending']);

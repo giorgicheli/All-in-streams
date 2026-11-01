@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Activity;
+use App\Models\AgencyProfile;
+use App\Models\AgencyTalent;
 use App\Models\Brief;
 use App\Models\CampaignDocument;
 use App\Models\CreatorProfile;
@@ -36,6 +38,9 @@ class DatabaseSeeder extends Seeder
         $creatorUser = User::updateOrCreate(['email' => 'creator@allinstreams.test'], ['name' => 'Max Weber', 'role' => 'creator', 'password' => $password]);
         $french = User::updateOrCreate(['email' => 'france@allinstreams.test'], ['name' => 'Lucas Martin', 'role' => 'creator', 'password' => $password]);
         $portuguese = User::updateOrCreate(['email' => 'portugal@allinstreams.test'], ['name' => 'Rafael Costa', 'role' => 'creator', 'password' => $password]);
+        $agency = User::updateOrCreate(['email' => 'agency@allinstreams.test'], ['name'=>'Morgan Lee','role'=>'agency','account_type'=>'agency','company'=>'Orbit Talent Demo','password'=>$password,'is_demo'=>true]);
+        AgencyProfile::updateOrCreate(['user_id'=>$agency->id], ['services'=>['supply','request'],'country'=>'Germany','website'=>'https://example.com/orbit-talent-demo','languages'=>['German','English'],'audience_geos'=>['Germany','Austria'],'platforms'=>['Twitch','Kick'],'bio'=>'Fictional sample talent agency.','status'=>'approved']);
+        AgencyTalent::updateOrCreate(['agency_user_id'=>$agency->id,'public_name'=>'Orbit Arena Demo'], ['country'=>'Germany','language'=>'German','platform'=>'Twitch','twitch_url'=>'https://www.twitch.tv/ais_demo_orbit_arena','followers'=>32000,'average_viewers'=>850,'audience_geos'=>['Germany','Austria'],'rate'=>700,'availability'=>'Open','status'=>'approved']);
 
         $sharedCreator = ['language' => 'German', 'platform' => 'Twitch', 'vertical' => 'iGaming', 'commercial_model' => 'Fixed + CPA', 'availability' => 'Open', 'status' => 'approved'];
         $max = CreatorProfile::updateOrCreate(['id' => 24], $sharedCreator + ['user_id' => $creatorUser->id, 'public_name' => 'StreamNorth', 'country' => 'Germany', 'channel_url' => 'https://example.com/streamnorth', 'followers' => 48200, 'average_viewers' => 1200, 'audience_geos' => ['Germany', 'Austria', 'Switzerland'], 'rate' => 750, 'bio' => 'German-speaking gaming creator with an engaged community. Demo profile.']);
@@ -52,6 +57,19 @@ class DatabaseSeeder extends Seeder
         Invitation::updateOrCreate(['brief_id' => $proposal->id, 'creator_profile_id' => $rafael->id], ['status' => 'interested', 'compensation' => 2800, 'deliverables' => '4 live streams + 2 VODs']);
         Invitation::updateOrCreate(['brief_id' => $matching->id, 'creator_profile_id' => $max->id], ['status' => 'pending', 'compensation' => 2400, 'deliverables' => '4 live streams · 90 minutes each', 'notes' => 'German language. Adult audience disclosure. Approved tracking links required. Final terms are coordinated by your account manager.']);
         Invitation::updateOrCreate(['brief_id' => $live->id, 'creator_profile_id' => $max->id], ['status' => 'interested', 'compensation' => 3000, 'deliverables' => '4 community live streams', 'introduced_at' => now()->subDays(8)]);
+        Invitation::updateOrCreate(['brief_id'=>$matching->id,'agency_user_id'=>$agency->id], ['status'=>'pending','compensation'=>3200,'deliverables'=>'4 live streams from an approved represented creator','opportunity_title'=>'iGaming agency talent partnership']);
+
+        foreach (Invitation::whereIn('brief_id', [$proposal->id,$matching->id,$live->id])->with('brief')->get() as $invitation) {
+            $selected = $invitation->brief_id === $live->id && $invitation->creator_profile_id === $max->id;
+            $invitation->update([
+                'opportunity_title'=>$invitation->opportunity_title ?: $invitation->brief->vertical.' creator partnership',
+                'offer_details'=>Invitation::detailsFromBrief($invitation->brief),'currency'=>'EUR','offer_version'=>1,
+                'accepted_offer_version'=>$invitation->status === 'interested' ? 1 : null,
+                'selection_status'=>$selected ? 'selected' : 'unselected',
+                'selected_at'=>$selected ? now()->subDays(8) : null,'selected_by'=>$selected ? $admin->id : null,
+                'requirements'=>'Use agreed tracking links and provide evidence of the delivered streams.',
+            ]);
+        }
 
         foreach ([$review, $proposal, $matching, $live] as $brief) {
             Activity::updateOrCreate(['brief_id' => $brief->id, 'title' => 'We received your brief', 'audience' => 'business'], ['user_id' => $admin->id, 'body' => 'Your campaign brief is with the All In Streams team. Your account manager will coordinate matching, proposals, and delivery.']);

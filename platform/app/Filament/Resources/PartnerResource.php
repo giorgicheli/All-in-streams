@@ -20,9 +20,9 @@ class PartnerResource extends ManagedResource
 {
     protected static ?string $model = User::class;
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office-2';
-    protected static ?string $navigationLabel = 'Companies & agencies';
-    protected static ?string $modelLabel = 'partner';
-    protected static ?string $pluralModelLabel = 'companies & agencies';
+    protected static ?string $navigationLabel = 'Businesses';
+    protected static ?string $modelLabel = 'business';
+    protected static ?string $pluralModelLabel = 'businesses';
     protected static string|UnitEnum|null $navigationGroup = 'Partner network';
     protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'company';
@@ -54,7 +54,7 @@ class PartnerResource extends ManagedResource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('company')->label('Company / agency')->searchable()->sortable()->placeholder('Independent partner'),
+            TextColumn::make('company')->label('Business')->searchable()->sortable()->placeholder('Independent business'),
             TextColumn::make('name')->label('Contact')->searchable(),
             TextColumn::make('account_type')->label('Type')->formatStateUsing(fn (?string $state) => $state === 'agency' ? 'Agency' : 'Business')->badge(),
             TextColumn::make('email')->searchable()->copyable(),
@@ -62,7 +62,6 @@ class PartnerResource extends ManagedResource
             IconColumn::make('is_demo')->label('Demo')->boolean(),
             TextColumn::make('created_at')->label('Registered')->date()->sortable(),
         ])->filters([
-            SelectFilter::make('account_type')->label('Partner type')->options(['business' => 'Business', 'agency' => 'Agency']),
             SelectFilter::make('is_demo')->label('Workspace')->options(['1' => 'Demo accounts', '0' => 'Registered partners']),
         ])->recordActions([ViewAction::make()])->defaultSort('created_at', 'desc');
     }

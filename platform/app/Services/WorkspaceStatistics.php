@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Brief;
+use App\Models\AgencyProfile;
+use App\Models\AgencyTalent;
 use App\Models\CampaignMetric;
 use App\Models\CreatorProfile;
 use App\Models\User;
@@ -32,8 +34,11 @@ class WorkspaceStatistics
 
         $summary = $this->summarize(Brief::query(), $asOf);
         $accounts = [
-                'companies' => User::where('role', 'business')->where(fn (Builder $query) => $query->where('account_type', 'business')->orWhereNull('account_type'))->count(),
-                'agencies' => User::where('role', 'business')->where('account_type', 'agency')->count(),
+                'companies' => User::where('role', 'business')->count(),
+                'agencies' => User::where('role', 'agency')->count(),
+                'agencies_approved' => AgencyProfile::where('status', 'approved')->count(),
+                'agency_talent' => AgencyTalent::count(),
+                'agency_talent_approved' => AgencyTalent::where('status', 'approved')->count(),
                 'creator_accounts' => User::where('role', 'creator')->count(),
                 'creators_total' => CreatorProfile::count(),
                 'creators_approved' => CreatorProfile::where('status', 'approved')->count(),
@@ -50,7 +55,7 @@ class WorkspaceStatistics
 
     public function business(User $actor, ?CarbonInterface $asOf = null): array
     {
-        abort_unless($actor->role === 'business', 403);
+        abort_unless(in_array($actor->role, ['business', 'agency'], true), 403);
 
         $summary = $this->summarize(Brief::where('user_id', $actor->id), $asOf);
         $summary['contains_demo'] = $summary['contains_demo'] || (bool) $actor->is_demo;
@@ -59,7 +64,7 @@ class WorkspaceStatistics
 
     public function campaign(Brief $brief, User $actor, ?CarbonInterface $asOf = null): array
     {
-        abort_unless($actor->role === 'admin' || ($actor->role === 'business' && $brief->user_id === $actor->id), 403);
+        abort_unless($actor->role === 'admin' || (in_array($actor->role, ['business', 'agency'], true) && $brief->user_id === $actor->id), 403);
 
         return $this->summarize(Brief::whereKey($brief->id), $asOf);
     }
@@ -73,7 +78,7 @@ class WorkspaceStatistics
         return [
             'followers' => $profile?->followers,
             'average_viewers' => $profile?->average_viewers,
-            'pending' => $invitations ? (clone $invitations)->where('status', 'pending')->count() : 0,
+            'pending' => $invitations ? (clone $invitations)->where('status', 'pending')->where('selection_status', '!=', 'not_selected')->whereHas('brief', fn (Builder $query) => $query->whereIn('status', ['matching', 'proposal']))->count() : 0,
             'interested' => $invitations ? (clone $invitations)->where('status', 'interested')->count() : 0,
             'total' => $invitations ? (clone $invitations)->count() : 0,
             'contains_demo' => (bool) $actor->is_demo || ($invitations && (clone $invitations)->whereHas('brief', fn (Builder $query) => $query->where('is_demo', true))->exists()),

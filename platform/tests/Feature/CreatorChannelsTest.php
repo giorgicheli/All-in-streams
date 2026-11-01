@@ -95,14 +95,15 @@ class CreatorChannelsTest extends TestCase
         ];
     }
 
-    public function test_agency_registration_uses_business_permissions_and_keeps_its_account_type(): void
+    public function test_legacy_agency_registration_creates_a_distinct_agency_account_and_profile(): void
     {
         $this->post('/register', $this->registration([
             'role' => 'business', 'account_type' => 'agency', 'company' => 'Northstar Talent',
             'twitch_url' => 'https://unrelated.example/channel',
-        ]))->assertSessionHasNoErrors()->assertRedirect('/dashboard');
+        ]))->assertSessionHasNoErrors()->assertRedirect('/agency/dashboard');
 
-        $this->assertDatabaseHas('users', ['email' => 'streamer@example.test', 'role' => 'business', 'account_type' => 'agency', 'company' => 'Northstar Talent']);
+        $this->assertDatabaseHas('users', ['email' => 'streamer@example.test', 'role' => 'agency', 'account_type' => 'agency', 'company' => 'Northstar Talent']);
+        $this->assertDatabaseHas('agency_profiles', ['user_id' => User::where('email', 'streamer@example.test')->value('id'), 'status' => 'draft']);
         $this->assertDatabaseCount('creator_profiles', 0);
     }
 

@@ -63,6 +63,11 @@
                         <select id="brief-platform" wire:model="platform">@foreach(['Twitch', 'YouTube', 'Kick', 'TikTok', 'Multiple'] as $option)<option>{{ $option }}</option>@endforeach</select>
                         @error('platform')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
+                    <div class="form-field span-two">
+                        <label for="brief-provider">Who should deliver this campaign?</label>
+                        <select id="brief-provider" wire:model="provider_type"><option value="either">A creator or an agency — let staff recommend</option><option value="creator">Individual creator / streamer</option><option value="agency">Agency with its own roster</option></select>
+                        @error('provider_type')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    </div>
                 </div>
             @elseif($step === 3)
                 <h2 class="wizard-section-title">Make the plan yours.</h2>
@@ -108,6 +113,13 @@
                         <textarea id="brief-notes" wire:model="notes" maxlength="5000" placeholder="Brand guidelines, creative direction, market requirements, or a little more context."></textarea>
                         @error('notes')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
+                    <div class="form-field span-two">
+                        <label for="brief-attachment">Detailed brief <span>(optional PDF, up to 10 MB)</span></label>
+                        <input id="brief-attachment" type="file" wire:model="attachment" accept="application/pdf">
+                        <p class="prose-note mt-2">Private to you and All In Streams. Providers receive a separate offer with approved scope and their own compensation.</p>
+                        <span wire:loading wire:target="attachment" class="prose-note">Uploading…</span>
+                        @error('attachment')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    </div>
                 </div>
             @else
                 <h2 class="wizard-section-title">Ready to go all in?</h2>
@@ -119,6 +131,8 @@
                     <div><small>Language & platform</small><strong>{{ $language }} · {{ $platform }}</strong></div>
                     <div><small>Budget</small><strong>{{ number_format((float) $budget, 2) }} {{ $currency }}</strong></div>
                     <div><small>Commercial model</small><strong>{{ $commercial_model === 'Open' ? 'Open to discussion' : $commercial_model }}</strong></div>
+                    <div><small>Provider preference</small><strong>{{ match($provider_type) { 'creator' => 'Individual creator', 'agency' => 'Agency', default => 'Creator or agency' } }}</strong></div>
+                    @if($attachment)<div><small>Private brief attachment</small><strong>PDF attached</strong></div>@endif
                     <div><small>Start date</small><strong>{{ $start_date }}</strong></div>
                     <div><small>End date</small><strong>{{ $end_date }}</strong></div>
                     <div class="span-two"><small>Deliverables</small><strong>{{ $deliverables }}</strong></div>
@@ -131,7 +145,7 @@
         </div>
 
         <div class="wizard-actions">
-            @if($step > 1)<button type="button" class="btn btn-secondary" wire:click="back" wire:loading.attr="disabled"><x-ui-icon name="left" size="16"/> Back</button>@else<a href="/campaigns" class="btn btn-secondary">Cancel</a>@endif
+            @if($step > 1)<button type="button" class="btn btn-secondary" wire:click="back" wire:loading.attr="disabled"><x-ui-icon name="left" size="16"/> Back</button>@else<a href="{{ auth()->user()->role === 'agency' ? '/agency' : '' }}/campaigns" class="btn btn-secondary">Cancel</a>@endif
             <span>Step {{ $step }} of 4 · Managed by All In Streams</span>
             @if($step < 4)
                 <button type="button" class="btn btn-primary" wire:click="next" wire:loading.attr="disabled"><span wire:loading.remove wire:target="next">Continue</span><span wire:loading wire:target="next">Checking…</span><x-ui-icon name="right" size="16"/></button>

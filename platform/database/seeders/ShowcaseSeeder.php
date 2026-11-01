@@ -3,17 +3,22 @@
 namespace Database\Seeders;
 
 use App\Models\Activity;
+use App\Models\AgencyProfile;
+use App\Models\AgencyTalent;
 use App\Models\Brief;
 use App\Models\CampaignDocument;
 use App\Models\CampaignMetric;
 use App\Models\CreatorProfile;
+use App\Models\DeliverySubmission;
 use App\Models\Invitation;
+use App\Models\PaymentMilestone;
 use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 use LogicException;
 
 class ShowcaseSeeder extends Seeder
@@ -40,14 +45,16 @@ class ShowcaseSeeder extends Seeder
             $credentials = [];
             $businesses = [];
             foreach ($this->businesses() as $index => [$slug, $name, $company, $type]) {
-                $businesses[] = $this->account($slug, $name, 'business', $company, $type, 60 - $index * 3, $credentials);
+                $businesses[] = $this->account($slug, $name, $type === 'agency' ? 'agency' : 'business', $company, $type, 60 - $index * 3, $credentials);
             }
+            $agencyTalent = [];
+            foreach ([4, 5] as $index) $agencyTalent[$index] = $this->agencyRoster($businesses[$index], $index);
 
             $creators = [];
             foreach ($this->creators() as $index => $row) {
                 [$slug, $name, $handle, $country, $language, $platform, $followers, $viewers, $geos, $vertical, $rate, $status] = $row;
                 $user = $this->account($slug, $name, 'creator', null, null, ($index < 8 ? 80 - $index * 3 : 20 - $index * 2), $credentials);
-                $profile = CreatorProfile::firstOrNew(['user_id' => $user->id]);
+                $profile = CreatorProfile::withTrashed()->firstOrNew(['user_id' => $user->id]);
                 if (! $profile->exists) {
                     $twitch = 'https://www.twitch.tv/ais_demo_'.$handle;
                     $kick = 'https://kick.com/ais_demo_'.$handle;
@@ -109,18 +116,28 @@ class ShowcaseSeeder extends Seeder
             foreach ($invitationPlans as $campaign => $invitations) {
                 $brief = $briefs[$campaign];
                 foreach ($invitations as $position => [$creator, $status]) {
+                    $active = in_array($brief->status, ['contracts', 'live', 'completed'], true);
+                    $selected = $active && $position === 0 && ! in_array($campaign, [7, 9], true);
                     $invitation = Invitation::firstOrCreate([
                         'brief_id' => $brief->id, 'creator_profile_id' => $creators[$creator]->id,
                     ], [
                         'status' => $status, 'compensation' => $creators[$creator]->rate * 4,
+                        'opportunity_title' => $brief->vertical.' creator partnership', 'offer_details' => Invitation::detailsFromBrief($brief),
+                        'currency' => 'EUR', 'cpa_rate' => $brief->vertical === 'iGaming' ? 25 : null,
+                        'offer_version' => 1, 'accepted_offer_version' => $status === 'interested' ? 1 : null,
+                        'selection_status' => $active ? ($selected ? 'selected' : 'not_selected') : 'unselected',
+                        'selected_at' => $selected ? $brief->created_at->copy()->addDays(3) : null,
                         'deliverables' => '4 live streams · 90 minutes each + 2 highlights',
                         'notes' => 'Sample invitation. Scope and compensation remain private with All In Streams.',
+                        'requirements' => 'Use the agreed tracking links and submit delivery evidence through All In Streams.',
+                        'counter_amount' => $status === 'changes_requested' ? $creators[$creator]->rate * 4 + 200 : null,
                         'response_notes' => $status === 'changes_requested' ? 'Could we move the first stream to a weekend? Sample response.' : null,
-                        'introduced_at' => in_array($brief->status, ['contracts', 'live', 'completed'], true) && $status === 'interested' ? $brief->created_at->copy()->addDays(3) : null,
+                        'introduced_at' => $selected ? $brief->created_at->copy()->addDays(3) : null,
                         'created_at' => $brief->created_at->copy()->addDay(), 'updated_at' => $brief->created_at->copy()->addDays(2),
                     ]);
-                    if (in_array($brief->status, ['contracts', 'live', 'completed'], true) && $invitation->status === 'interested') {
-                        $this->document($brief, 'creator', $creators[$creator], $brief->status !== 'contracts' || $position === 0 ? 'signed' : 'pending');
+                    $this->offerHistory($invitation);
+                    if ($invitation->selection_status === 'selected') {
+                        $this->document($brief, 'creator', $creators[$creator], $brief->status === 'contracts' ? 'pending' : 'signed');
                     }
                 }
                 if (in_array($brief->status, ['contracts', 'live', 'completed'], true)) {
@@ -128,10 +145,33 @@ class ShowcaseSeeder extends Seeder
                 }
             }
 
+            foreach ([[3,4,'pending'],[4,4,'changes_requested'],[5,5,'interested'],[7,5,'interested'],[9,4,'interested']] as [$campaign,$provider,$status]) {
+                $brief = $briefs[$campaign];
+                $active = in_array($brief->status, ['contracts','live','completed'], true);
+                $selected = $active && ! $brief->invitations()->where('selection_status','selected')->exists();
+                $invitation = Invitation::firstOrCreate(['brief_id'=>$brief->id,'agency_user_id'=>$businesses[$provider]->id], [
+                    'status'=>$status,'compensation'=>3200,'currency'=>'EUR','deliverables'=>'4 live streams with two represented creators and a campaign recap.',
+                    'opportunity_title'=>$brief->vertical.' agency talent partnership','offer_details'=>Invitation::detailsFromBrief($brief),
+                    'requirements'=>'Nominate approved roster talent and submit evidence for each agreed stream.',
+                    'notes'=>'Fictional sample agency offer. All client communication is coordinated by All In Streams.',
+                    'offer_version'=>1,'accepted_offer_version'=>$status === 'interested' ? 1 : null,
+                    'selection_status'=>$active ? ($selected ? 'selected' : 'not_selected') : 'unselected',
+                    'selected_at'=>$selected ? $brief->created_at->copy()->addDays(3) : null,
+                    'introduced_at'=>$selected ? $brief->created_at->copy()->addDays(3) : null,
+                    'counter_amount'=>$status === 'changes_requested' ? 3600 : null,
+                    'response_notes'=>$status === 'changes_requested' ? 'Sample counterproposal: an extra preparation stream needs a revised fee.' : null,
+                    'proposed_talent_ids'=>$status === 'interested' ? $agencyTalent[$provider]->pluck('id')->all() : [],
+                    'created_at'=>$brief->created_at->copy()->addDay(),'updated_at'=>$brief->created_at->copy()->addDays(2),
+                ]);
+                $this->offerHistory($invitation);
+                if ($invitation->selection_status === 'selected') $this->document($brief, 'agency', null, $brief->status === 'contracts' ? 'pending' : 'signed', $businesses[$provider]);
+            }
+
             foreach ($briefs as $index => $brief) {
                 if (in_array($brief->status, ['live', 'completed'], true)) {
                     $this->metrics($brief, $index);
                 }
+                foreach ($brief->invitations()->where('selection_status','selected')->where('status','interested')->get() as $invitation) $this->providerRecords($invitation);
             }
 
             $ids = array_map(fn (Brief $brief) => $brief->id, $briefs);
@@ -139,8 +179,11 @@ class ShowcaseSeeder extends Seeder
                 'new_credentials' => $credentials,
                 'counts' => [
                     'companies' => 4, 'agencies' => 2, 'creators' => count($creators), 'campaigns' => count($briefs),
+                    'agency_talent' => AgencyTalent::whereIn('agency_user_id', [$businesses[4]->id,$businesses[5]->id])->count(),
                     'invitations' => Invitation::whereIn('brief_id', $ids)->count(),
                     'metric_days' => CampaignMetric::whereIn('brief_id', $ids)->count(),
+                    'delivery_submissions' => DeliverySubmission::whereHas('invitation', fn ($query) => $query->whereIn('brief_id',$ids))->count(),
+                    'payment_milestones' => PaymentMilestone::whereHas('invitation', fn ($query) => $query->whereIn('brief_id',$ids))->count(),
                 ],
             ];
             if ($beforeCommit) {
@@ -150,12 +193,77 @@ class ShowcaseSeeder extends Seeder
         }));
     }
 
+    private function agencyRoster(User $agency, int $index): Collection
+    {
+        $country = $index === 4 ? 'Germany' : 'Portugal';
+        $profile = AgencyProfile::firstOrNew(['user_id'=>$agency->id]);
+        if (! $profile->exists || ($profile->status === 'draft' && blank($profile->country) && blank($profile->languages) && blank($profile->bio))) {
+            $profile->fill(['services'=>['supply','request'],'country'=>$country,'website'=>'https://example.com/fictional-'.($index === 4 ? 'northlight' : 'pixelbridge'),
+                'languages'=>['English',$index === 4 ? 'German' : 'Portuguese'],'audience_geos'=>[$country,'United Kingdom'],'platforms'=>['Twitch','Kick'],
+                'bio'=>'Fictional sample agency with a separately reviewed roster. All audience figures and channel links are simulated.','status'=>'approved'])->save();
+        }
+        $talent = collect();
+        foreach ([['Arena', 'Twitch', 48000, 1200],['Quest', 'Kick', 32000, 850]] as $position => [$suffix,$platform,$followers,$viewers]) {
+            $publicName = ($index === 4 ? 'Northlight ' : 'PixelBridge ').$suffix;
+            $handle = 'ais_demo_agency_'.$index.'_'.$position;
+            $talent->push(AgencyTalent::withTrashed()->firstOrCreate(['agency_user_id'=>$agency->id,'public_name'=>$publicName], [
+                'country'=>$country,'language'=>$index === 4 ? 'German' : 'Portuguese','platform'=>$platform,
+                'twitch_url'=>$platform === 'Twitch' ? 'https://www.twitch.tv/'.$handle : null,
+                'kick_url'=>$platform === 'Kick' ? 'https://kick.com/'.$handle : null,
+                'followers'=>$followers,'average_viewers'=>$viewers,'audience_geos'=>[$country,'United Kingdom'],
+                'rate'=>700 + $position * 150,'availability'=>'Open','status'=>'approved',
+            ]));
+        }
+        return $talent;
+    }
+
+    private function offerHistory(Invitation $invitation): void
+    {
+        $invitation->events()->firstOrCreate(['kind'=>'sent'], ['amount'=>$invitation->compensation,'cpa_rate'=>$invitation->cpa_rate,'notes'=>'Fictional sample offer sent by All In Streams.','created_at'=>$invitation->created_at,'updated_at'=>$invitation->created_at]);
+        if ($invitation->status !== 'pending') {
+            $kind = match ($invitation->status) { 'interested'=>'accepted','changes_requested'=>'counter_proposed',default=>'declined' };
+            $invitation->events()->firstOrCreate(['kind'=>$kind], ['user_id'=>$invitation->agency_user_id ?: $invitation->creatorProfile?->user_id,
+                'amount'=>$invitation->status === 'changes_requested' ? $invitation->counter_amount : $invitation->compensation,
+                'cpa_rate'=>$invitation->cpa_rate,'notes'=>$invitation->response_notes ?: 'Fictional sample provider response.',
+                'created_at'=>$invitation->updated_at,'updated_at'=>$invitation->updated_at]);
+        }
+        if ($invitation->selection_status === 'selected') $invitation->events()->firstOrCreate(['kind'=>'selected'], [
+            'amount'=>$invitation->compensation,'notes'=>'Fictional sample final provider approval.',
+            'created_at'=>$invitation->selected_at ?: $invitation->updated_at,'updated_at'=>$invitation->selected_at ?: $invitation->updated_at,
+        ]);
+    }
+
+    private function providerRecords(Invitation $invitation): void
+    {
+        $brief = $invitation->brief;
+        $provider = $invitation->agency_user_id ? $invitation->agency : $invitation->creatorProfile?->user;
+        if (! $brief->is_demo || ! $provider?->is_demo || ! $invitation->recipientApproved()
+            || $invitation->offer_version !== $invitation->accepted_offer_version
+            || ! in_array($brief->status, ['contracts','live','completed'], true)) return;
+
+        PaymentMilestone::firstOrCreate(['invitation_id'=>$invitation->id,'label'=>'Fictional sample fixed fee'], [
+            'kind'=>'fixed_fee','amount'=>$invitation->compensation,'currency'=>$invitation->currency,'status'=>'pending',
+        ]);
+        if (in_array($brief->status, ['live','completed'], true)) DeliverySubmission::firstOrCreate([
+            'invitation_id'=>$invitation->id,'title'=>'Fictional sample stream evidence',
+        ], [
+            'user_id'=>$provider->id,'content_url'=>'https://example.com/fictional-stream-'.$invitation->id,
+            'delivered_on'=>$brief->end_date->copy()->min(today())->toDateString(),
+            'notes'=>'Fictional sample evidence. Audience figures are simulated and require staff review. This submission does not automatically update recorded campaign totals.',
+            'reported_impressions'=>10500,'reported_clicks'=>85,'reported_conversions'=>4,
+            'status'=>$brief->status === 'completed' ? 'approved' : 'submitted',
+            'review_notes'=>$brief->status === 'completed' ? 'Fictional sample review: simulated approval for this completed sample campaign. No real staff review is recorded.' : null,
+            'reviewed_at'=>$brief->status === 'completed' ? $brief->end_date->copy()->addDay() : null,
+        ]);
+    }
+
     private function account(string $slug, string $name, string $role, ?string $company, ?string $type, int $age, array &$credentials): User
     {
         $email = $slug.'@workspace.allinstreams.example';
         $user = User::where('email', $email)->first();
         if ($user) {
-            if (! $user->is_demo || $user->role !== $role) {
+            if ($user->is_demo && $role === 'agency' && $user->role === 'business' && $user->account_type === 'agency') $user->update(['role'=>'agency']);
+            if (! $user->is_demo || $user->role !== $role || (in_array($role, ['business','agency'], true) && $user->account_type !== $type)) {
                 throw new LogicException('A sample email address is already used by another account. No existing account was changed.');
             }
             return $user;
@@ -203,16 +311,23 @@ class ShowcaseSeeder extends Seeder
         }
     }
 
-    private function document(Brief $brief, string $audience, ?CreatorProfile $creator, string $signature): void
+    private function document(Brief $brief, string $audience, ?CreatorProfile $creator, string $signature, ?User $agency = null): void
     {
-        $title = ($audience === 'business' ? 'Business service agreement' : 'Creator service agreement').' · Sample';
-        $identity = ['brief_id' => $brief->id, 'creator_profile_id' => $creator?->id, 'audience' => $audience, 'title' => $title];
-        if (CampaignDocument::where($identity)->exists()) {
+        $title = match ($audience) { 'business'=>'Business service agreement', 'agency'=>'Agency talent supply agreement', default=>'Creator service agreement' }.' · Sample';
+        $identity = ['brief_id' => $brief->id, 'creator_profile_id' => $creator?->id, 'agency_user_id'=>$agency?->id, 'audience' => $audience, 'title' => $title];
+        $path = 'showcase-documents/'.$brief->demo_key.'/'.$audience.($creator ? '-'.$creator->id : ($agency ? '-'.$agency->id : '')).'.txt';
+        if ($document = CampaignDocument::where($identity)->first()) {
+            if ($audience !== 'business' && $document->file_path === $path && Storage::disk('local')->exists($path)) {
+                $content = Storage::disk('local')->get($path);
+                $prefix = "ALL IN STREAMS — FICTIONAL SAMPLE DOCUMENT\n\nThis is not a legally binding agreement. Signature status is simulated for workflow demonstration.\nCampaign: ";
+                if (str_starts_with($content, $prefix) && preg_match('~\nAudience: (?:creator|agency)\n(?:Creator|Agency): [^\r\n]+\n\z~D', $content)) {
+                    Storage::disk('local')->put($path, preg_replace('~(?<=\n)Campaign: [^\r\n]+(?=\nAudience: )~', 'Campaign reference: '.$brief->code, $content, 1));
+                }
+            }
             return;
         }
-        $path = 'showcase-documents/'.$brief->demo_key.'/'.$audience.($creator ? '-'.$creator->id : '').'.txt';
         if (! Storage::disk('local')->exists($path)) {
-            Storage::disk('local')->put($path, "ALL IN STREAMS — FICTIONAL SAMPLE DOCUMENT\n\nThis is not a legally binding agreement. Signature status is simulated for workflow demonstration.\nCampaign: ".$brief->title."\nAudience: ".$audience."\n".($creator ? 'Creator: '.$creator->public_name."\n" : 'Company: '.$brief->brand."\n"));
+            Storage::disk('local')->put($path, "ALL IN STREAMS — FICTIONAL SAMPLE DOCUMENT\n\nThis is not a legally binding agreement. Signature status is simulated for workflow demonstration.\nCampaign reference: ".$brief->code."\nAudience: ".$audience."\n".($creator ? 'Creator: '.$creator->public_name."\n" : ($agency ? 'Agency: '.$agency->company."\n" : 'Company: '.$brief->brand."\n")));
         }
         CampaignDocument::create($identity + [
             'file_path' => $path, 'signature_status' => $signature,

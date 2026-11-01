@@ -3,10 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Brief;
+use App\Models\AgencyProfile;
+use App\Models\AgencyTalent;
 use App\Models\CampaignDocument;
 use App\Models\CampaignMetric;
 use App\Models\CreatorProfile;
+use App\Models\DeliverySubmission;
 use App\Models\Invitation;
+use App\Models\PaymentMilestone;
 use App\Models\User;
 use Database\Seeders\ShowcaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -56,6 +60,11 @@ class ShowcaseSeederTest extends TestCase
         $this->assertDatabaseCount('users', 17);
         $this->assertSame(4, User::where('is_demo', true)->where('account_type', 'business')->count());
         $this->assertSame(2, User::where('is_demo', true)->where('account_type', 'agency')->count());
+        $this->assertSame(2, User::where('is_demo', true)->where('role', 'agency')->count());
+        $this->assertDatabaseCount('agency_profiles', 2);
+        $this->assertDatabaseCount('agency_talents', 4);
+        $this->assertSame(2, AgencyProfile::where('status', 'approved')->count());
+        $this->assertSame(4, AgencyTalent::where('status', 'approved')->count());
         $this->assertSame(10, User::where('is_demo', true)->where('role', 'creator')->count());
         $this->assertDatabaseCount('briefs', 12);
         $this->assertDatabaseCount('creator_profiles', 10);
@@ -85,12 +94,12 @@ class ShowcaseSeederTest extends TestCase
         $password = $user->fresh()->password;
         $brief = Brief::where('demo_key', ShowcaseSeeder::PREFIX.'gear-launch')->firstOrFail();
         $brief->update(['title' => 'Edited campaign title', 'status' => 'review']);
-        $counts = [User::count(), Brief::count(), CreatorProfile::count(), Invitation::count(), CampaignDocument::count(), CampaignMetric::count()];
+        $counts = [User::count(), Brief::count(), CreatorProfile::count(), Invitation::count(), CampaignDocument::count(), CampaignMetric::count(), AgencyProfile::count(), AgencyTalent::count(), DeliverySubmission::count(), PaymentMilestone::count()];
         $credentials = file_get_contents($file);
 
         $this->artisan('showcase:seed', ['--credentials-file' => $file])->expectsOutput('New sample accounts: 0')->assertSuccessful();
 
-        $this->assertSame($counts, [User::count(), Brief::count(), CreatorProfile::count(), Invitation::count(), CampaignDocument::count(), CampaignMetric::count()]);
+        $this->assertSame($counts, [User::count(), Brief::count(), CreatorProfile::count(), Invitation::count(), CampaignDocument::count(), CampaignMetric::count(), AgencyProfile::count(), AgencyTalent::count(), DeliverySubmission::count(), PaymentMilestone::count()]);
         $this->assertSame($password, $user->fresh()->password);
         $this->assertSame('Edited sample user', $user->fresh()->name);
         $this->assertSame('Edited campaign title', $brief->fresh()->title);
@@ -146,16 +155,114 @@ class ShowcaseSeederTest extends TestCase
                 $this->assertTrue($brief->activities()->where('title', 'Delivery complete — reporting ready')->firstOrFail()->created_at->isSameDay($brief->end_date->copy()->addDay()));
             }
             $this->assertTrue($brief->documents()->where('audience', 'business')->where('signature_status', 'signed')->exists());
-            foreach ($brief->invitations()->where('status', 'interested')->get() as $invitation) {
-                $this->assertSame('approved', $invitation->creatorProfile->status);
+            $this->assertSame(1, $brief->invitations()->where('selection_status','selected')->count());
+            foreach ($brief->invitations()->where('selection_status', 'selected')->get() as $invitation) {
+                $this->assertSame('interested', $invitation->status);
+                $this->assertSame($invitation->offer_version, $invitation->accepted_offer_version);
                 $this->assertNotNull($invitation->introduced_at);
-                $this->assertTrue($brief->documents()->where('creator_profile_id', $invitation->creator_profile_id)->where('signature_status', 'signed')->exists());
+                if ($invitation->agency_user_id) {
+                    $this->assertSame('approved', $invitation->agency->agencyProfile->status);
+                    $this->assertNotEmpty($invitation->proposed_talent_ids);
+                    $this->assertSame(count($invitation->proposed_talent_ids), AgencyTalent::where('agency_user_id',$invitation->agency_user_id)->where('status','approved')->whereIn('id',$invitation->proposed_talent_ids)->count());
+                    $this->assertTrue($brief->documents()->where('agency_user_id', $invitation->agency_user_id)->where('audience','agency')->where('signature_status','signed')->exists());
+                } else {
+                    $this->assertSame('approved', $invitation->creatorProfile->status);
+                    $this->assertTrue($brief->documents()->where('creator_profile_id', $invitation->creator_profile_id)->where('signature_status', 'signed')->exists());
+                }
             }
         }
         foreach (CampaignDocument::all() as $document) {
             Storage::disk('local')->assertExists($document->file_path);
             $this->assertStringContainsString('FICTIONAL SAMPLE DOCUMENT', Storage::disk('local')->get($document->file_path));
         }
+    }
+
+    public function test_repeated_showcase_seed_preserves_roster_reviews_and_does_not_restore_archived_people(): void
+    {
+        $seeder = app(ShowcaseSeeder::class);
+        $seeder->provision();
+        $talent = AgencyTalent::firstOrFail();
+        $profile = $talent->agency->agencyProfile;
+        $profile->update(['status'=>'pending','bio'=>'Edited agency overview']);
+        $talent->update(['status'=>'declined','followers'=>321]);
+        $talent->delete();
+        $creator = CreatorProfile::where('status','pending')->firstOrFail();
+        $creator->delete();
+        $seeder->provision();
+        $this->assertSame('pending', $profile->refresh()->status);
+        $this->assertSame('Edited agency overview', $profile->bio);
+        $this->assertSoftDeleted('agency_talents',['id'=>$talent->id]);
+        $this->assertSoftDeleted('creator_profiles',['id'=>$creator->id]);
+        $this->assertSame(321, AgencyTalent::withTrashed()->findOrFail($talent->id)->followers);
+        $this->assertSame(4, AgencyTalent::withTrashed()->count());
+        $this->assertSame(10, CreatorProfile::withTrashed()->count());
+    }
+
+    public function test_production_rerun_keeps_legacy_selected_creators_when_adding_agency_offers(): void
+    {
+        $seeder = app(ShowcaseSeeder::class);
+        $seeder->provision();
+        $selected = [];
+        foreach (['tournament-partners','cross-market-play'] as $slug) {
+            $brief = Brief::where('demo_key', ShowcaseSeeder::PREFIX.$slug)->sole();
+            $oldAgencyOffers = $brief->invitations()->whereNotNull('agency_user_id')->pluck('id');
+            DeliverySubmission::whereIn('invitation_id',$oldAgencyOffers)->delete();
+            PaymentMilestone::whereIn('invitation_id',$oldAgencyOffers)->delete();
+            $brief->invitations()->whereNotNull('agency_user_id')->delete();
+            $lead = $brief->invitations()->whereNotNull('creator_profile_id')->oldest('id')->firstOrFail();
+            $lead->update(['selection_status'=>'selected','selected_at'=>now()->subDays(3),'introduced_at'=>now()->subDays(3)]);
+            $selected[$brief->id] = $lead->id;
+        }
+        $this->app['env'] = 'production';
+        try { $seeder->provision(true); } finally { $this->app['env'] = 'testing'; }
+        foreach ($selected as $briefId=>$invitationId) {
+            $lead = Invitation::where('brief_id',$briefId)->where('selection_status','selected')->sole();
+            $this->assertSame($invitationId, $lead->id);
+            $this->assertNull($lead->agency_user_id);
+            $this->assertDatabaseHas('invitations',['brief_id'=>$briefId,'selection_status'=>'not_selected']);
+        }
+    }
+
+    public function test_sample_delivery_and_payment_records_belong_only_to_selected_demo_providers(): void
+    {
+        app(ShowcaseSeeder::class)->provision();
+        $this->assertGreaterThan(0, DeliverySubmission::count());
+        $this->assertGreaterThan(0, PaymentMilestone::count());
+        foreach (DeliverySubmission::with('invitation.brief','user')->get() as $submission) {
+            $this->assertTrue($submission->user->is_demo);
+            $this->assertTrue($submission->invitation->brief->is_demo);
+            $this->assertSame('selected',$submission->invitation->selection_status);
+            $this->assertContains($submission->invitation->brief->status,['live','completed']);
+            $this->assertSame($submission->invitation->brief->status === 'completed' ? 'approved' : 'submitted',$submission->status);
+        }
+        foreach (PaymentMilestone::with('invitation.brief')->get() as $milestone) {
+            $this->assertTrue($milestone->invitation->brief->is_demo);
+            $this->assertSame('selected',$milestone->invitation->selection_status);
+            $this->assertSame($milestone->invitation->currency,$milestone->currency);
+            $this->assertSame('pending',$milestone->status);
+            $this->assertNull($milestone->paid_at);
+            $this->assertNull($milestone->approved_by);
+        }
+    }
+
+    public function test_legacy_generated_provider_documents_remove_client_titles_without_replacing_custom_files(): void
+    {
+        $seeder = app(ShowcaseSeeder::class);
+        $seeder->provision();
+        $documents = CampaignDocument::where('audience','creator')->with('brief','creatorProfile')->get();
+        $legacy = $documents->first();
+        Storage::disk('local')->put($legacy->file_path, "ALL IN STREAMS — FICTIONAL SAMPLE DOCUMENT\n\nThis is not a legally binding agreement. Signature status is simulated for workflow demonstration.\nCampaign: ".$legacy->brief->title."\nAudience: creator\nCreator: ".$legacy->creatorProfile->public_name."\n");
+        $custom = $documents->last();
+        $customPath = 'campaign-documents/custom-provider-file.txt';
+        Storage::disk('local')->put($customPath, 'Custom uploaded document: keep this content.');
+        $custom->update(['file_path'=>$customPath]);
+        $signature = $legacy->signature_status;
+        $seeder->provision();
+        $content = Storage::disk('local')->get($legacy->file_path);
+        $this->assertStringNotContainsString($legacy->brief->title, $content);
+        $this->assertStringContainsString('Campaign reference: '.$legacy->brief->code, $content);
+        $this->assertSame($signature, $legacy->refresh()->signature_status);
+        $this->assertSame('Custom uploaded document: keep this content.', Storage::disk('local')->get($custom->refresh()->file_path));
     }
 
     public function test_failure_to_persist_credentials_rolls_back_new_database_records(): void
