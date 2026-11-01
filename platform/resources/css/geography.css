@@ -1,0 +1,22 @@
+/* The caption and the scrolling countries have separate, non-overlapping cells. */
+.geo-inner{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:24px;overflow:visible}
+.geo-inner>.geo-label,.geo-inner>.geo-end-label{min-width:0;white-space:nowrap}
+.geo-viewport{min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-behavior:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.geo-viewport::-webkit-scrollbar{display:none}
+.geo-viewport:focus-visible{outline:1px solid var(--lime);outline-offset:4px;border-radius:3px}
+.geo-track{display:flex;min-width:100%;width:max-content}
+.geo-items{display:flex;align-items:center;justify-content:space-between;gap:20px;min-width:100%;flex:1}
+.geo-item{flex-shrink:0;user-select:none}
+.geo-item img{-webkit-user-drag:none}
+.geo-country-name{white-space:nowrap}
+
+@media(max-width:700px){
+    .geo-inner{height:76px;grid-template-columns:110px minmax(0,1fr);gap:14px;white-space:normal}
+    .geo-inner>.geo-label{align-self:stretch;display:flex;align-items:center;white-space:normal;min-width:0;padding-right:12px;border-right:1px solid var(--line);font-size:9px;line-height:1.55;letter-spacing:.08em}
+    .geo-inner>.geo-end-label{display:none}
+    .geo-viewport{width:100%;min-width:0;padding-block:12px;mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 12px),transparent 100%)}
+    .geo-track{min-width:0}
+    .geo-items{flex:0 0 auto;min-width:0;gap:10px;padding-right:10px;justify-content:flex-start}
+    .geo-item{flex:0 0 78px;width:78px;gap:7px;font-size:10px}
+    .geo-country-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+}

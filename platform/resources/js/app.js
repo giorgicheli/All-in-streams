@@ -1,6 +1,7 @@
 import './bootstrap';
 import { initializeMotion } from './motion';
 import { initializeSmoothScroll } from './smooth-scroll';
+import { initializeGeographyCarousels } from './geography';
 
 let cleanup = () => {};
 
@@ -9,6 +10,7 @@ function initializePage() {
     const controller = new AbortController();
     const disposeMotion = initializeMotion();
     const disposeScroll = initializeSmoothScroll();
+    const disposeGeography = initializeGeographyCarousels();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => header.classList.toggle('scrolled', scrollY > 20);
@@ -26,6 +28,7 @@ function initializePage() {
         controller.abort();
         disposeMotion();
         disposeScroll();
+        disposeGeography();
     };
 }
 

@@ -8,6 +8,7 @@
 @import './readability.css';
 @import './motion.css';
 @import './content.css';
+@import './geography.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
