@@ -9,7 +9,7 @@ The application is deployed at https://streams.chelidze.ge on aaPanel with Nginx
 - Application database: `ais_streams_prod`
 - Deployment account: `ais_streams_deploy`
 
-Database credentials and the application key are stored only in the private production `.env`. Keep that key when updating the application. The production database contains no seeded demo accounts. The initial administrator credentials were delivered separately in a private local file.
+Database credentials and the application key are stored only in the private production `.env`. Keep that key when updating the application. The initial administrator credentials were delivered separately in a private local file.
 
 ## Updates
 
@@ -37,3 +37,19 @@ Deployment verification covered public HTTPS pages and assets, business and crea
 `APP_ENV=production`, `APP_DEBUG=false`, encrypted secure session cookies and database-backed sessions/cache are configured. The mailer currently writes to the application log; external email delivery needs an SMTP provider. Payments and document signature readiness are managed by administrators; payment and electronic-signature providers are not connected. Password-reset and email-verification flows are not implemented.
 
 The temporary sudo grant allowed only a frozen, root-owned setup script for this domain and a grant-revocation command. It should remain revoked after setup. The SSH deployment account is time limited and may need renewal for later updates.
+
+## Sample workspace and reporting
+
+At the owner's request, production includes a labelled fictional workspace: 4 companies, 2 agencies, 10 creators and 12 campaigns across the review, matching, proposal, contracts, live and completed stages, including requested changes and a declined brief. Sample data never publishes itself to the public campaign gallery.
+
+```bash
+umask 0007
+/www/server/php/83/bin/php -d disable_functions= artisan showcase:seed --force \
+  --credentials-file=/home/ais_streams_deploy/deploy-tools/showcase-accounts.json
+```
+
+The command adds only its own marked sample records, preserves existing administrator accounts, passwords and edited workflow states, and saves newly generated sample login details in a private file outside the web root. Repeating it does not reset passwords or duplicate campaigns. The regular `DatabaseSeeder` remains blocked on production.
+
+Company and agency accounts use business permissions and see only their own campaigns. Creator signup requires a valid Twitch or Kick channel URL; both can be saved. Channel identities remain hidden from businesses until staff authorizes an introduction.
+
+Staff can enter or correct daily reports under `/admin/campaign-metrics`. Dashboards aggregate recorded impressions, clicks, conversions and delivered streams over an inclusive 30-day window. CTR is total clicks divided by total impressions. Currency budgets remain separate; they are planned brief budgets, not collected revenue. Sample figures are simulated, and no streaming-platform analytics API is connected.

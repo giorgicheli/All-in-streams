@@ -162,7 +162,7 @@ class MarketplaceTest extends TestCase
         $component = Livewire::actingAs($user)->test(CreatorApplication::class)
             ->set('country', 'Germany')->call('next')->assertSet('step', 2)
             ->set('channel_url', 'javascript:alert(1)')->call('next')->assertHasErrors('channel_url')->assertSet('step', 2)
-            ->set('channel_url', 'https://example.com/creator')->call('next')->assertSet('step', 3)
+            ->set('channel_url', 'https://www.twitch.tv/new_creator')->call('next')->assertSet('step', 3)
             ->set('followers', '25000')->set('average_viewers', '700')->set('audience_geos', ['Germany'])->call('next')->assertSet('step', 4)
             ->set('rate', '500')->call('next')->assertSet('step', 5)->call('submit')->assertHasNoErrors()->assertRedirect(route('creator.opportunities'));
         $profile = CreatorProfile::where('user_id', $user->id)->firstOrFail();

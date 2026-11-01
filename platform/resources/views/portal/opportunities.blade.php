@@ -8,6 +8,19 @@
         @if($profile)<a href="{{ route('creator.apply') }}" class="btn btn-secondary"><x-ui-icon name="user" size="15"/> Your creator profile</a>@endif
     </div>
 
+    @if($creatorStats['contains_demo'] && !auth()->user()->is_demo)
+        <div class="privacy-note"><x-ui-icon name="eye"/><span><strong>Sample data included.</strong> This workspace contains sample campaign invitations.</span></div>
+    @endif
+
+    @if($profile)
+        <div class="stats-grid">
+            @foreach([['Profile followers',number_format($creatorStats['followers']),'users','Self-reported profile figure'],['Average live viewers',number_format($creatorStats['average_viewers']),'eye','Self-reported profile figure'],['Awaiting your response',$creatorStats['pending'],'mail','Your pending invitations'],['Interested',$creatorStats['interested'],'star','Invitations you responded to']] as [$label,$value,$icon,$note])
+                <div class="stat-card"><div class="stat-label">{{ $label }}<x-ui-icon :name="$icon"/></div><div class="stat-value">{{ $value }}</div><div class="stat-footnote">{{ $note }}</div></div>
+            @endforeach
+        </div>
+        <p class="prose-note mb-6">Audience figures come from your creator profile. They are separate from campaign performance reports.</p>
+    @endif
+
     @if($errors->any())
         <div class="alert error" role="alert"><x-ui-icon name="message"/><span>{{ $errors->first() }}</span></div>
     @endif
@@ -34,6 +47,7 @@
                     <div class="invite-head">
                         <div>
                             <span class="eyebrow">{{ $invitation->status === 'pending' ? 'A NEW OPPORTUNITY' : 'YOUR CAMPAIGN INVITATION' }}</span>
+                            @if($invitation->brief->is_demo)<span class="tag">Sample campaign</span>@endif
                             <h2>{{ $invitation->brief->title }}</h2>
                             <p>{{ $invitation->brief->code }} · Coordinated by All In Streams</p>
                         </div>

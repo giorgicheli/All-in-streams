@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CreatorProfileResource\Pages\ManageCreators;
 use App\Models\Brief;
 use App\Models\CreatorProfile;
+use App\Rules\StreamingChannelUrl;
 use App\Services\CampaignWorkflow;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -42,7 +43,9 @@ class CreatorProfileResource extends ManagedResource
                 TextInput::make('country')->required()->maxLength(80),
                 TextInput::make('language')->required()->maxLength(80),
                 Select::make('platform')->options(['Twitch' => 'Twitch', 'Kick' => 'Kick', 'YouTube' => 'YouTube', 'TikTok' => 'TikTok'])->required(),
-                TextInput::make('channel_url')->url()->required()->maxLength(500),
+                TextInput::make('channel_url')->url()->required()->maxLength(255),
+                TextInput::make('twitch_url')->label('Twitch channel')->url()->maxLength(255)->rules([new StreamingChannelUrl('Twitch')])->helperText('Private channel link; visible to staff until an introduction is authorized.'),
+                TextInput::make('kick_url')->label('Kick channel')->url()->maxLength(255)->rules([new StreamingChannelUrl('Kick')]),
             ])->columns(2),
             Section::make('Audience and partnerships')->schema([
                 TextInput::make('followers')->numeric()->minValue(0)->required(),
@@ -52,7 +55,7 @@ class CreatorProfileResource extends ManagedResource
                 TextInput::make('rate')->numeric()->minValue(0)->prefix('€')->required()->helperText('Internal creator rate. Never included in a business proposal.'),
                 Select::make('commercial_model')->options(['Fixed' => 'Fixed', 'Fixed + CPA' => 'Fixed + CPA', 'CPA' => 'CPA', 'Revenue share' => 'Revenue share', 'Open' => 'Open to discussion'])->required(),
                 Select::make('availability')->options(['Open' => 'Open', 'Opening soon' => 'Opening soon', 'Unavailable' => 'Unavailable'])->required(),
-                Select::make('status')->options(['pending' => 'Pending review', 'approved' => 'Approved', 'declined' => 'Declined'])->required(),
+                Select::make('status')->options(['draft' => 'Application draft', 'pending' => 'Pending review', 'approved' => 'Approved', 'declined' => 'Declined'])->required(),
                 Textarea::make('bio')->maxLength(3000)->columnSpanFull(),
             ])->columns(2),
         ]);
@@ -76,7 +79,7 @@ class CreatorProfileResource extends ManagedResource
                 SelectFilter::make('country')->options(fn () => CreatorProfile::query()->distinct()->orderBy('country')->pluck('country', 'country')->all())->searchable(),
                 SelectFilter::make('language')->options(fn () => CreatorProfile::query()->distinct()->orderBy('language')->pluck('language', 'language')->all())->searchable(),
                 SelectFilter::make('platform')->options(['Twitch' => 'Twitch', 'Kick' => 'Kick', 'YouTube' => 'YouTube', 'TikTok' => 'TikTok']),
-                SelectFilter::make('status')->options(['pending' => 'Pending review', 'approved' => 'Approved', 'declined' => 'Declined']),
+                SelectFilter::make('status')->options(['draft' => 'Application draft', 'pending' => 'Pending review', 'approved' => 'Approved', 'declined' => 'Declined']),
                 SelectFilter::make('availability')->options(['Open' => 'Open', 'Opening soon' => 'Opening soon', 'Unavailable' => 'Unavailable']),
             ])
             ->recordActions([

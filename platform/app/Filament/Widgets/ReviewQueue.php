@@ -21,7 +21,7 @@ class ReviewQueue extends TableWidget
             ->query(Brief::query()->whereIn('status', ['submitted', 'review', 'changes_requested'])->latest())
             ->columns([
                 TextColumn::make('title')->label('Campaign')->searchable()->weight('semibold')->description(fn (Brief $record) => $record->brand),
-                TextColumn::make('budget')->money('EUR')->label('Budget'),
+                TextColumn::make('budget')->money(fn (Brief $record) => $record->currency)->label('Budget'),
                 TextColumn::make('status')->badge()->formatStateUsing(fn (string $state) => str($state)->replace('_', ' ')->title())->color('primary'),
                 TextColumn::make('created_at')->since()->label('Submitted'),
             ])

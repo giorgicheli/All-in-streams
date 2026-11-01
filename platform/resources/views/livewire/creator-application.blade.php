@@ -46,11 +46,11 @@
                 </div>
             @elseif($step === 2)
                 <h2 class="wizard-section-title">Where your community comes together.</h2>
-                <p class="wizard-description">Share your main channel so our team can get to know your content.</p>
+                <p class="wizard-description">Add your Twitch or Kick channel. If you stream on both, share both links so our team can review your complete presence.</p>
                 <div class="form-grid">
                     <div class="form-field">
                         <label for="creator-platform">Main platform</label>
-                        <select id="creator-platform" wire:model="platform">@foreach(['Twitch', 'YouTube', 'Kick', 'TikTok'] as $option)<option>{{ $option }}</option>@endforeach</select>
+                        <select id="creator-platform" wire:model.live="platform">@foreach(['Twitch', 'YouTube', 'Kick', 'TikTok'] as $option)<option>{{ $option }}</option>@endforeach</select>
                         @error('platform')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <div class="form-field">
@@ -58,11 +58,23 @@
                         <select id="creator-vertical" wire:model="vertical"><option>Gaming</option><option>Esports</option><option>iGaming</option></select>
                         @error('vertical')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
-                    <div class="form-field span-two">
-                        <label for="creator-channel">Channel URL</label>
-                        <input id="creator-channel" wire:model="channel_url" type="url" maxlength="255" inputmode="url" placeholder="https://www.twitch.tv/your-channel" aria-invalid="{{ $errors->has('channel_url') ? 'true' : 'false' }}">
-                        @error('channel_url')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    <div class="form-field">
+                        <label for="creator-twitch">Twitch channel URL</label>
+                        <input id="creator-twitch" wire:model="twitch_url" type="url" maxlength="255" inputmode="url" placeholder="https://www.twitch.tv/your_channel" aria-invalid="{{ $errors->has('twitch_url') ? 'true' : 'false' }}">
+                        @error('twitch_url')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
+                    <div class="form-field">
+                        <label for="creator-kick">Kick channel URL</label>
+                        <input id="creator-kick" wire:model="kick_url" type="url" maxlength="255" inputmode="url" placeholder="https://kick.com/your_channel" aria-invalid="{{ $errors->has('kick_url') ? 'true' : 'false' }}">
+                        @error('kick_url')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    </div>
+                    @if(in_array($platform, ['YouTube', 'TikTok'], true) || ($channel_url && ! $twitch_url && ! $kick_url))
+                    <div class="form-field span-two">
+                        <label for="creator-channel">{{ in_array($platform, ['YouTube', 'TikTok'], true) ? 'Primary channel URL' : 'Previously added primary channel' }}</label>
+                        <input id="creator-channel" wire:model="channel_url" type="url" maxlength="255" inputmode="url" placeholder="https://www.twitch.tv/your-channel" aria-invalid="{{ $errors->has('channel_url') ? 'true' : 'false' }}">
+                    </div>
+                    @endif
+                    @error('channel_url')<p class="field-error span-two" role="alert">Add a channel link before continuing.</p>@enderror
                 </div>
                 <div class="privacy-note"><x-ui-icon name="lock"/><span>We review your channel to understand your content and audience. Your channel details stay protected in business shortlists until staff authorizes an introduction.</span></div>
             @elseif($step === 3)
@@ -121,6 +133,8 @@
                     <div><small>Main platform</small><strong>{{ $platform }}</strong></div>
                     <div><small>Content category</small><strong>{{ $vertical }}</strong></div>
                     <div class="span-two"><small>Channel URL</small><strong>{{ $channel_url }}</strong></div>
+                    @if($twitch_url)<div class="span-two"><small>Twitch channel</small><strong>{{ $twitch_url }}</strong></div>@endif
+                    @if($kick_url)<div class="span-two"><small>Kick channel</small><strong>{{ $kick_url }}</strong></div>@endif
                     <div><small>Followers / subscribers</small><strong>{{ number_format((float) $followers) }}</strong></div>
                     <div><small>Average live viewers</small><strong>{{ number_format((float) $average_viewers) }}</strong></div>
                     <div class="span-two"><small>Main audience markets</small><strong>{{ implode(', ', $audience_geos) }}</strong></div>

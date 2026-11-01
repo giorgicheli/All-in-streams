@@ -5,6 +5,8 @@ namespace App\Filament\Pages;
 use App\Filament\Resources\BriefResource;
 use App\Filament\Resources\CreatorProfileResource;
 use App\Filament\Widgets\OperationsStats;
+use App\Filament\Widgets\CampaignPipeline;
+use App\Filament\Widgets\PerformanceOverview;
 use App\Filament\Widgets\ReviewQueue;
 use Filament\Actions\Action;
 use Filament\Pages\Dashboard;
@@ -26,7 +28,7 @@ class OperationsDashboard extends Dashboard
 
     public function getWidgets(): array
     {
-        return [OperationsStats::class, ReviewQueue::class];
+        return [OperationsStats::class, CampaignPipeline::class, PerformanceOverview::class, ReviewQueue::class];
     }
 
     protected function getHeaderActions(): array

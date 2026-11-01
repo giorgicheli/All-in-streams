@@ -28,6 +28,8 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'role',
         'company',
+        'account_type',
+        'is_demo',
     ];
 
     /**
@@ -50,6 +52,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_demo' => 'boolean',
         ];
     }
 
@@ -66,5 +69,14 @@ class User extends Authenticatable implements FilamentUser
     public function creatorProfile(): HasOne
     {
         return $this->hasOne(CreatorProfile::class);
+    }
+
+    public function getAccountTypeLabelAttribute(): string
+    {
+        return match ($this->role) {
+            'admin' => 'Administrator',
+            'creator' => 'Creator',
+            default => $this->account_type === 'agency' ? 'Agency' : 'Business',
+        };
     }
 }

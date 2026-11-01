@@ -7,19 +7,16 @@ use App\Models\Brief;
 use App\Models\CampaignDocument;
 use App\Models\Invitation;
 use App\Services\CampaignWorkflow;
+use App\Services\WorkspaceStatistics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PortalController extends Controller
 {
-    public function dashboard(Request $request)
+    public function dashboard(Request $request, WorkspaceStatistics $statistics)
     {
         $briefs = $request->user()->briefs()->latest()->get();
-        $stats = [
-            'active' => $briefs->whereIn('status', ['matching', 'proposal', 'contracts', 'live'])->count(),
-            'review' => $briefs->whereIn('status', ['submitted', 'review', 'changes_requested'])->count(),
-            'completed' => $briefs->where('status', 'completed')->count(), 'budget' => $briefs->sum('budget'),
-        ];
+        $stats = $statistics->business($request->user());
         return view('portal.dashboard', compact('briefs', 'stats'));
     }
 
@@ -29,14 +26,15 @@ class PortalController extends Controller
         return view('portal.campaigns', compact('briefs'));
     }
 
-    public function campaign(Request $request, Brief $brief)
+    public function campaign(Request $request, Brief $brief, WorkspaceStatistics $statistics)
     {
         abort_unless($brief->user_id === $request->user()->id, 403);
         $creators = in_array($brief->status, ['proposal', 'contracts', 'live', 'completed'], true)
             ? $brief->invitations()->with(['creatorProfile', 'brief'])->where('status', 'interested')->whereHas('creatorProfile', fn ($query) => $query->where('status', 'approved'))->get()->map->forBusiness() : collect();
         $activities = $brief->activities()->where('audience', 'business')->latest()->get();
         $documents = $brief->documents()->visibleTo($request->user())->latest()->get();
-        return view('portal.campaign', compact('brief', 'creators', 'activities', 'documents'));
+        $stats = $statistics->campaign($brief, $request->user());
+        return view('portal.campaign', compact('brief', 'creators', 'activities', 'documents', 'stats'));
     }
 
     public function proposals(Request $request)
@@ -66,13 +64,14 @@ class PortalController extends Controller
         return Storage::disk('local')->download($document->file_path);
     }
 
-    public function opportunities(Request $request)
+    public function opportunities(Request $request, WorkspaceStatistics $statistics)
     {
         $profile = $request->user()->creatorProfile;
         $invitations = $profile ? $profile->invitations()->with([
-            'brief' => fn ($query) => $query->select('id', 'title', 'brand', 'vertical', 'geos', 'language', 'platform', 'currency', 'deliverables', 'start_date', 'end_date', 'kpis', 'status', 'created_at'),
+            'brief' => fn ($query) => $query->select('id', 'title', 'brand', 'vertical', 'geos', 'language', 'platform', 'currency', 'deliverables', 'start_date', 'end_date', 'kpis', 'status', 'created_at', 'is_demo'),
         ])->latest()->get() : collect();
-        return view('portal.opportunities', compact('invitations', 'profile'));
+        $creatorStats = $statistics->creator($request->user());
+        return view('portal.opportunities', compact('invitations', 'profile', 'creatorStats'));
     }
 
     public function respond(Request $request, Invitation $invitation, CampaignWorkflow $workflow)

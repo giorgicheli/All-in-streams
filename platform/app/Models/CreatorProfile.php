@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CreatorProfile extends Model
 {
-    protected $fillable = ['user_id', 'public_name', 'country', 'language', 'platform', 'channel_url', 'followers', 'average_viewers', 'audience_geos', 'vertical', 'rate', 'commercial_model', 'availability', 'bio', 'status'];
+    protected $fillable = ['user_id', 'public_name', 'country', 'language', 'platform', 'channel_url', 'twitch_url', 'kick_url', 'followers', 'average_viewers', 'audience_geos', 'vertical', 'rate', 'commercial_model', 'availability', 'bio', 'status'];
 
     protected function casts(): array
     {
