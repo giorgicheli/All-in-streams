@@ -2,6 +2,7 @@ import './bootstrap';
 import { initializeMotion } from './motion';
 import { initializeSmoothScroll } from './smooth-scroll';
 import { initializeGeographyCarousels } from './geography';
+import { initializeMobileNavigation } from './navigation';
 
 let cleanup = () => {};
 
@@ -11,6 +12,7 @@ function initializePage() {
     const disposeMotion = initializeMotion();
     const disposeScroll = initializeSmoothScroll();
     const disposeGeography = initializeGeographyCarousels();
+    const disposeNavigation = initializeMobileNavigation();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => header.classList.toggle('scrolled', scrollY > 20);
@@ -29,6 +31,7 @@ function initializePage() {
         disposeMotion();
         disposeScroll();
         disposeGeography();
+        disposeNavigation();
     };
 }
 
