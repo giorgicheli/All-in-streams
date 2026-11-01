@@ -2,3 +2,25 @@
 .site-nav nav,.header-actions{font-size:12px}.audience-card p,.industry-card p,.process-step p{font-size:13px}.card-number,.geo-inner>strong{font-size:9px}.gallery-empty p,.faq-list summary{font-size:13px}.faq-list details p{font-size:13px}.section-heading>p{font-size:13px}.hero-footnote{font-size:11px}.footer-top>p{font-size:11px}
 .side-link{font-size:13px}.account strong{font-size:12px}.account small{font-size:10px}.workspace-label{font-size:9px}.back-site{font-size:11px}.managed-note{font-size:10px}.managed-note p{font-size:10px}.breadcrumbs{font-size:11px}.portal-team{font-size:10px}.page-heading p{font-size:12px}.page-heading .eyebrow{font-size:9px}.overview-banner p{font-size:12px}.stat-label{font-size:11px}.stat-footnote{font-size:9px}.data-table th{font-size:10px}.data-table td{font-size:12px}.table-title{font-size:13px}.table-subtitle{font-size:10px}.status{font-size:10px}.panel-header h2{font-size:17px}.panel-header .text-link{font-size:11px}.mini-stage{font-size:9px}.journey-help,.support-body>p{font-size:11px}.support-person strong{font-size:12px}.support-person small{font-size:10px}.prose-note{font-size:11px}.detail-summary small,.brief-detail-row,.activity-item>div,.activity-item p,.next-step p{font-size:11px}.activity-item small{font-size:10px}.timeline-stage strong{font-size:11px}.timeline-stage small{font-size:9px}.privacy-note{font-size:11px}.creator-card-top,.creator-card>p,.creator-metrics small{font-size:11px}.creator-identity p{font-size:11px}.form-field>label,.field-label{font-size:12px}.form-field input,.form-field select,.form-field textarea,.form-input{font-size:13px}.field-help,.field-error{font-size:11px}.auth-form>.muted,.auth-switch{font-size:12px}.demo-accounts button{font-size:11px}.wizard-description{font-size:12px}.wizard-step{font-size:11px}.choice-label{font-size:11px}.review-grid small{font-size:11px}.review-grid strong{font-size:13px}.invite-field small{font-size:11px}.document-card p{font-size:11px}
 @media(max-width:700px){.portal-team{font-size:0}.portal-topbar{gap:8px}.breadcrumbs{font-size:10px}.page-heading p,.overview-banner p{font-size:12px}.stat-label{font-size:10px}.stat-footnote{font-size:9px}.panel-header h2{font-size:16px}.panel-header .text-link{font-size:10px}.wizard-step{font-size:10px}.wizard-description{font-size:12px}.form-field>label{font-size:12px}.form-field input,.form-field select,.form-field textarea{font-size:13px}.gallery-privacy{font-size:10px}.privacy-note{font-size:11px}.invite-actions .btn{font-size:11px}.gallery-tab{font-size:11px}.mobile-nav{font-size:13px}}
+
+/* Form controls use one visible focus border, without the offset outline. */
+:is(.auth-form, .wizard-shell, .portal-content) :is(
+    input:not([type]),
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="url"],
+    input[type="number"],
+    input[type="search"],
+    input[type="date"],
+    input[type="datetime-local"],
+    input[type="tel"],
+    textarea,
+    select
+):is(:focus, :focus-visible) {
+    border-color: var(--lime);
+    border-width: 1px;
+    outline: none;
+    outline-offset: 0;
+    box-shadow: none;
+}

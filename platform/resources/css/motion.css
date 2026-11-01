@@ -1,0 +1,112 @@
+/* Motion is opt-in at runtime. No reveal selector makes resting content hidden. */
+html.ais-motion-smooth {
+    scroll-behavior: smooth;
+    scroll-padding-top: 108px;
+}
+
+/* Lenis owns interpolation while active; avoid a second native animation. */
+html.lenis,
+html.ais-motion-smooth.lenis {
+    scroll-behavior: auto !important;
+}
+
+html.ais-motion-smooth .section[id],
+html.ais-motion-smooth .cta-section[id] {
+    scroll-margin-top: 20px;
+}
+
+[data-ais-reveal="running"] {
+    will-change: opacity, translate;
+}
+
+.ais-hero-motion {
+    isolation: isolate;
+}
+
+.ais-hero-motion::before {
+    content: "";
+    position: absolute;
+    inset: 9% 0 8%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 40% 40%, #b6ec4e17, transparent 60%),
+        radial-gradient(ellipse at 70% 65%, #52cbb018, transparent 64%);
+    filter: blur(15px);
+    pointer-events: none;
+    z-index: -1;
+    animation: ais-ambient-breathe 9s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+.ais-hero-motion .visual-orbit {
+    animation: ais-orbit-breathe 18s ease-in-out infinite;
+    animation-play-state: paused;
+    pointer-events: none;
+}
+
+.ais-hero-motion .float-label {
+    animation: ais-label-drift 7s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+.ais-hero-motion .float-label.bottom {
+    animation-delay: -3.2s;
+    animation-duration: 8.5s;
+}
+
+.ais-hero-motion.ais-hero-running::before,
+.ais-hero-motion.ais-hero-running .visual-orbit,
+.ais-hero-motion.ais-hero-running .float-label {
+    animation-play-state: running;
+}
+
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .ais-hero-motion .partnership-card {
+        transform: perspective(1100px) rotateX(var(--ais-tilt-x, 0deg))
+            rotateY(var(--ais-tilt-y, 0deg)) var(--ais-base-transform, rotate(-5deg));
+        transform-style: preserve-3d;
+        transition: transform 680ms cubic-bezier(.2, .7, .25, 1),
+            border-color 400ms ease, box-shadow 400ms ease;
+    }
+
+    .ais-hero-motion.ais-hero-running:hover .partnership-card {
+        border-color: #6c8856;
+        box-shadow: 0 36px 85px #0007, 0 0 45px #92c6530a;
+    }
+}
+
+@keyframes ais-label-drift {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -6px; }
+}
+
+@keyframes ais-orbit-breathe {
+    0%, 100% { transform: rotate(-5deg) scale(.98); opacity: .75; }
+    50% { transform: rotate(5deg) scale(1.035); opacity: 1; }
+}
+
+@keyframes ais-ambient-breathe {
+    0%, 100% { transform: translate3d(-5px, 3px, 0) scale(.98); opacity: .65; }
+    50% { transform: translate3d(6px, -6px, 0) scale(1.05); opacity: 1; }
+}
+
+@media (max-width: 700px) {
+    html.ais-motion-smooth { scroll-padding-top: 90px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.ais-motion-smooth { scroll-behavior: auto; }
+    .ais-hero-motion::before,
+    .ais-hero-motion .visual-orbit,
+    .ais-hero-motion .float-label {
+        animation: none;
+    }
+    .ais-hero-motion .partnership-card {
+        transition: none;
+    }
+    .btn:hover {
+        transform: none;
+    }
+    [data-ais-reveal] {
+        will-change: auto;
+    }
+}
