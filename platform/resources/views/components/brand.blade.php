@@ -1,0 +1,2 @@
+@props(['compact' => false])
+<a href="/" {{ $attributes->class(['brand']) }} aria-label="All In Streams home"><svg width="38" height="38" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M4 34 19 5h9L13 34H4Z" fill="currentColor"/><path d="m24 17 16 17H29L19 24l5-7Z" fill="currentColor"/><path d="m16 37 4-8h19l-4 8H16Z" fill="currentColor" opacity=".5"/></svg>@unless($compact)<span>all in <b>streams</b><small>CREATOR PARTNERSHIPS</small></span>@endunless</a>
