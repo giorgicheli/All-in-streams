@@ -14,25 +14,24 @@ export function initializeMobileNavigation() {
     let frame;
     let previousFocus = null;
     let scrollPosition = 0;
-    let bodyStyles = null;
+    let rootStyles = null;
+    let headerHeightStyle = null;
     let inertElements = [];
-    let headerPlaceholder = null;
 
     function lockPage() {
         scrollPosition = window.scrollY;
+        const root = document.documentElement;
+        rootStyles = ['overflow', 'scrollbar-gutter'].map(name => [name, root.style.getPropertyValue(name), root.style.getPropertyPriority(name)]);
+        // Lock the root scroll container without fixing or offsetting the body.
+        // Keeping native scrollY avoids a browser-toolbar/layout jump on Android.
+        if (CSS.supports('scrollbar-gutter', 'stable')) root.style.setProperty('scrollbar-gutter', 'stable');
+        root.style.setProperty('overflow', 'hidden', 'important');
         document.documentElement.classList.add('site-menu-open');
-        // Keep the sticky header in the same viewport position when the body
-        // becomes fixed. Its placeholder preserves the content's flow height.
         if (header) {
-            headerPlaceholder = document.createElement('div');
-            headerPlaceholder.setAttribute('aria-hidden', 'true');
-            headerPlaceholder.dataset.menuHeaderPlaceholder = '';
-            headerPlaceholder.style.height = `${header.getBoundingClientRect().height}px`;
-            header.before(headerPlaceholder);
-            header.classList.add('site-menu-pinned');
+            headerHeightStyle = [menu.style.getPropertyValue('--site-menu-header-height'), menu.style.getPropertyPriority('--site-menu-header-height')];
+            menu.style.setProperty('--site-menu-header-height', `${header.getBoundingClientRect().height}px`);
         }
-        bodyStyles = Object.fromEntries(['position', 'top', 'left', 'right', 'width', 'overflow'].map(name => [name, document.body.style[name]]));
-        Object.assign(document.body.style, { position: 'fixed', top: `-${scrollPosition}px`, left: '0', right: '0', width: '100%', overflow: 'hidden' });
+        document.dispatchEvent(new CustomEvent('ais:navigation-state', { detail: { open: true } }));
         // The dialog is a sibling of the header/content. Keep every unrelated
         // body subtree inert while leaving the dialog's own ancestor usable.
         let branch = menu;
@@ -51,19 +50,23 @@ export function initializeMobileNavigation() {
     function unlockPage() {
         inertElements.forEach(([element, wasInert]) => { element.inert = wasInert; });
         inertElements = [];
-        if (bodyStyles) {
-            Object.assign(document.body.style, bodyStyles);
-            bodyStyles = null;
-            const oldBehavior = document.documentElement.style.scrollBehavior;
-            document.documentElement.style.scrollBehavior = 'auto';
-            window.scrollTo(0, scrollPosition);
-            document.documentElement.style.scrollBehavior = oldBehavior;
+        if (rootStyles) {
+            for (const [name, value, priority] of rootStyles) {
+                if (value) document.documentElement.style.setProperty(name, value, priority);
+                else document.documentElement.style.removeProperty(name);
+            }
+            rootStyles = null;
+            if (Math.abs(window.scrollY - scrollPosition) > 1) {
+                window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+            }
+            document.dispatchEvent(new CustomEvent('ais:navigation-state', { detail: { open: false } }));
         }
-        // Switch back to sticky only after restoring scroll, within the same
-        // paint. The header and content never expose the body's locked offset.
-        header?.classList.remove('site-menu-pinned');
-        headerPlaceholder?.remove();
-        headerPlaceholder = null;
+        if (headerHeightStyle) {
+            const [value, priority] = headerHeightStyle;
+            if (value) menu.style.setProperty('--site-menu-header-height', value, priority);
+            else menu.style.removeProperty('--site-menu-header-height');
+            headerHeightStyle = null;
+        }
         document.documentElement.classList.remove('site-menu-open');
     }
 

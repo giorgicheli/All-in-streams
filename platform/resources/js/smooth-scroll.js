@@ -4,6 +4,7 @@ export function initializeSmoothScroll() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const desktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     let scroll = null;
+    let navigationOpen = false;
 
     const destroy = () => {
         scroll?.destroy();
@@ -25,11 +26,19 @@ export function initializeSmoothScroll() {
             stopInertiaOnNavigate: true,
             prevent: (node) => Boolean(node.closest?.('input, textarea, select, [contenteditable="true"], [role="dialog"], .table-wrap, .sidebar, [data-lenis-prevent]')),
         });
+        if (navigationOpen) scroll.stop();
+    };
+
+    const navigationChanged = event => {
+        navigationOpen = event.detail?.open === true;
+        if (navigationOpen) scroll?.stop();
+        else scroll?.start();
     };
 
     reducedMotion.addEventListener('change', configure);
     desktopPointer.addEventListener('change', configure);
     document.addEventListener('visibilitychange', configure);
+    document.addEventListener('ais:navigation-state', navigationChanged);
     configure();
 
     return () => {
@@ -37,5 +46,6 @@ export function initializeSmoothScroll() {
         reducedMotion.removeEventListener('change', configure);
         desktopPointer.removeEventListener('change', configure);
         document.removeEventListener('visibilitychange', configure);
+        document.removeEventListener('ais:navigation-state', navigationChanged);
     };
 }

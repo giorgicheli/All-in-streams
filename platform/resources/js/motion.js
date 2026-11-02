@@ -103,7 +103,7 @@ export function initializeMotion(root = document) {
         if (!disposed) element.setAttribute('data-ais-reveal', 'done');
     }
 
-    function reveal(element, delay = 140) {
+    function reveal(element, delay = 180) {
         if (seen.has(element) || !belongs(element)) return;
         seen.add(element);
         revealObserver?.unobserve(element);
@@ -111,7 +111,7 @@ export function initializeMotion(root = document) {
             element.setAttribute('data-ais-reveal', 'done');
             return;
         }
-        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 820 : 900;
+        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 900 : 1000;
         const frames = canTranslate
             ? [{ opacity: 0, translate: '0 18px' }, { opacity: 1, translate: '0 0' }]
             : [{ opacity: 0 }, { opacity: 1 }];
@@ -150,12 +150,12 @@ export function initializeMotion(root = document) {
         const schedules = new Map();
         for (const entry of entering) {
             const candidate = candidates.find(item => item.element === entry.target);
-            if (!candidate) { schedules.set(entry.target, 140); continue; }
+            if (!candidate) { schedules.set(entry.target, 180); continue; }
             const intro = candidate.group?.matches('.hero-copy');
             const peers = candidates.filter(item => item.group === candidate.group && (intro || Math.abs(item.bounds.top - candidate.bounds.top) <= 18));
             peers.sort((a, b) => intro ? a.bounds.top - b.bounds.top || a.bounds.left - b.bounds.left : a.bounds.left - b.bounds.left || a.bounds.top - b.bounds.top);
             peers.forEach((item, index) => {
-                const delay = 140 + Math.min(index, intro ? 4 : 5) * (intro ? 70 : 140);
+                const delay = 180 + Math.min(index, intro ? 4 : 5) * (intro ? 80 : 180);
                 if (!schedules.has(item.element)) schedules.set(item.element, delay);
             });
         }
