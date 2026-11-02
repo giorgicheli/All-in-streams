@@ -20,6 +20,12 @@ const REVEAL_TARGETS = [
     '.wizard-shell [wire\\:key^="creator-step-"]',
 ].join(',');
 
+const REVEAL_GROUPS = [
+    '[data-motion-group]', '.hero-copy', '.audience-cards', '.stats-grid',
+    '.creators-grid', '.dashboard-bottom', '.campaign-detail-grid',
+    '.how-grid', '.faq-wrap', '.process-list', '.invite-list',
+].join(',');
+
 function connectLivewire() {
     const livewire = window.Livewire;
     if (!livewire?.hook || livewire === hookedLivewire) return;
@@ -97,23 +103,23 @@ export function initializeMotion(root = document) {
         if (!disposed) element.setAttribute('data-ais-reveal', 'done');
     }
 
-    function reveal(element) {
+    function reveal(element, delay = 140) {
         if (seen.has(element) || !belongs(element)) return;
         seen.add(element);
         revealObserver?.unobserve(element);
-        if (reduced.matches || doc.hidden || !canAnimate || element.contains(doc.activeElement)) return;
-        const siblings = [...(element.parentElement?.children ?? [])].filter(sibling => targets.has(sibling));
-        const index = Math.max(0, siblings.indexOf(element));
-        const delay = Math.min(index, 3) * 76;
-        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 540 : 640;
+        if (reduced.matches || doc.hidden || !canAnimate || element.contains(doc.activeElement)) {
+            element.setAttribute('data-ais-reveal', 'done');
+            return;
+        }
+        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 820 : 900;
         const frames = canTranslate
-            ? [{ opacity: 0, translate: '0 22px' }, { opacity: 1, translate: '0 0' }]
+            ? [{ opacity: 0, translate: '0 18px' }, { opacity: 1, translate: '0 0' }]
             : [{ opacity: 0 }, { opacity: 1 }];
 
         try {
             element.setAttribute('data-ais-reveal', 'running');
             const animation = element.animate(frames, {
-                duration, delay, easing: 'cubic-bezier(.22,.72,.25,1)', fill: 'backwards',
+                duration, delay, easing: 'cubic-bezier(.22,.6,.3,1)', fill: 'backwards',
             });
             animations.set(element, animation);
             animation.finished.then(() => {
@@ -126,11 +132,41 @@ export function initializeMotion(root = document) {
         }
     }
 
+    function revealBatch(entries) {
+        const entering = entries.filter(entry => entry.isIntersecting && !seen.has(entry.target) && belongs(entry.target));
+        if (!entering.length) return;
+
+        // Measure the complete visible row before starting any animations. This
+        // keeps CSS-reordered cards and cards inside separate columns in visual
+        // left-to-right order, without counting hidden or off-screen siblings.
+        const candidates = [];
+        for (const element of targets) {
+            if (seen.has(element) || !belongs(element) || !element.getClientRects().length) continue;
+            const bounds = element.getBoundingClientRect();
+            if (!bounds.width || !bounds.height || bounds.bottom <= 0 || bounds.top >= win.innerHeight - 28 || bounds.right <= 0 || bounds.left >= win.innerWidth) continue;
+            if (win.getComputedStyle(element).visibility === 'hidden') continue;
+            candidates.push({ element, bounds, group: element.closest(REVEAL_GROUPS) ?? element.parentElement });
+        }
+        const schedules = new Map();
+        for (const entry of entering) {
+            const candidate = candidates.find(item => item.element === entry.target);
+            if (!candidate) { schedules.set(entry.target, 140); continue; }
+            const intro = candidate.group?.matches('.hero-copy');
+            const peers = candidates.filter(item => item.group === candidate.group && (intro || Math.abs(item.bounds.top - candidate.bounds.top) <= 18));
+            peers.sort((a, b) => intro ? a.bounds.top - b.bounds.top || a.bounds.left - b.bounds.left : a.bounds.left - b.bounds.left || a.bounds.top - b.bounds.top);
+            peers.forEach((item, index) => {
+                const delay = 140 + Math.min(index, intro ? 4 : 5) * (intro ? 70 : 140);
+                if (!schedules.has(item.element)) schedules.set(item.element, delay);
+            });
+        }
+        // Start in the observer callback, before the next paint. A separate RAF
+        // would briefly expose a row and then hide it for its entrance delay.
+        schedules.forEach((delay, element) => reveal(element, delay));
+    }
+
     const revealObserver = canObserve ? new win.IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) reveal(entry.target);
-        });
-    }, { threshold: 0.06, rootMargin: '0px 0px -18px 0px' }) : null;
+        revealBatch(entries);
+    }, { threshold: 0.08, rootMargin: '0px 0px -28px 0px' }) : null;
 
     function setHeroState(hero) {
         const running = !disposed && hero.inView && !doc.hidden && !reduced.matches;

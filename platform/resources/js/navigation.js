@@ -2,6 +2,7 @@ export function initializeMobileNavigation() {
     const trigger = document.querySelector('[data-mobile-menu-open]');
     const menu = document.querySelector('[data-mobile-menu]');
     const closeButton = menu?.querySelector('[data-mobile-menu-close]');
+    const header = trigger?.closest('.site-header');
     if (!trigger || !menu || !closeButton) return () => {};
 
     const controller = new AbortController();
@@ -15,12 +16,23 @@ export function initializeMobileNavigation() {
     let scrollPosition = 0;
     let bodyStyles = null;
     let inertElements = [];
+    let headerPlaceholder = null;
 
     function lockPage() {
         scrollPosition = window.scrollY;
+        document.documentElement.classList.add('site-menu-open');
+        // Keep the sticky header in the same viewport position when the body
+        // becomes fixed. Its placeholder preserves the content's flow height.
+        if (header) {
+            headerPlaceholder = document.createElement('div');
+            headerPlaceholder.setAttribute('aria-hidden', 'true');
+            headerPlaceholder.dataset.menuHeaderPlaceholder = '';
+            headerPlaceholder.style.height = `${header.getBoundingClientRect().height}px`;
+            header.before(headerPlaceholder);
+            header.classList.add('site-menu-pinned');
+        }
         bodyStyles = Object.fromEntries(['position', 'top', 'left', 'right', 'width', 'overflow'].map(name => [name, document.body.style[name]]));
         Object.assign(document.body.style, { position: 'fixed', top: `-${scrollPosition}px`, left: '0', right: '0', width: '100%', overflow: 'hidden' });
-        document.documentElement.classList.add('site-menu-open');
         // The dialog is a sibling of the header/content. Keep every unrelated
         // body subtree inert while leaving the dialog's own ancestor usable.
         let branch = menu;
@@ -47,6 +59,11 @@ export function initializeMobileNavigation() {
             window.scrollTo(0, scrollPosition);
             document.documentElement.style.scrollBehavior = oldBehavior;
         }
+        // Switch back to sticky only after restoring scroll, within the same
+        // paint. The header and content never expose the body's locked offset.
+        header?.classList.remove('site-menu-pinned');
+        headerPlaceholder?.remove();
+        headerPlaceholder = null;
         document.documentElement.classList.remove('site-menu-open');
     }
 

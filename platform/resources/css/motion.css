@@ -17,6 +17,7 @@ html.ais-motion-smooth .cta-section[id] {
 
 [data-ais-reveal="running"] {
     will-change: opacity, translate;
+    backface-visibility: hidden;
 }
 
 .ais-hero-motion {

@@ -15,7 +15,10 @@ function initializePage() {
     const disposeNavigation = initializeMobileNavigation();
     const header = document.querySelector('.site-header');
     if (header) {
-        const updateHeader = () => header.classList.toggle('scrolled', scrollY > 20);
+        const updateHeader = () => {
+            if (document.documentElement.classList.contains('site-menu-open')) return;
+            header.classList.toggle('scrolled', scrollY > 20);
+        };
         updateHeader();
         addEventListener('scroll', updateHeader, { passive: true, signal: controller.signal });
     }
