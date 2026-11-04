@@ -5,15 +5,20 @@ All In Streams connects businesses with creators and agencies. Staff coordinate 
 ## Accounts
 
 - **Business:** creates and edits its own campaign briefs, reviews proposals and requests a preferred provider through All In Streams.
-- **Creator:** supplies Twitch and/or Kick channel links, audience countries, language, audience statistics and rates; receives and answers its own invitations.
+- **Streamer:** an individual creator with at least one Twitch or Kick channel, audience countries and a private short profile/audience verification video.
+- **Influencer:** an individual creator with at least one Facebook, Instagram, YouTube or TikTok profile, audience countries and a private short verification video. Streamers and influencers have separate staff directories and agency roster categories.
 - **Agency:** has a separate agency profile and talent roster. It can request creators for its clients, supply talent, or do both. A provider invitation belongs to the agency account; the agency can propose talent from its own approved roster.
 - **Admin:** reviews profiles and briefs, invites providers, negotiates terms, chooses the final provider, manages private documents and validates delivery and settlement records.
 
 Agency client briefs and agency provider opportunities are separate. Acting as a provider does not grant access to another business's brief or commercial terms.
 
+Every new account must provide a valid Telegram contact. Individual creator registration cannot finish without the correct type of profile link, audience countries and a playable verification video. The system checks file type, size and duration; staff review the actual profile and analytics shown in the recording. All contacts, social links and verification videos remain private to staff. Existing users can update their Telegram at Account settings.
+
+Staff control video upload size, duration and optional compression in Video uploads. They may watch or delete a proof video; after deletion, a new video is required before profile resubmission. Staff can also attach several private PDF/DOC/DOCX files to any account. These internal account files are separate from party-specific campaign agreements and cannot be read by the account holder.
+
 ## Brief and matching
 
-The brief owner supplies brand and campaign details, vertical, audience countries, language, platform, deliverables, dates, total budget, currency, commercial model and campaign objectives. Staff review the brief and either request changes, decline it or approve matching. Approval for matching does not launch a campaign.
+The brief owner supplies brand and campaign details, vertical, audience countries, language, platform, a streamer/influencer/agency preference, deliverables, dates, total budget, currency, commercial model and campaign objectives. Staff review the brief and either request changes, decline it or approve matching. Approval for matching does not launch a campaign. Staff can filter each creator directory by residence, audience country, platform and maximum EUR rate.
 
 During matching, staff may send an opportunity to several approved creators or approved supplying agencies. Each invitation has its own provider compensation and offer version. Staff prepare a neutral opportunity description and provider requirements; the full business brief is private.
 
@@ -55,4 +60,4 @@ Staff can remove a creator from future matching while retaining historical invit
 
 ## Reference precedence
 
-The supplied journey screenshots and videos establish the managed matching, invitations, protected shortlist, separate contracts, evidence review and manual settlement stages. The latest requirement is stricter than the older creator video: providers must not see company details, including the formerly permitted brand label. Final selection is one creator or one agency, even when several providers were invited.
+The supplied journey screenshots and videos establish the managed matching, invitations, protected shortlist, separate contracts, evidence review and manual settlement stages. The latest requirement is stricter than the older creator video: company and provider identities and contacts are never released to counterparties. Final selection is one individual streamer/influencer or one agency, even when several providers were invited.
