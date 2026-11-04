@@ -13,6 +13,5 @@
                 </article>
             @endforeach
         </div>
-        @if($data['is_demo'])<p class="network-sample-note"><span class="live-dot" aria-hidden="true"></span>{{ $data['sample_note'] }}</p>@endif
     </div>
 </section>

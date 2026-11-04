@@ -18,5 +18,4 @@
         <div class="gallery-empty" data-results-empty @if($results->isNotEmpty()) hidden @endif><x-ui-icon name="globe"/><h3>{{ $data['empty_title'] }}</h3><p><span data-results-region-label>{{ $data['regions'][0]['label'] }}</span> · {{ $data['empty_description'] }}</p></div>
     </div>
     <span class="sr-only" role="status" data-results-status>{{ $results->count() }} campaign results</span>
-    <div class="gallery-privacy"><x-ui-icon name="shield" size="13"/> {{ $data['privacy_note'] }}</div>
 </div></section>

@@ -100,7 +100,7 @@ class PublicCampaignResultsTest extends TestCase
         $editor->set('data.network_stats.cards.'.$first.'.count',240)->call('saveDraft')->assertHasNoErrors();
         $this->assertSame(120,app(SiteContent::class)->getPublished('settings')['network_stats']['cards'][0]['count']);
         $editor->call('publish')->assertHasNoErrors();
-        $this->get('/')->assertOk()->assertSee('data-network-count="240"',false)->assertSee('Illustrative network figures for this demo.');
+        $this->get('/')->assertOk()->assertSee('data-network-count="240"',false)->assertDontSee('Illustrative network figures for this demo.');
         $editor->set('data.network_stats.cards.'.$first.'.count',-1)->call('publish')->assertHasErrors();
     }
 }
