@@ -116,6 +116,8 @@ class SiteContent
                 $value = '';
             } elseif ($key === 'enabled') {
                 $value = (bool) $value;
+            } elseif ($key === 'suffix' && $value === null) {
+                $value = '';
             }
         });
         return $validated;
@@ -132,6 +134,8 @@ class SiteContent
                     $rules[$path] = ['required', 'array', 'min:1', 'max:'.$limit];
                     if ($value) $this->objectRules($value[0], $path.'.*', $rules);
                 } else $this->objectRules($value, $path, $rules);
+            } elseif (is_int($value)) {
+                $rules[$path] = ['required', 'integer', 'min:0', 'max:10000000'];
             } elseif (is_bool($value)) {
                 $rules[$path] = ['required', 'boolean'];
             } elseif ($value === null) {
@@ -141,7 +145,7 @@ class SiteContent
                     }
                 }];
             } else {
-                $rules[$path] = array_merge($value === '' ? ['present', 'nullable'] : ['required'], ['string', 'max:5000', function (string $attribute, mixed $text, \Closure $fail): void {
+                $rules[$path] = array_merge($value === '' || $key === 'suffix' ? ['present', 'nullable'] : ['required'], ['string', 'max:5000', function (string $attribute, mixed $text, \Closure $fail): void {
                     if (is_string($text) && (strip_tags($text) !== $text || preg_match('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', $text))) $fail('Use plain text without HTML or executable markup.');
                 }]);
                 if ($key === 'icon') $rules[$path][] = Rule::in(SiteContentDefaults::ICONS);

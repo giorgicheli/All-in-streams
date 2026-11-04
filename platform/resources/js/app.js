@@ -3,6 +3,7 @@ import { initializeMotion } from './motion';
 import { initializeSmoothScroll } from './smooth-scroll';
 import { initializeGeographyCarousels } from './geography';
 import { initializeMobileNavigation } from './navigation';
+import { initializePublicResults, initializeNetworkCounters } from './public-results';
 
 let cleanup = () => {};
 
@@ -13,6 +14,8 @@ function initializePage() {
     const disposeScroll = initializeSmoothScroll();
     const disposeGeography = initializeGeographyCarousels();
     const disposeNavigation = initializeMobileNavigation();
+    const disposeResults = initializePublicResults();
+    const disposeCounters = initializeNetworkCounters();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -22,12 +25,6 @@ function initializePage() {
         updateHeader();
         addEventListener('scroll', updateHeader, { passive: true, signal: controller.signal });
     }
-    document.querySelectorAll('[data-geo]').forEach(button => button.addEventListener('click', () => {
-        document.querySelectorAll('[data-geo]').forEach(tab => {tab.classList.remove('selected');tab.setAttribute('aria-selected','false')});
-        button.classList.add('selected');button.setAttribute('aria-selected','true');
-        const label = document.querySelector('[data-geo-label]');
-        if (label) label.textContent = button.dataset.geo;
-    }, { signal: controller.signal }));
 
     cleanup = () => {
         controller.abort();
@@ -35,6 +32,8 @@ function initializePage() {
         disposeScroll();
         disposeGeography();
         disposeNavigation();
+        disposeResults();
+        disposeCounters();
     };
 }
 

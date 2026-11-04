@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Services\SiteContent;
+use App\Models\PublicCampaignResult;
 use Illuminate\Http\Request;
 
 class WebsiteController extends Controller
 {
     public function home(SiteContent $content)
     {
-        return view('landing', ['home' => $content->getPublished('home'), 'site' => $content->getPublished('settings')]);
+        return view('landing', [
+            'home' => $content->getPublished('home'),
+            'site' => $content->getPublished('settings'),
+            'publicResults' => PublicCampaignResult::published()->latest('completed_on')->get(PublicCampaignResult::PUBLIC_COLUMNS),
+        ]);
     }
 
     public function privacy(SiteContent $content)

@@ -114,6 +114,18 @@ class SiteContentDefaults
             'navigation' => [['label' => 'Platform', 'url' => '#platform'], ['label' => 'Industries', 'url' => '#industries'], ['label' => 'How it works', 'url' => '#how-it-works']],
             'header' => ['sign_in_label' => 'Partner sign in', 'workspace_label' => 'Your workspace', 'cta_label' => 'Get started', 'cta_url' => '/register'],
             'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Partner sign in', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
+            'network_stats' => [
+                'enabled' => true, 'eyebrow' => 'THE NETWORK BEHIND THE STREAM',
+                'title' => 'Great people. Growing possibilities.',
+                'description' => 'Creators, agencies and brands. Connected by one team.',
+                'is_demo' => true, 'sample_note' => 'Illustrative network figures for this demo.',
+                'cards' => [
+                    ['icon'=>'users','count'=>120,'suffix'=>'+','label'=>'Creators','description'=>'Streamers & influencers'],
+                    ['icon'=>'layers','count'=>18,'suffix'=>'+','label'=>'Agencies','description'=>'Talent & campaign partners'],
+                    ['icon'=>'globe','count'=>24,'suffix'=>'','label'=>'Countries','description'=>'Local voices. Global reach.'],
+                    ['icon'=>'briefcase','count'=>60,'suffix'=>'+','label'=>'Companies','description'=>'Brands building connections'],
+                ],
+            ],
             'auth_story' => [
                 'eyebrow' => 'Creator partnerships. All in.', 'title_line_1' => 'Great people.', 'title_line_2' => 'Real connections.', 'highlight' => 'All in.',
                 'description' => 'The right creators. The right communities. One team to bring it all together.',

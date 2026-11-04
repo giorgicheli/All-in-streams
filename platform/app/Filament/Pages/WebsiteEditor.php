@@ -236,6 +236,10 @@ class WebsiteEditor extends Page
                 }
                 continue;
             }
+            if (is_int($value)) {
+                $fields[] = TextInput::make($name)->label($label)->default($value)->required()->numeric()->integer()->minValue(0)->maxValue(10000000);
+                continue;
+            }
             if ($key === 'icon') {
                 $fields[] = Select::make($name)->label('Icon')->options(array_combine(SiteContentDefaults::ICONS, array_map(fn ($icon) => str($icon)->replace('_', ' ')->title()->toString(), SiteContentDefaults::ICONS)))
                     ->required()->searchable()->default($value);
@@ -248,7 +252,7 @@ class WebsiteEditor extends Page
             $long = in_array($key, ['body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true);
             $field = $long ? Textarea::make($name)->rows(3)->columnSpanFull() : TextInput::make($name);
             $field->label($label)->default($value)->maxLength(5000);
-            if ($value !== '' && $value !== null) $field->required();
+            if ($value !== '' && $value !== null && $key !== 'suffix') $field->required();
             if ($key === 'url' || str_ends_with($key, '_url')) $field->maxLength(2048)->rules([new SiteLink()]);
             if ($prefix === 'seo.') $field->maxLength($key === 'title' ? 200 : 500);
             $fields[] = $field;
@@ -268,7 +272,7 @@ class WebsiteEditor extends Page
     {
         return [
             'seo' => 'Search & sharing', 'brand_name' => 'Brand name', 'brand_tagline' => 'Brand tagline',
-            'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer',
+            'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer', 'network_stats' => 'Network statistics', 'count' => 'Displayed count', 'is_demo' => 'Show sample-data label',
             'auth_story' => 'Sign-in & registration story', 'auth' => 'Account page copy', 'labels' => 'Form labels',
             'login' => 'Sign-in page', 'register' => 'Registration page', 'eyebrow' => 'Small heading',
             'title_line_1' => 'Headline · first line', 'title_line_2' => 'Headline · second line',

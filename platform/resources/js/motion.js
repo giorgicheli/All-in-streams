@@ -9,7 +9,7 @@ const REVEAL_TARGETS = [
     '[data-motion-reveal]',
     '.hero-copy > .eyebrow', '.hero-copy h1', '.hero-subtitle', '.hero-copy > p',
     '.hero-buttons', '.hero-footnote', '.section-heading', '.audience-card',
-    '.industry-card', '.how-intro', '.process-step', '.gallery-tabs',
+    '.industry-card', '.network-stat-card', '.result-card', '.how-intro', '.process-step', '.gallery-tabs',
     '.gallery-empty', '.gallery-privacy', '.faq-wrap > div:first-child',
     '.faq-list details', '.cta-copy', '.cta-buttons', '.auth-story-content', '.auth-form',
     '.page-heading', '.overview-banner', '.privacy-note',
