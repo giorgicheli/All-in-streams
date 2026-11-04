@@ -1,20 +1,18 @@
-# Flag image credits
+# Country flag sources
 
-The website displays locally hosted PNG flag icons designed by **Freepik** and supplied by **Flaticon**, using the **Flags Rectangular** style. The six files share a flat rectangular shape without poles, shadows or emoji rendering. They are displayed at a consistent 3:2 ratio; the source PNG canvases are 128 × 128 with transparent vertical padding.
+The website serves six original flat PNG country flags locally. They come from [Flagpedia.net](https://flagpedia.net/download) through its [Flagcdn download API](https://flagpedia.net/download/api), based on Wikimedia Commons vector files.
 
-Visible website credit must remain: **Flags designed by Freepik from Flaticon**, linked to [Freepik's Flaticon author page](https://www.flaticon.com/authors/freepik).
+Flagpedia describes these downloads as public domain and free for commercial and non-commercial use. Its backlink is appreciated rather than required. The website therefore does not require a visible flag attribution line. The previous Freepik/Flaticon icons have been replaced and are no longer used by the flag component.
 
-These third-party assets use the [Flaticon Free License with attribution](https://www.flaticon.com/media/license/license.pdf). They are not covered by the application's MIT license. The raw PNG files are deliberately excluded from public Git history and are deployed separately for use in this website. Do not offer them as an icon pack or downloadable collection, remove attribution, sell them, or redistribute them as standalone assets.
+The downloaded files are unchanged 160-pixel-wide PNG originals with their native proportions. The component places them in consistent 3:2 slots with centered `object-fit: contain`, preserving each national flag's full native proportions while keeping the website's minimal rectangular style. Files are locally hosted; page visitors do not make requests to the external flag CDN.
 
-Exact source pages, original PNG download URLs and SHA-256 checksums are recorded in [`sources.json`](../public/images/flags/sources.json).
-
-| File | Country | Original icon | Pack |
+| Local file | Country | Original download | Dimensions |
 | --- | --- | --- | --- |
-| `de.png` | Germany | [206690](https://www.flaticon.com/free-icon/germany_206690) | International flags |
-| `fr.png` | France | [206657](https://www.flaticon.com/free-icon/france_206657) | International flags |
-| `pl.png` | Poland | [206641](https://www.flaticon.com/free-icon/poland_206641) | International flags |
-| `br.png` | Brazil | [206597](https://www.flaticon.com/free-icon/brazil_206597) | International flags |
-| `ca.png` | Canada | [555473](https://www.flaticon.com/free-icon/canada_555473) | Rectangular country simple flags |
-| `mx.png` | Mexico | [206600](https://www.flaticon.com/free-icon/mexico_206600) | International flags |
+| `de.png` | Germany | [PNG](https://flagcdn.com/w160/de.png) | 160 x 96 |
+| `fr.png` | France | [PNG](https://flagcdn.com/w160/fr.png) | 160 x 107 |
+| `pl.png` | Poland | [PNG](https://flagcdn.com/w160/pl.png) | 160 x 100 |
+| `br.png` | Brazil | [PNG](https://flagcdn.com/w160/br.png) | 160 x 112 |
+| `ca.png` | Canada | [PNG](https://flagcdn.com/w160/ca.png) | 160 x 80 |
+| `mx.png` | Mexico | [PNG](https://flagcdn.com/w160/mx.png) | 160 x 91 |
 
-Both source packs use the same Freepik **Flags Rectangular** style. Asset pages confirmed that PNG variants permit personal and commercial website use with attribution. No premium format, user account, authenticated endpoint or access-control bypass was used. Each downloaded PNG was decoded and visually checked against its country before deployment.
+Exact source URLs, dimensions, verification date and SHA-256 checksums are recorded in [`sources.json`](../public/images/flags/sources.json). These binaries remain excluded from Git and are uploaded with each relevant asset deployment. The version suffix `public-domain-20261104` makes clients request the replacement images instead of cached copies of the previous set.

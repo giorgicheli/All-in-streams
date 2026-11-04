@@ -7,7 +7,7 @@
     $height = (int) round($width * 2 / 3);
 @endphp
 @if($url)
-    <img src="{{ $url }}" width="{{ $width }}" height="{{ $height }}" alt="{{ $decorative ? '' : 'Flag of '.$label }}" @if($decorative) aria-hidden="true" @endif loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" {{ $attributes->class('country-flag')->style('width:'.$width.'px;height:'.$height.'px;object-fit:cover;object-position:center;display:inline-block;vertical-align:middle;flex-shrink:0;border-radius:2px') }}>
+    <img src="{{ $url }}" width="{{ $width }}" height="{{ $height }}" alt="{{ $decorative ? '' : 'Flag of '.$label }}" @if($decorative) aria-hidden="true" @endif loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" {{ $attributes->class('country-flag')->style('width:'.$width.'px;height:'.$height.'px;object-fit:contain;object-position:center;display:inline-block;vertical-align:middle;flex-shrink:0;border-radius:2px') }}>
 @else
     <span {{ $attributes->class('country-flag-fallback') }} @if($decorative) aria-hidden="true" @else aria-label="{{ $label }}" @endif>{{ $resolvedCode ?: strtoupper((string) $code) }}</span>
 @endif

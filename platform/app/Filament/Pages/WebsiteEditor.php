@@ -12,6 +12,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -81,6 +82,18 @@ class WebsiteEditor extends Page
             return $schema->components(static::fields(SiteContentDefaults::settings()))->statePath('data');
         }
 
+        if (in_array($this->editingPage, ['privacy', 'terms'], true)) {
+            $defaults = SiteContentDefaults::for($this->editingPage);
+            return $schema->components([
+                Section::make('Search & sharing')->schema(static::fields($defaults['seo'], 'seo.'))->collapsible()->collapsed(),
+                TextInput::make('title')->label('Page title')->required()->maxLength(200),
+                RichEditor::make('body')->label('Page content')->json()->minHeight(420)
+                    ->toolbarButtons([['bold', 'italic', 'underline', 'strike', 'link', 'clearFormatting'], ['h2', 'h3'], ['bulletList', 'orderedList', 'blockquote'], ['undo', 'redo']])
+                    ->linkProtocols(['https', 'mailto', 'tel'])->columnSpanFull()
+                    ->helperText('Add your text, headings, lists and links. Save a draft to preview it, then publish when ready.'),
+            ])->statePath('data');
+        }
+
         $blocks = [];
         foreach (SiteContentDefaults::home()['blocks'] as $block) {
             [$label, $icon] = self::BLOCK_LABELS[$block['type']];
@@ -100,7 +113,7 @@ class WebsiteEditor extends Page
     public function selectPage(string $page): void
     {
         $this->guardStaff();
-        abort_unless(in_array($page, ['home', 'settings'], true), 404);
+        abort_unless(in_array($page, ['home', 'settings', 'privacy', 'terms'], true), 404);
         $this->editingPage = $page;
         if ($page === 'home') $this->previewTarget = 'home';
         $this->revisionId = null;

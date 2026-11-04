@@ -4,6 +4,8 @@ namespace App\Support;
 
 class Countries
 {
+    private const FLAG_ASSET_VERSION = 'public-domain-20261104';
+
     private const COUNTRIES = [
         'DE' => 'Germany', 'FR' => 'France', 'PL' => 'Poland',
         'BR' => 'Brazil', 'CA' => 'Canada', 'MX' => 'Mexico',
@@ -43,6 +45,6 @@ class Countries
         }
         $path = 'images/flags/'.strtolower($code).'.png';
 
-        return is_file(public_path($path)) ? asset($path) : null;
+        return is_file(public_path($path)) ? asset($path).'?v='.self::FLAG_ASSET_VERSION : null;
     }
 }

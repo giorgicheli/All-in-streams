@@ -6,5 +6,5 @@
         <p>{{ $story['description'] }}</p>
         <div class="auth-perks">@foreach($story['perks'] as $perk)<span><x-ui-icon :name="$perk['icon']"/> {{ $perk['text'] }}</span>@endforeach</div>
     </div>
-    <div class="auth-story-footer">© {{ date('Y') }} {{ $site['brand_name'] }} <span>·</span> {{ $site['footer']['statement'] }}</div>
+    <div class="auth-story-footer">© {{ date('Y') }} {{ $site['brand_name'] }} <span>·</span> {{ $site['footer']['copyright'] }}</div>
 </aside>

@@ -70,9 +70,12 @@ class WebsiteRenderingTest extends TestCase
         }
     }
 
-    public function test_flags_have_local_image_sources_and_visible_attribution(): void
+    public function test_footer_has_legal_links_without_removed_slogans_or_replaced_asset_credits(): void
     {
-        $this->get('/')->assertOk()->assertSee('Germany')->assertSee('France')->assertSee('Flags designed by')
-            ->assertSee('Flaticon')->assertSee('Freepik');
+        $this->get('/')->assertOk()->assertSee('Germany')->assertSee('France')
+            ->assertSee(route('privacy'))->assertSee(route('terms'))
+            ->assertSee('Privacy policy')->assertSee('Terms &amp; conditions', false)
+            ->assertDontSee('Local voices. Global ambition')->assertDontSee('Flags designed by')
+            ->assertDontSee('Flaticon')->assertDontSee('Freepik');
     }
 }

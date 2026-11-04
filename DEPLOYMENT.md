@@ -68,7 +68,7 @@ Administrators manage the public website at `/admin/website-editor`. Home-page s
 
 `Save draft & preview` updates the private preview. `Publish changes` updates the public content. Published versions can be restored to a draft and reviewed before publishing again. Preview URLs require an administrator session and are never cacheable public pages. The renderer uses typed blocks and escaped text rather than user-supplied HTML or scripts.
 
-Country flags use locally served Flaticon PNGs with visible author attribution. The source/checksum manifest and [asset credits](platform/docs/ASSET-CREDITS.md) are committed; the licensed PNGs are deployed separately and excluded from Git. Preserve the visible attribution when changing the site footer.
+Country flags use locally served public-domain Flagpedia/Flagcdn PNGs. The source/checksum manifest and [asset provenance](platform/docs/ASSET-CREDITS.md) are committed; the six images are deployed separately. Public-domain replacements removed the former Flaticon attribution requirement. Preserve their native national ratios within the shared flag slots.
 
 ## Creator types, private media and staff files
 
@@ -94,3 +94,9 @@ umask 0007
 ```
 
 The private fixture directory contains `sample-agreement.pdf`, `internal-notes.docx` and `verification-demo.mp4`, each clearly labelled DEMO. The command creates one administrator, business, streamer, influencer and agency, three selected-provider contract examples, one agency client brief with pending/counter offers, six unsigned campaign PDFs and ten administrator-only user attachments. It does not mark signatures or payments complete. Run the established application permissions helper after CLI fixture creation so PHP-FPM can read the private files. Credentials stay in a mode-0600 file outside the web root and must never be committed or served publicly.
+
+## Footer and policy pages
+
+The footer links to `/privacy-policy` and `/terms-and-conditions`. Both pages start with empty content, as requested by the owner. The obsolete footer slogan and attribution row are removed. The replaced public-domain flags are hosted locally and use a new cache version; deploy all six `public/images/flags/*.png` files alongside their committed source manifest.
+
+Administrators edit each page under Website editor > Privacy policy or Terms & conditions. The visual text editor supports headings, emphasis, lists and links. Save draft & preview keeps changes private; Publish changes updates the public page. Published versions can be restored to draft. Formatting is stored as a bounded document tree and rendered through the sanitized rich-content renderer. Embedded files, images, scripts and arbitrary HTML are not accepted in policy content. Existing home/settings drafts, published content and revisions are preserved. New legal pages require no migration or initial database write.

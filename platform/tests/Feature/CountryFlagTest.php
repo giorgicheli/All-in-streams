@@ -58,10 +58,11 @@ class CountryFlagTest extends TestCase
         $html = Blade::render('<x-country-flag code="DE" size="24"/>');
 
         $this->assertStringContainsString('/images/flags/de.png', $html);
+        $this->assertStringContainsString('de.png?v=public-domain-20261104', $html);
         $this->assertStringContainsString('alt="Flag of Germany"', $html);
         $this->assertStringContainsString('width="24"', $html);
         $this->assertStringContainsString('height="16"', $html);
-        $this->assertStringContainsString('object-fit:cover', $html);
+        $this->assertStringContainsString('object-fit:contain', $html);
     }
 
     public function test_decorative_flags_do_not_repeat_the_adjacent_country_name(): void

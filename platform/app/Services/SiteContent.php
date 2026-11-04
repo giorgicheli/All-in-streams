@@ -6,6 +6,7 @@ use App\Models\SitePage;
 use App\Models\SitePageRevision;
 use App\Models\User;
 use App\Rules\SiteLink;
+use App\Rules\LegalRichText;
 use App\Support\SiteContentDefaults;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -19,14 +20,16 @@ class SiteContent
     {
         $defaults = SiteContentDefaults::for($slug);
         if (! Schema::hasTable('site_pages')) return $defaults;
-        return SitePage::where('slug', $slug)->value('published_content') ?? $defaults;
+        $content = SitePage::where('slug', $slug)->value('published_content') ?? $defaults;
+        return $slug === 'settings' ? $this->normalizeSettings($content) : $content;
     }
 
     public function getDraft(string $slug = 'home'): array
     {
         $defaults = SiteContentDefaults::for($slug);
         if (! Schema::hasTable('site_pages')) return $defaults;
-        return SitePage::where('slug', $slug)->value('draft_content') ?? $defaults;
+        $content = SitePage::where('slug', $slug)->value('draft_content') ?? $defaults;
+        return $slug === 'settings' ? $this->normalizeSettings($content) : $content;
     }
 
     public function saveDraft(User $actor, string $slug, array $content): SitePage
@@ -72,8 +75,15 @@ class SiteContent
     {
         $defaults = SiteContentDefaults::for($slug);
         $rules = [];
+        if ($slug === 'settings') $content = $this->normalizeSettings($content);
         if ($slug === 'settings') {
             $this->objectRules($defaults, '', $rules);
+        } elseif (in_array($slug, ['privacy', 'terms'], true)) {
+            $this->objectRules(['seo' => $defaults['seo'], 'title' => $defaults['title']], '', $rules);
+            $rules['seo.title'][] = 'max:200';
+            $rules['seo.description'][] = 'max:500';
+            $rules['title'][] = 'max:200';
+            $rules['body'] = ['required', 'array', new LegalRichText];
         } else {
             $rules = [
                 'seo' => ['required', 'array:title,description'],
@@ -147,12 +157,27 @@ class SiteContent
     private function editablePage(string $slug): SitePage
     {
         $defaults = SiteContentDefaults::for($slug);
-        SitePage::firstOrCreate(['slug' => $slug], ['title' => $slug === 'home' ? 'Home page' : 'Site settings', 'draft_content' => $defaults]);
+        $title = match ($slug) { 'home' => 'Home page', 'privacy' => 'Privacy policy', 'terms' => 'Terms & conditions', default => 'Site settings' };
+        SitePage::firstOrCreate(['slug' => $slug], ['title' => $title, 'draft_content' => $defaults]);
         return SitePage::where('slug', $slug)->lockForUpdate()->firstOrFail();
     }
 
     private function authorize(User $actor): void
     {
         abort_unless($actor->role === 'admin', 403);
+    }
+
+    /** Keep authored lists intact while adding new settings to older saved versions. */
+    private function normalizeSettings(array $content): array
+    {
+        if (isset($content['footer']) && is_array($content['footer'])) unset($content['footer']['statement']);
+        $merge = function (array $defaults, array $authored) use (&$merge): array {
+            foreach ($defaults as $key => $value) {
+                if (! array_key_exists($key, $authored)) $authored[$key] = $value;
+                elseif (is_array($value) && ! array_is_list($value) && is_array($authored[$key])) $authored[$key] = $merge($value, $authored[$key]);
+            }
+            return $authored;
+        };
+        return $merge(SiteContentDefaults::settings(), $content);
     }
 }

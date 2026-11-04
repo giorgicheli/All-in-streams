@@ -20,6 +20,8 @@
             <div class="website-editor-tabs" role="group" aria-label="Website content">
                 <x-filament::button wire:click="selectPage('home')" :color="$editingPage === 'home' ? 'primary' : 'gray'">Home page</x-filament::button>
                 <x-filament::button wire:click="selectPage('settings')" :color="$editingPage === 'settings' ? 'primary' : 'gray'">Site settings</x-filament::button>
+                <x-filament::button wire:click="selectPage('privacy')" :color="$editingPage === 'privacy' ? 'primary' : 'gray'">Privacy policy</x-filament::button>
+                <x-filament::button wire:click="selectPage('terms')" :color="$editingPage === 'terms' ? 'primary' : 'gray'">Terms & conditions</x-filament::button>
             </div>
             <div class="website-editor-actions">
                 <x-filament::button color="gray" icon="heroicon-o-eye" wire:click="saveDraft" wire:loading.attr="disabled">Save draft & preview</x-filament::button>
@@ -28,7 +30,7 @@
         </div>
         <p class="website-editor-note">Draft changes stay private until you publish. Save the draft to refresh the page preview. Uploaded images are public website assets.</p>
         <div class="website-editor-grid">
-            <section aria-label="Content editor">
+            <section aria-label="Content editor" wire:key="website-content-editor-{{ $editingPage }}">
                 {{ $this->form }}
                 @php $versions = $this->revisionOptions(); @endphp
                 @if($versions)

@@ -14,6 +14,8 @@ class SiteContentDefaults
         return match ($slug) {
             'home' => self::home(),
             'settings' => self::settings(),
+            'privacy' => self::privacy(),
+            'terms' => self::terms(),
             default => throw new InvalidArgumentException('Unknown website content page.'),
         };
     }
@@ -111,7 +113,7 @@ class SiteContentDefaults
             'site_description' => 'All In Streams connects brands with gaming creators. From your first brief to the final campaign report, managed end to end.',
             'navigation' => [['label' => 'Platform', 'url' => '#platform'], ['label' => 'Industries', 'url' => '#industries'], ['label' => 'How it works', 'url' => '#how-it-works']],
             'header' => ['sign_in_label' => 'Partner sign in', 'workspace_label' => 'Your workspace', 'cta_label' => 'Get started', 'cta_url' => '/register'],
-            'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'statement' => 'Local voices. Global ambition.', 'sign_in_label' => 'Partner sign in'],
+            'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Partner sign in', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
             'auth_story' => [
                 'eyebrow' => 'Creator partnerships. All in.', 'title_line_1' => 'Great people.', 'title_line_2' => 'Real connections.', 'highlight' => 'All in.',
                 'description' => 'The right creators. The right communities. One team to bring it all together.',
@@ -123,6 +125,24 @@ class SiteContentDefaults
                 'register' => ['page_title' => 'Join All In Streams', 'eyebrow' => 'LET’S MAKE YOUR NEXT MOVE', 'title' => 'Let’s go all in.', 'description' => 'A new partnership starts with you.', 'submit_label' => 'Create account', 'login_prompt' => 'Already a partner?', 'login_label' => 'Sign in', 'channel_help' => 'Add at least one channel. Stream on both? Add both links. Your channel details stay private until our team authorizes an introduction.', 'password_help' => 'Use at least 10 characters, including letters and a number.'],
                 'labels' => ['name' => 'Your name', 'company' => 'Company name', 'agency' => 'Agency name', 'email' => 'Email address', 'password' => 'Password', 'password_confirmation' => 'Confirm password', 'twitch' => 'Twitch channel', 'kick' => 'Kick channel', 'company_choice' => 'Company', 'agency_choice' => 'Agency', 'creator_choice' => 'Creator'],
             ],
+        ];
+    }
+
+    public static function privacy(): array
+    {
+        return [
+            'seo' => ['title' => 'Privacy policy', 'description' => 'Privacy policy for All In Streams.'],
+            'title' => 'Privacy policy',
+            'body' => ['type' => 'doc', 'content' => []],
+        ];
+    }
+
+    public static function terms(): array
+    {
+        return [
+            'seo' => ['title' => 'Terms & conditions', 'description' => 'Terms and conditions for All In Streams.'],
+            'title' => 'Terms & conditions',
+            'body' => ['type' => 'doc', 'content' => []],
         ];
     }
 }

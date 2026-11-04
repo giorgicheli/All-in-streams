@@ -15,8 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
+Route::get('/privacy-policy', [WebsiteController::class, 'privacy'])->name('privacy');
+Route::get('/terms-and-conditions', [WebsiteController::class, 'terms'])->name('terms');
 Route::get('/admin/website-preview/{page}', [WebsiteController::class, 'preview'])
-    ->whereIn('page', ['home', 'settings'])->middleware('auth')->name('website.preview');
+    ->whereIn('page', ['home', 'settings', 'privacy', 'terms'])->middleware('auth')->name('website.preview');
 Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
     Route::post('/login', [AuthController::class, 'login']);
