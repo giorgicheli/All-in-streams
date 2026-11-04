@@ -1,4 +1,4 @@
-<x-layout :title="$home['seo']['title']" :description="$home['seo']['description']">
+<x-layout :title="$home['seo']['title']" :description="$home['seo']['description']" :light-preview="$lightPreview ?? false">
     @include('site.navigation')
     <main>
         @foreach($home['blocks'] as $block)

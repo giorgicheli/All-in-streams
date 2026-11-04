@@ -17,6 +17,16 @@ class WebsiteController extends Controller
         ]);
     }
 
+    public function white(SiteContent $content)
+    {
+        return response()->view('landing', [
+            'home' => $content->getPublished('home'),
+            'site' => $content->getPublished('settings'),
+            'publicResults' => PublicCampaignResult::published()->latest('completed_on')->get(PublicCampaignResult::PUBLIC_COLUMNS),
+            'lightPreview' => true,
+        ])->header('X-Robots-Tag', 'noindex, nofollow');
+    }
+
     public function privacy(SiteContent $content)
     {
         return view('site.legal', ['page' => $content->getPublished('privacy'), 'site' => $content->getPublished('settings')]);

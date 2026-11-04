@@ -1,5 +1,5 @@
-@props(['compact' => false])
-<a href="/" {{ $attributes->class(['brand']) }} aria-label="{{ $site['brand_name'] }} home">
+@props(['compact' => false, 'homeUrl' => '/'])
+<a href="{{ $homeUrl }}" {{ $attributes->class(['brand']) }} aria-label="{{ $site['brand_name'] }} home">
     @if($site['logo_path'])
         <img class="brand-upload" src="{{ Storage::disk('public')->url($site['logo_path']) }}" alt="{{ $site['brand_name'] }}" width="38" height="38">
     @else

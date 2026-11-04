@@ -1,6 +1,6 @@
 @php $siteNavUrl = fn (string $url) => str_starts_with($url, '#') && !isset($home) ? '/'.$url : $url; @endphp
 <header class="site-header" data-mobile-navigation>
-    <div class="container site-nav"><x-brand/>
+    <div class="container site-nav"><x-brand :home-url="($lightPreview ?? false) ? route('home.white') : '/'"/>
         <nav aria-label="Main navigation">@foreach($site['navigation'] as $link)<a href="{{ $siteNavUrl($link['url']) }}">{{ $link['label'] }}</a>@endforeach</nav>
         <div class="header-actions">
             @auth<a href="/account" class="sign-in">{{ $site['header']['workspace_label'] }}</a>@else<a href="/login" class="sign-in">{{ $site['header']['sign_in_label'] }}</a>@endauth
@@ -13,7 +13,7 @@
 </header>
 <div id="site-mobile-menu" class="mobile-nav site-mobile-menu" data-mobile-menu role="dialog" aria-modal="true" aria-label="Main navigation" tabindex="-1" data-lenis-prevent hidden inert>
     <div class="site-mobile-menu-shell">
-        <div class="site-mobile-menu-top"><x-brand/>
+        <div class="site-mobile-menu-top"><x-brand :home-url="($lightPreview ?? false) ? route('home.white') : '/'"/>
             <button type="button" class="icon-button site-menu-close" data-mobile-menu-close aria-label="Close navigation"><span aria-hidden="true"><i></i><i></i></span></button>
         </div>
         <nav class="site-mobile-menu-links" aria-label="Mobile navigation">

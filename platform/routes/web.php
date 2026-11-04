@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
+Route::get('/white', [WebsiteController::class, 'white'])->name('home.white');
 Route::get('/privacy-policy', [WebsiteController::class, 'privacy'])->name('privacy');
 Route::get('/terms-and-conditions', [WebsiteController::class, 'terms'])->name('terms');
 Route::get('/admin/website-preview/{page}', [WebsiteController::class, 'preview'])

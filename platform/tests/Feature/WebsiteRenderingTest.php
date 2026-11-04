@@ -78,4 +78,22 @@ class WebsiteRenderingTest extends TestCase
             ->assertDontSee('Local voices. Global ambition')->assertDontSee('Flags designed by')
             ->assertDontSee('Flaticon')->assertDontSee('Freepik');
     }
+
+    public function test_white_preview_shares_only_published_content_and_preserves_the_main_theme(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $content = SiteContentDefaults::home();
+        $content['blocks'][0]['data']['title_line_1'] = 'UNPUBLISHED_WHITE_PREVIEW_HEADLINE';
+        app(SiteContent::class)->saveDraft($admin, 'home', $content);
+        $pagesBefore = \App\Models\SitePage::all()->toArray();
+
+        $this->get('/white')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow')
+            ->assertSee('class="theme-white"', false)->assertSee('content="#ffffff"', false)
+            ->assertSee('Outplay your')->assertSee('site-footer')->assertSee('data-network-count', false)
+            ->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE')->assertDontSee('livewire.js')
+            ->assertDontSee('network-stat-index')->assertDontSee('card-number')->assertDontSee('step-number');
+        $this->get('/')->assertOk()->assertDontSee('class="theme-white"', false)
+            ->assertSee('content="#090d0c"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
+        $this->assertSame($pagesBefore, \App\Models\SitePage::all()->toArray());
+    }
 }
