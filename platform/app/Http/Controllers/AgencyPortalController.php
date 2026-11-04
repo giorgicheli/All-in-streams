@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AgencyProfile;
 use App\Models\AgencyTalent;
 use App\Models\Invitation;
-use App\Rules\StreamingChannelUrl;
+use App\Services\AgencyTalentInput;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -47,7 +47,7 @@ class AgencyPortalController extends Controller
             'country' => ['required', 'string', 'max:80'], 'website' => ['nullable', 'url:https', 'max:255'],
             'languages' => ['required', 'array', 'min:1', 'max:20'], 'languages.*' => ['required', 'string', 'max:80', 'distinct'],
             'audience_geos' => ['required', 'array', 'min:1', 'max:30'], 'audience_geos.*' => ['required', 'string', 'max:80', 'distinct'],
-            'platforms' => ['required', 'array', 'min:1', 'max:4'], 'platforms.*' => ['required', 'in:Twitch,Kick,YouTube,TikTok', 'distinct'],
+            'platforms' => ['required', 'array', 'min:1', 'max:6'], 'platforms.*' => ['required', 'in:Twitch,Kick,Facebook,Instagram,YouTube,TikTok', 'distinct'],
             'bio' => ['nullable', 'string', 'max:3000'],
         ]);
         DB::transaction(function () use ($agency, $data) {
@@ -65,9 +65,10 @@ class AgencyPortalController extends Controller
     public function roster(Request $request)
     {
         $agency = $this->agency($request);
-        $talents = $agency->agencyTalent()->latest()->get();
+        $creatorType = in_array($request->query('creator_type'), ['streamer', 'influencer'], true) ? $request->query('creator_type') : null;
+        $talents = $agency->agencyTalent()->when($creatorType, fn ($query) => $query->where('creator_type', $creatorType))->latest()->get();
         $editing = $request->filled('edit') ? $agency->agencyTalent()->findOrFail($request->integer('edit')) : null;
-        return view('agency.roster', compact('talents', 'editing'));
+        return view('agency.roster', compact('talents', 'editing', 'creatorType'));
     }
 
     public function storeTalent(Request $request)
@@ -119,21 +120,7 @@ class AgencyPortalController extends Controller
     private function talentData(Request $request): array
     {
         $this->normalizeLists($request, ['audience_geos']);
-        $data = $request->validate([
-            'public_name' => ['required', 'string', 'min:2', 'max:120'], 'country' => ['required', 'string', 'max:80'],
-            'language' => ['required', 'string', 'max:80'], 'platform' => ['required', 'in:Twitch,Kick'],
-            'twitch_url' => ['nullable', 'required_without:kick_url', 'string', 'max:255', new StreamingChannelUrl('Twitch')],
-            'kick_url' => ['nullable', 'required_without:twitch_url', 'string', 'max:255', new StreamingChannelUrl('Kick')],
-            'followers' => ['required', 'integer', 'min:0', 'max:2000000000'],
-            'average_viewers' => ['required', 'integer', 'min:0', 'max:100000000'],
-            'audience_geos' => ['required', 'array', 'min:1', 'max:30'], 'audience_geos.*' => ['required', 'string', 'max:80', 'distinct'],
-            'rate' => ['required', 'numeric', 'min:0', 'max:999999999'],
-            'availability' => ['required', 'in:Open,Opening soon,Unavailable'],
-        ]);
-        $data['twitch_url'] = StreamingChannelUrl::canonicalize($data['twitch_url'] ?? null, 'Twitch');
-        $data['kick_url'] = StreamingChannelUrl::canonicalize($data['kick_url'] ?? null, 'Kick');
-        if ($data['platform'] === 'Twitch' && ! $data['twitch_url']) $data['platform'] = 'Kick';
-        if ($data['platform'] === 'Kick' && ! $data['kick_url']) $data['platform'] = 'Twitch';
+        $data = AgencyTalentInput::validate($request->except('status'));
         return $data;
     }
 

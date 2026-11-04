@@ -30,6 +30,7 @@ class User extends Authenticatable implements FilamentUser
         'company',
         'account_type',
         'is_demo',
+        'telegram',
     ];
 
     /**
@@ -75,11 +76,13 @@ class User extends Authenticatable implements FilamentUser
 
     public function agencyTalent(): HasMany { return $this->hasMany(AgencyTalent::class, 'agency_user_id'); }
 
+    public function internalFiles(): HasMany { return $this->hasMany(UserFile::class); }
+
     public function getAccountTypeLabelAttribute(): string
     {
         return match ($this->role) {
             'admin' => 'Administrator',
-            'creator' => 'Creator',
+            'creator' => $this->creatorProfile?->creator_type === 'influencer' ? 'Influencer' : 'Streamer',
             'agency' => 'Agency',
             default => $this->account_type === 'agency' ? 'Agency' : 'Business',
         };

@@ -50,7 +50,7 @@ umask 0007
 
 The command adds only its own marked sample records, preserves existing administrator accounts, passwords and edited workflow states, and saves newly generated sample login details in a private file outside the web root. Repeating it does not reset passwords or duplicate campaigns. The regular `DatabaseSeeder` remains blocked on production.
 
-Companies, agencies and creators have separate roles and directories. Agencies can request creators for their clients, supply an independently reviewed talent roster, or do both. Client briefs and provider invitations use separate screens and permissions. Creator signup requires a valid Twitch or Kick channel URL; both can be saved. Channel identities remain hidden from businesses until staff authorizes an introduction.
+Companies, agencies and creators have separate roles and directories. Agencies can request creators for their clients, supply an independently reviewed talent roster, or do both. Client briefs and provider invitations use separate screens and permissions. Creator signup separates streamers (Twitch or Kick required) and influencers (Facebook, Instagram, YouTube or TikTok required). Both require a private short verification video and at least one audience country. All registrations require Telegram. Identities, profile links and contacts remain private to administrators at every campaign stage.
 
 ## Provider offers and delivery
 
@@ -69,3 +69,28 @@ Administrators manage the public website at `/admin/website-editor`. Home-page s
 `Save draft & preview` updates the private preview. `Publish changes` updates the public content. Published versions can be restored to a draft and reviewed before publishing again. Preview URLs require an administrator session and are never cacheable public pages. The renderer uses typed blocks and escaped text rather than user-supplied HTML or scripts.
 
 Country flags use locally served Flaticon PNGs with visible author attribution. The source/checksum manifest and [asset credits](platform/docs/ASSET-CREDITS.md) are committed; the licensed PNGs are deployed separately and excluded from Git. Preserve the visible attribution when changing the site footer.
+
+## Creator types, private media and staff files
+
+Migrations `2026_11_04_000001` through `000004` add creator types, private verification media, Telegram contacts, media settings, staff-only per-user files, and streamer/influencer agency roster entries. Existing supported social-platform profiles are classified as influencers; other existing creator profiles remain streamers. Existing accounts and campaign history are preserved.
+
+Staff use `/admin/creator-profiles` for streamers, `/admin/influencer-profiles` for influencers, `/admin/user-accounts` for all roles and `/admin/user-files` for multiple private PDF/DOC/DOCX attachments. These internal files are inaccessible even to the account holder. Partner contracts remain separate, party-specific campaign documents. New and edited contacts can be saved at `/account/settings`.
+
+`/admin/creator-video-settings` controls the upload size, short-video duration and optional compression quality/width. A valid playable MP4/MOV/WebM with a video stream is required; renamed files and overlong recordings are rejected. Staff must still manually review that the recording actually shows the applicant's profile and audience countries. Automatic platform-account ownership or analytics verification is not implemented.
+
+This host disables process execution in PHP-FPM. The private `creator-media:worker --port=18743` process runs as the existing deployment user, with fixed operations and a private token. It listens only on `127.0.0.1`; its token is stored only in the site's private `.env`. FFmpeg and FFprobe binaries are checksum-verified and installed outside the web root at `/home/ais_streams_deploy/deploy-tools/media-tools`. Keep their execute permissions when repairing application storage permissions.
+
+The deployment user's cron starts the worker under `flock` each minute, so only one instance runs and a stopped process is restarted. After source/config changes, restart the verified worker process to load the new configuration. Keep the deployment account valid for its cron to continue running. The existing `www` and deployment-user default ACLs must apply to `storage/app/private/creator-proof`; the service activates those ACLs on uploaded originals for worker access.
+
+Site-local PHP upload/request limits are 100/110 MB. Nginx currently caps requests at 50 MB, so production sets `CREATOR_MEDIA_REQUEST_MAX_MB=49`; the admin UI shows that ceiling and the effective limit. Compression validates the original size before processing and retains a verified output only if smaller. It does not guarantee an exact output size. Livewire temporary files stay on the private disk.
+
+To create the owner's clearly fictional five-role demo workspace without resetting existing passwords or edited workflows:
+
+```bash
+umask 0007
+/www/server/php/83/bin/php -d disable_functions= artisan demo:roles --force \
+  --fixtures-dir=/home/ais_streams_deploy/deploy-tools/role-fixtures \
+  --credentials-file=/home/ais_streams_deploy/deploy-tools/demo-role-accounts.json
+```
+
+The private fixture directory contains `sample-agreement.pdf`, `internal-notes.docx` and `verification-demo.mp4`, each clearly labelled DEMO. The command creates one administrator, business, streamer, influencer and agency, three selected-provider contract examples, one agency client brief with pending/counter offers, six unsigned campaign PDFs and ten administrator-only user attachments. It does not mark signatures or payments complete. Run the established application permissions helper after CLI fixture creation so PHP-FPM can read the private files. Credentials stay in a mode-0600 file outside the web root and must never be committed or served publicly.

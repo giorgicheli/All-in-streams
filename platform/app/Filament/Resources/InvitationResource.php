@@ -49,7 +49,6 @@ class InvitationResource extends ManagedResource
                 TextEntry::make('requirements')->columnSpanFull()->placeholder('No additional requirements'),
                 TextEntry::make('notes')->label('Shared offer message')->columnSpanFull()->placeholder('No message'),
                 TextEntry::make('response_notes')->label('Recipient response')->columnSpanFull()->placeholder('No response notes'),
-                TextEntry::make('introduced_at')->dateTime()->placeholder('Identity protected'),
                 TextEntry::make('selected_at')->dateTime()->placeholder('No final selection'),
                 TextEntry::make('negotiation')->label('Negotiation history')->state(fn (Invitation $record) => $record->events()->oldest('id')->get()->map(fn ($event) => $event->created_at->format('d M H:i').' · '.str_replace('_',' ',$event->kind).' · '.($event->amount!==null?$record->currency.' '.$event->amount.' · ':'').($event->notes??''))->implode("\n"))->columnSpanFull(),
             ])->columns(2),
@@ -89,10 +88,6 @@ class InvitationResource extends ManagedResource
                     ->visible(fn (Invitation $record) => $record->status==='interested' && $record->selection_status!=='selected' && in_array($record->brief->status,['matching','proposal']))
                     ->requiresConfirmation()->modalDescription('Choose exactly one accepted creator or agency for this campaign. Other offers will be marked not selected. Agreements and payment readiness are still required before launch.')
                     ->action(fn (Invitation $record) => ProviderOfferActions::run(fn () => app(CampaignWorkflow::class)->selectProvider($record,auth()->user()),'Final provider approved')),
-                Action::make('introduce')->label('Authorize introduction')->icon('heroicon-o-lock-open')
-                    ->visible(fn (Invitation $record) => $record->status==='interested' && !$record->introduced_at && $record->selection_status!=='not_selected')
-                    ->requiresConfirmation()->modalDescription('Release only this provider’s identity to the business. Private provider compensation and the company’s details remain separate.')
-                    ->action(fn (Invitation $record) => ProviderOfferActions::run(fn () => app(CampaignWorkflow::class)->introduce($record,auth()->user()),'Introduction authorized')),
             ])->emptyStateHeading('Send a private provider offer')->emptyStateDescription('Approve a business brief for matching, then send it to several independent creators or talent agencies.');
     }
 

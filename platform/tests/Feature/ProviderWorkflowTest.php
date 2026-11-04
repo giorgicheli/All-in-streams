@@ -217,7 +217,7 @@ class ProviderWorkflowTest extends TestCase
         $this->workflow->deleteCreator($creator, $this->admin);
         $this->assertSoftDeleted($creator);
         $historical = Invitation::eligibleForBusiness()->sole();
-        $this->assertSame($creator->public_name, $historical->forBusiness()['public_name']);
+        $this->assertNull($historical->forBusiness()['public_name']);
         $this->assertSame($creator->id, $historical->creatorProfile->id);
         $this->invalid(fn () => $this->workflow->invite($this->brief(), $creator, $this->admin), 'creator_profile_id');
     }

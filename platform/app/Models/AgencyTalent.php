@@ -12,7 +12,7 @@ class AgencyTalent extends Model
 
     protected $table = 'agency_talents';
 
-    protected $fillable = ['agency_user_id', 'public_name', 'country', 'language', 'platform', 'twitch_url', 'kick_url', 'followers', 'average_viewers', 'audience_geos', 'rate', 'availability', 'status'];
+    protected $fillable = ['agency_user_id', 'creator_type', 'public_name', 'country', 'language', 'platform', 'twitch_url', 'kick_url', 'facebook_url', 'instagram_url', 'youtube_url', 'tiktok_url', 'followers', 'average_viewers', 'audience_geos', 'rate', 'availability', 'status'];
 
     protected function casts(): array
     {

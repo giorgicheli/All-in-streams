@@ -6,6 +6,7 @@ use App\Filament\Resources\PartnerResource\Pages\ListPartners;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -44,6 +45,7 @@ class PartnerResource extends ManagedResource
                 TextEntry::make('account_type_label')->label('Account type')->badge(),
                 TextEntry::make('name')->label('Contact name'),
                 TextEntry::make('email')->label('Contact email')->copyable(),
+                TextEntry::make('telegram')->placeholder('Not provided')->copyable(),
                 TextEntry::make('briefs_count')->label('Campaign briefs'),
                 TextEntry::make('created_at')->label('Registered')->dateTime(),
                 TextEntry::make('is_demo')->label('Workspace')->formatStateUsing(fn (bool $state) => $state ? 'Demo — fictional sample account' : 'Registered partner'),
@@ -58,12 +60,18 @@ class PartnerResource extends ManagedResource
             TextColumn::make('name')->label('Contact')->searchable(),
             TextColumn::make('account_type')->label('Type')->formatStateUsing(fn (?string $state) => $state === 'agency' ? 'Agency' : 'Business')->badge(),
             TextColumn::make('email')->searchable()->copyable(),
+            TextColumn::make('telegram')->searchable()->copyable()->placeholder('Not provided'),
             TextColumn::make('briefs_count')->label('Briefs')->sortable(),
             IconColumn::make('is_demo')->label('Demo')->boolean(),
             TextColumn::make('created_at')->label('Registered')->date()->sortable(),
         ])->filters([
             SelectFilter::make('is_demo')->label('Workspace')->options(['1' => 'Demo accounts', '0' => 'Registered partners']),
-        ])->recordActions([ViewAction::make()])->defaultSort('created_at', 'desc');
+        ])->recordActions([
+            ViewAction::make(),
+            Action::make('attachFiles')->label('Attach files')->icon('heroicon-o-paper-clip')->schema(fn (User $record) => UserFileResource::uploadSchema($record->id))
+                ->action(fn (User $record, array $data) => UserFileResource::upload($data, $record)),
+            Action::make('files')->label('Private files')->icon('heroicon-o-folder')->url(fn (User $record) => UserFileResource::forUserUrl($record)),
+        ])->defaultSort('created_at', 'desc');
     }
 
     public static function getPages(): array

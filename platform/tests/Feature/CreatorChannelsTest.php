@@ -9,16 +9,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
+use Tests\Concerns\FakeCreatorProofVideo;
 
 class CreatorChannelsTest extends TestCase
 {
     use RefreshDatabase;
+    use FakeCreatorProofVideo;
 
     protected function setUp(): void
     {
         parent::setUp();
         config(['app.key' => 'base64:'.base64_encode(random_bytes(32))]);
         $this->withoutVite();
+        $this->fakeCreatorProofVideos();
     }
 
     private function registration(array $values = []): array
@@ -27,6 +30,8 @@ class CreatorChannelsTest extends TestCase
             'name' => 'New Streamer', 'email' => 'streamer@example.test', 'role' => 'creator',
             'password' => 'StrongChannel123!', 'password_confirmation' => 'StrongChannel123!',
             'twitch_url' => 'https://twitch.tv/Stream_Person/',
+            'creator_type' => 'streamer', 'telegram' => '@stream_person',
+            'audience_geos' => ['Canada'], 'verification_video' => $this->creatorProofVideo(),
         ], $values);
     }
 
@@ -137,10 +142,11 @@ class CreatorChannelsTest extends TestCase
 
     public function test_existing_other_platform_profiles_can_still_be_completed(): void
     {
-        $user = User::factory()->create(['role' => 'creator']);
+        $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
         Livewire::actingAs($user)->test(CreatorApplication::class)
-            ->set('country', 'Georgia')->set('platform', 'YouTube')->set('channel_url', 'https://www.youtube.com/@creator_channel')
+            ->set('creator_type', 'influencer')->set('country', 'Georgia')->set('platform', 'YouTube')->set('youtube_url', 'https://www.youtube.com/@creator_channel')
+            ->set('verification_video', $this->creatorProofVideo())
             ->set('followers', '12000')->set('average_viewers', '420')->set('audience_geos', ['Georgia'])->set('rate', '350')
             ->call('submit')->assertHasNoErrors();
 
@@ -150,7 +156,7 @@ class CreatorChannelsTest extends TestCase
 
     public function test_application_validates_each_added_streaming_link(): void
     {
-        $user = User::factory()->create(['role' => 'creator']);
+        $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
         Livewire::actingAs($user)->test(CreatorApplication::class)
             ->set('country', 'Georgia')->call('next')->assertSet('step', 2)
@@ -161,7 +167,7 @@ class CreatorChannelsTest extends TestCase
 
     public function test_legacy_primary_channel_must_match_its_streaming_platform(): void
     {
-        $user = User::factory()->create(['role' => 'creator']);
+        $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
         Livewire::actingAs($user)->test(CreatorApplication::class)
             ->set('country', 'Georgia')->call('next')->assertSet('step', 2)
@@ -171,10 +177,11 @@ class CreatorChannelsTest extends TestCase
 
     public function test_valid_legacy_primary_channel_is_saved_into_its_platform_field(): void
     {
-        $user = User::factory()->create(['role' => 'creator']);
+        $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
         Livewire::actingAs($user)->test(CreatorApplication::class)
             ->set('country', 'Georgia')->set('channel_url', 'https://twitch.tv/Legacy_Person/')
+            ->set('verification_video', $this->creatorProofVideo())
             ->set('followers', '10000')->set('average_viewers', '300')->set('audience_geos', ['Georgia'])->set('rate', '250')
             ->call('submit')->assertHasNoErrors();
 
@@ -194,7 +201,7 @@ class CreatorChannelsTest extends TestCase
 
     public function test_only_kick_link_switches_the_primary_platform_when_twitch_was_selected(): void
     {
-        $user = User::factory()->create(['role' => 'creator']);
+        $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
         Livewire::actingAs($user)->test(CreatorApplication::class)
             ->set('country', 'Georgia')->call('next')->assertSet('step', 2)

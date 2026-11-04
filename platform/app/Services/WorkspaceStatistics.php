@@ -41,6 +41,8 @@ class WorkspaceStatistics
                 'agency_talent_approved' => AgencyTalent::where('status', 'approved')->count(),
                 'creator_accounts' => User::where('role', 'creator')->count(),
                 'creators_total' => CreatorProfile::count(),
+                'streamers_total' => CreatorProfile::where('creator_type', 'streamer')->count(),
+                'influencers_total' => CreatorProfile::where('creator_type', 'influencer')->count(),
                 'creators_approved' => CreatorProfile::where('status', 'approved')->count(),
                 'creators_pending' => CreatorProfile::where('status', 'pending')->count(),
                 'creators_declined' => CreatorProfile::where('status', 'declined')->count(),

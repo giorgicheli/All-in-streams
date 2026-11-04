@@ -21,8 +21,18 @@
         <div wire:key="creator-step-{{ $step }}">
             @if($step === 1)
                 <h2 class="wizard-section-title">Let’s start with you.</h2>
-                <p class="wizard-description">A little about the person behind the stream. Your details stay with the All In Streams team until an introduction is authorized.</p>
+                <p class="wizard-description">Tell us about your content. Your identity, contact details and channels stay private with the All In Streams team.</p>
                 <div class="form-grid">
+                    <div class="form-field">
+                        <label for="creator-type">Creator type</label>
+                        <select id="creator-type" wire:model.live="creator_type"><option value="streamer">Streamer · Twitch / Kick</option><option value="influencer">Influencer · Social media</option></select>
+                        @error('creator_type')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="form-field">
+                        <label for="creator-telegram">Telegram</label>
+                        <input id="creator-telegram" wire:model="telegram" maxlength="100" placeholder="@your_username" autocomplete="off">
+                        @error('telegram')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    </div>
                     <div class="form-field span-two">
                         <label for="creator-name">Creator / public name</label>
                         <input id="creator-name" wire:model="public_name" maxlength="120" autocomplete="nickname" placeholder="The name your community knows" aria-invalid="{{ $errors->has('public_name') ? 'true' : 'false' }}">
@@ -47,11 +57,11 @@
                 </div>
             @elseif($step === 2)
                 <h2 class="wizard-section-title">Where your community comes together.</h2>
-                <p class="wizard-description">Add your Twitch or Kick channel. If you stream on both, share both links so our team can review your complete presence.</p>
+                <p class="wizard-description">{{ $creator_type === 'streamer' ? 'Add at least one Twitch or Kick channel. Share both if you stream on both.' : 'Add at least one Facebook, Instagram, YouTube or TikTok profile. Share every relevant profile with our team.' }}</p>
                 <div class="form-grid">
                     <div class="form-field">
                         <label for="creator-platform">Main platform</label>
-                        <select id="creator-platform" wire:model.live="platform">@foreach(['Twitch', 'YouTube', 'Kick', 'TikTok'] as $option)<option>{{ $option }}</option>@endforeach</select>
+                        <select id="creator-platform" wire:model.live="platform">@foreach($creator_type === 'streamer' ? ['Twitch', 'Kick'] : ['Facebook', 'Instagram', 'YouTube', 'TikTok'] as $option)<option>{{ $option }}</option>@endforeach</select>
                         @error('platform')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <div class="form-field">
@@ -59,6 +69,7 @@
                         <select id="creator-vertical" wire:model="vertical"><option>Gaming</option><option>Esports</option><option>iGaming</option></select>
                         @error('vertical')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
+                    @if($creator_type === 'streamer')
                     <div class="form-field">
                         <label for="creator-twitch">Twitch channel URL</label>
                         <input id="creator-twitch" wire:model="twitch_url" type="url" maxlength="255" inputmode="url" placeholder="https://www.twitch.tv/your_channel" aria-invalid="{{ $errors->has('twitch_url') ? 'true' : 'false' }}">
@@ -69,15 +80,18 @@
                         <input id="creator-kick" wire:model="kick_url" type="url" maxlength="255" inputmode="url" placeholder="https://kick.com/your_channel" aria-invalid="{{ $errors->has('kick_url') ? 'true' : 'false' }}">
                         @error('kick_url')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
-                    @if(in_array($platform, ['YouTube', 'TikTok'], true) || ($channel_url && ! $twitch_url && ! $kick_url))
-                    <div class="form-field span-two">
-                        <label for="creator-channel">{{ in_array($platform, ['YouTube', 'TikTok'], true) ? 'Primary channel URL' : 'Previously added primary channel' }}</label>
-                        <input id="creator-channel" wire:model="channel_url" type="url" maxlength="255" inputmode="url" placeholder="https://www.twitch.tv/your-channel" aria-invalid="{{ $errors->has('channel_url') ? 'true' : 'false' }}">
+                    @else
+                    @foreach(\App\Rules\SocialProfileUrl::FIELDS as $field => $socialPlatform)
+                    <div class="form-field">
+                        <label for="creator-{{ $field }}">{{ $socialPlatform }} profile URL</label>
+                        <input id="creator-{{ $field }}" wire:model="{{ $field }}" type="url" maxlength="255" inputmode="url" placeholder="Your {{ $socialPlatform }} profile link">
+                        @error($field)<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
+                    @endforeach
                     @endif
                     @error('channel_url')<p class="field-error span-two" role="alert">Add a channel link before continuing.</p>@enderror
                 </div>
-                <div class="privacy-note"><x-ui-icon name="lock"/><span>We review your channel to understand your content and audience. Your channel details stay protected in business shortlists until staff authorizes an introduction.</span></div>
+                <div class="privacy-note"><x-ui-icon name="lock"/><span>Only our administrators can see your identity, channel links and contact details. Other companies, creators and agencies cannot view them.</span></div>
             @elseif($step === 3)
                 <h2 class="wizard-section-title">It’s all about your people.</h2>
                 <p class="wizard-description">Recent, representative audience figures help us match you with relevant opportunities.</p>
@@ -88,20 +102,28 @@
                         @error('followers')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <div class="form-field">
-                        <label for="creator-viewers">Average live viewers</label>
+                        <label for="creator-viewers">{{ $creator_type === 'streamer' ? 'Average live viewers' : 'Average content views' }}</label>
                         <input id="creator-viewers" wire:model="average_viewers" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="e.g. 1200">
                         @error('average_viewers')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <fieldset class="form-field span-two">
                         <legend class="field-label">Your main audience markets</legend>
                         <div class="choice-grid">
-                            @foreach(['Germany', 'Austria', 'Switzerland', 'France', 'Poland', 'Portugal', 'Spain', 'Italy', 'Netherlands', 'United Kingdom', 'United States', 'Canada', 'Brazil', 'Mexico', 'Argentina', 'Georgia', 'Turkey', 'Australia', 'India', 'Japan', 'South Korea', 'United Arab Emirates'] as $geo)
+                            @foreach(\App\Models\CreatorProfile::AUDIENCE_COUNTRIES as $geo)
                                 <label class="choice-label"><input type="checkbox" wire:model="audience_geos" value="{{ $geo }}"><span>{{ $geo }}</span></label>
                             @endforeach
                         </div>
                         @error('audience_geos')<p class="field-error" role="alert">Choose at least one audience market.</p>@enderror
                         @error('audience_geos.*')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </fieldset>
+                    <div class="form-field span-two">
+                        <label for="creator-proof-video">Profile and audience verification video</label>
+                        @if($verification_video_original_name)<p class="field-help">Current video: {{ $verification_video_original_name }}. Upload a replacement to update it. Changing creator type requires a new video.</p>@endif
+                        <input id="creator-proof-video" wire:model="verification_video" type="file" accept="video/mp4,video/webm,video/quicktime">
+                        <p class="field-help">Show your own {{ $creator_type === 'streamer' ? 'Twitch or Kick' : 'social media' }} profile and audience countries in a short screen recording. MP4, WebM or MOV; up to {{ app(\App\Services\CreatorProofVideo::class)->maxUploadMb() }} MB and {{ app(\App\Services\CreatorProofVideo::class)->maxDurationSeconds() }} seconds. Only administrators can watch it.</p>
+                        <p class="field-help" wire:loading wire:target="verification_video">Uploading your private video…</p>
+                        @error('verification_video')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                    </div>
                 </div>
                 <div class="privacy-note"><x-ui-icon name="shield"/><span>Your application statistics help our team find the right fit. They are never added automatically to the public campaign gallery.</span></div>
             @elseif($step === 4)
@@ -130,12 +152,20 @@
                 <p class="wizard-description">Check your details, then send your profile to the team for review.</p>
                 <div class="review-grid">
                     <div><small>Creator name</small><strong>{{ $public_name }}</strong></div>
+                    <div><small>Creator type</small><strong>{{ ucfirst($creator_type) }}</strong></div>
+                    <div><small>Telegram</small><strong>{{ $telegram }}</strong></div>
                     <div><small>Country & language</small><strong>{{ $country }} · {{ $language }}</strong></div>
                     <div><small>Main platform</small><strong>{{ $platform }}</strong></div>
                     <div><small>Content category</small><strong>{{ $vertical }}</strong></div>
                     <div class="span-two"><small>Channel URL</small><strong>{{ $channel_url }}</strong></div>
                     @if($twitch_url)<div class="span-two"><small>Twitch channel</small><strong>{{ $twitch_url }}</strong></div>@endif
                     @if($kick_url)<div class="span-two"><small>Kick channel</small><strong>{{ $kick_url }}</strong></div>@endif
+                    @if($creator_type === 'influencer')
+                        @foreach(\App\Rules\SocialProfileUrl::FIELDS as $field => $socialPlatform)
+                            @if($this->{$field})<div class="span-two"><small>{{ $socialPlatform }} profile</small><strong>{{ $this->{$field} }}</strong></div>@endif
+                        @endforeach
+                    @endif
+                    <div class="span-two"><small>Verification video</small><strong>{{ $verification_video ? $verification_video->getClientOriginalName() : ($verification_video_original_name ?: 'Required before submission') }}</strong></div>
                     <div><small>Followers / subscribers</small><strong>{{ number_format((float) $followers) }}</strong></div>
                     <div><small>Average live viewers</small><strong>{{ number_format((float) $average_viewers) }}</strong></div>
                     <div class="span-two"><small>Main audience markets</small><strong>{{ implode(', ', $audience_geos) }}</strong></div>
@@ -144,7 +174,7 @@
                     <div><small>Availability</small><strong>{{ $availability }}</strong></div>
                     @if($bio)<div class="span-two"><small>Your story</small><strong>{{ $bio }}</strong></div>@endif
                 </div>
-                <div class="privacy-note"><x-ui-icon name="shield"/><span>Our team reviews every profile before matching. You choose which invitations to accept; All In Streams coordinates introductions and agreements.</span></div>
+                <div class="privacy-note"><x-ui-icon name="shield"/><span>Our team reviews every profile before matching. You choose which invitations to accept; all communication and agreements go through All In Streams.</span></div>
                 @if($errors->any())<div class="alert" role="alert"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
             @endif
         </div>

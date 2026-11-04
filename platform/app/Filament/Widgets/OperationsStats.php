@@ -37,7 +37,7 @@ class OperationsStats extends StatsOverviewWidget
         return [
             Stat::make('Company accounts', number_format($accounts['companies']))->description('Registered business accounts')->descriptionIcon('heroicon-o-building-office-2')->color('primary'),
             Stat::make('Agency accounts', number_format($accounts['agencies']))->description('Registered agency partners')->descriptionIcon('heroicon-o-building-library')->color('info'),
-            Stat::make('Creator accounts', number_format($accounts['creator_accounts']))->description($accounts['creators_total'].' creator profiles')->descriptionIcon('heroicon-o-users')->color('primary'),
+            Stat::make('Creator accounts', number_format($accounts['creator_accounts']))->description($accounts['streamers_total'].' streamers · '.$accounts['influencers_total'].' influencers')->descriptionIcon('heroicon-o-users')->color('primary'),
             Stat::make('Approved creators', number_format($accounts['creators_approved']))->description('Profiles approved by staff')->descriptionIcon('heroicon-o-check-badge')->color('success'),
             Stat::make('Creator profiles in review', number_format($accounts['creators_pending']))->description($accounts['creators_declined'].' declined profiles')->descriptionIcon('heroicon-o-user-circle')->color('warning'),
             Stat::make('EUR brief budget', 'EUR '.number_format($stats['budget_eur'], 0))->description('EUR briefs only; declined excluded')->descriptionIcon('heroicon-o-currency-euro')->color('primary'),

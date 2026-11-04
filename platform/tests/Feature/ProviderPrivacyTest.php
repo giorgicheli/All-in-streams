@@ -99,8 +99,8 @@ class ProviderPrivacyTest extends TestCase
         $page = $this->actingAs($this->business)->get(route('proposals'))->assertOk();
         foreach (['PROVIDER_IDENTITY_SENTINEL', 'PRIVATE_PROVIDER_COUNTER_SENTINEL', '2345.67', '2,345', '4321.98', '4,321'] as $private) $page->assertDontSee($private);
         $selected = $this->workflow->selectProvider($accepted, $this->admin);
-        $this->assertSame($creator->public_name, $selected->forBusiness()['public_name']);
-        $this->get(route('proposals'))->assertOk()->assertSee($creator->public_name)->assertDontSee('PRIVATE_PROVIDER_COUNTER_SENTINEL')->assertDontSee('2,345');
+        $this->assertNull($selected->forBusiness()['public_name']);
+        $this->get(route('proposals'))->assertOk()->assertDontSee($creator->public_name)->assertDontSee('PRIVATE_PROVIDER_COUNTER_SENTINEL')->assertDontSee('2,345');
         $this->assertNoClientDetails($selected->forRecipient($creator->user));
     }
 

@@ -47,6 +47,7 @@ class AgencyResource extends ManagedResource
             Section::make('Agency account')->schema([
                 TextEntry::make('user.company')->label('Agency'), TextEntry::make('code')->label('Agency code'),
                 TextEntry::make('user.name')->label('Contact name'), TextEntry::make('user.email')->label('Private contact email')->copyable(),
+                TextEntry::make('user.telegram')->label('Private Telegram')->placeholder('Not supplied')->copyable(),
                 TextEntry::make('status')->badge(), TextEntry::make('country')->placeholder('Not supplied'),
                 TextEntry::make('website')->placeholder('Not supplied'), TextEntry::make('services')->badge(),
                 TextEntry::make('languages')->badge(), TextEntry::make('audience_geos')->label('Audience markets')->badge(),

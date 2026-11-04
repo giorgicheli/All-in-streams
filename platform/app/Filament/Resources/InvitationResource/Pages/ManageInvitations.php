@@ -14,7 +14,7 @@ class ManageInvitations extends ManageRecords
 
     public function getSubheading(): ?string
     {
-        return 'Track creator responses and authorize introductions when both sides are ready.';
+        return 'Review private provider responses and approve the final provider. Identities stay private to staff.';
     }
 
     protected function getHeaderActions(): array

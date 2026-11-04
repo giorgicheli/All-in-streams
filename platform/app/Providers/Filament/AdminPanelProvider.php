@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\OperationsDashboard;
 use App\Filament\Pages\WebsiteEditor;
+use App\Filament\Pages\CreatorVideoSettings;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -41,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth(Width::Full)
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->pages([OperationsDashboard::class, WebsiteEditor::class])
+            ->pages([OperationsDashboard::class, WebsiteEditor::class, CreatorVideoSettings::class])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->renderHook('panels::head.end', fn () => new HtmlString('<style>.fi-body{background:#080d0e}.fi-sidebar,.fi-topbar{background:#0b1113}.fi-main{padding-top:2rem}.fi-logo{letter-spacing:-.035em}.fi-sidebar-item-active .fi-sidebar-item-button{border-left:3px solid #c4f853}.fi-section,.fi-ta{border-color:#263235!important}.fi-header-heading{letter-spacing:-.035em}</style>'))
             ->middleware([

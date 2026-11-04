@@ -16,10 +16,12 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
+use Tests\Concerns\FakeCreatorProofVideo;
 
 class MarketplaceTest extends TestCase
 {
     use RefreshDatabase;
+    use FakeCreatorProofVideo;
 
     protected function setUp(): void
     {
@@ -103,7 +105,7 @@ class MarketplaceTest extends TestCase
         $this->assertSame('interested', $invitation->fresh()->status);
     }
 
-    public function test_business_shortlist_hides_identity_and_private_terms_until_authorized(): void
+    public function test_business_shortlist_always_hides_identity_and_private_terms(): void
     {
         $invitation = Invitation::with(['brief', 'creatorProfile'])->where('brief_id', 839)->firstOrFail();
         $safe = $invitation->forBusiness();
@@ -114,7 +116,7 @@ class MarketplaceTest extends TestCase
         $this->assertArrayNotHasKey('user', $safe);
         app(CampaignWorkflow::class)->introduce($invitation, $this->user('admin'));
         $released = $invitation->fresh()->forBusiness();
-        $this->assertSame($invitation->creatorProfile->public_name, $released['public_name']);
+        $this->assertNull($released['public_name']);
         $this->assertArrayNotHasKey('compensation', $released);
     }
 
@@ -169,12 +171,13 @@ class MarketplaceTest extends TestCase
 
     public function test_creator_application_validates_channel_and_awaits_review(): void
     {
-        $user = User::factory()->create(['name' => 'New Creator', 'role' => 'creator']);
+        $this->fakeCreatorProofVideos();
+        $user = User::factory()->create(['name' => 'New Creator', 'role' => 'creator', 'telegram' => '@new_creator']);
         $component = Livewire::actingAs($user)->test(CreatorApplication::class)
             ->set('country', 'Germany')->call('next')->assertSet('step', 2)
             ->set('channel_url', 'javascript:alert(1)')->call('next')->assertHasErrors('channel_url')->assertSet('step', 2)
             ->set('channel_url', 'https://www.twitch.tv/new_creator')->call('next')->assertSet('step', 3)
-            ->set('followers', '25000')->set('average_viewers', '700')->set('audience_geos', ['Germany'])->call('next')->assertSet('step', 4)
+            ->set('followers', '25000')->set('average_viewers', '700')->set('audience_geos', ['Germany'])->set('verification_video', $this->creatorProofVideo())->call('next')->assertSet('step', 4)
             ->set('rate', '500')->call('next')->assertSet('step', 5)->call('submit')->assertHasNoErrors()->assertRedirect(route('creator.opportunities'));
         $profile = CreatorProfile::where('user_id', $user->id)->firstOrFail();
         $this->assertSame('pending', $profile->status);
@@ -202,7 +205,7 @@ class MarketplaceTest extends TestCase
         $invitation->update(['compensation' => 978765.43]);
         $this->actingAs($this->user('business'))->get('/proposals')->assertOk()->assertSee($invitation->creatorProfile->code)->assertDontSee('PRIVATE_CREATOR_92')->assertDontSee('PRIVATE_CHANNEL_92')->assertDontSee('981234')->assertDontSee('978765');
         app(CampaignWorkflow::class)->introduce($invitation, $this->user('admin'));
-        $this->get('/proposals')->assertOk()->assertSee('PRIVATE_CREATOR_92')->assertSee('PRIVATE_CHANNEL_92')->assertDontSee('981234')->assertDontSee('978765');
+        $this->get('/proposals')->assertOk()->assertDontSee('PRIVATE_CREATOR_92')->assertDontSee('PRIVATE_CHANNEL_92')->assertDontSee('981234')->assertDontSee('978765');
     }
 
     public function test_creator_page_does_not_receive_or_render_business_budget_or_private_notes(): void

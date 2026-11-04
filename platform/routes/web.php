@@ -5,6 +5,9 @@ use App\Http\Controllers\AgencyPortalController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ProviderDeliveryController;
 use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\AccountSettingsController;
+use App\Http\Controllers\CreatorProofVideoController;
+use App\Http\Controllers\UserFileController;
 use App\Http\Middleware\EnsureRole;
 use App\Livewire\BriefWizard;
 use App\Livewire\CreatorApplication;
@@ -23,6 +26,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/account', fn (Request $request, AuthController $auth) => redirect($auth->home($request->user())))->name('account');
+    Route::get('/account/settings', [AccountSettingsController::class, 'edit'])->name('account.settings');
+    Route::post('/account/settings', [AccountSettingsController::class, 'update'])->name('account.settings.update');
+    Route::get('/admin/creators/{creator}/verification-video', [CreatorProofVideoController::class, 'show'])->withTrashed()->name('admin.creator-video');
+    Route::post('/admin/user-files/upload', [UserFileController::class, 'store'])->name('admin.user-files.store');
+    Route::get('/admin/user-files/{userFile}/download', [UserFileController::class, 'download'])->name('admin.user-files.download');
+    Route::delete('/admin/user-files/{userFile}', [UserFileController::class, 'destroy'])->name('admin.user-files.destroy');
     Route::get('/documents', [PortalController::class, 'documents'])->name('documents');
     Route::get('/documents/{document}/download', [PortalController::class, 'download'])->name('documents.download');
     Route::get('/briefs/{brief}/attachment', [PortalController::class, 'briefAttachment'])->name('briefs.attachment');

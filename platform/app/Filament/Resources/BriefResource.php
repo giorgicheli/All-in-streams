@@ -60,7 +60,7 @@ class BriefResource extends ManagedResource
                 TextEntry::make('user.email')->label('Business contact'), TextEntry::make('vertical'),
                 TextEntry::make('geos')->badge()->label('Audience GEOs'), TextEntry::make('language'),
                 TextEntry::make('platform'), TextEntry::make('commercial_model')->label('Commercial model'),
-                TextEntry::make('provider_type')->label('Requested provider')->formatStateUsing(fn (string $state) => match ($state) { 'creator' => 'Individual creator', 'agency' => 'Agency', default => 'Creator or agency' }),
+                TextEntry::make('provider_type')->label('Requested provider')->formatStateUsing(fn (string $state) => match ($state) { 'streamer' => 'Streamer', 'influencer' => 'Influencer', 'creator' => 'Individual creator', 'agency' => 'Agency', default => 'Creator or agency' }),
                 TextEntry::make('budget')->money(fn (Brief $record) => $record->currency),
                 TextEntry::make('status')->badge()->formatStateUsing(fn (string $state) => str($state)->replace('_', ' ')->title()),
             ])->columns(2),

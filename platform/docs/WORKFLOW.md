@@ -25,7 +25,7 @@ Providers can express interest, decline or propose changes. A change request inc
 
 Staff can revise the provider's offer. A revised offer requires a fresh provider response; an earlier acceptance does not accept a new offer version. Expressing interest does not select a provider or launch a campaign.
 
-The business may review an anonymized shortlist and request a preferred creator or agency. Only staff make the final selection. Exactly one accepted, approved creator or agency is selected for a brief; the remaining invitations are closed as not selected. Protected provider identities are released to the business only through an authorized introduction. Company identity remains hidden in provider workspaces.
+The business may review an anonymized shortlist and request a preferred streamer, influencer or agency. Only staff make the final selection. Exactly one accepted, approved creator or agency is selected for a brief; the remaining invitations are closed as not selected. Provider and company identities, profile links and contacts always remain private to administrators. Historical introduction timestamps never grant access to an identity. All communication and separate agreements go through All In Streams.
 
 ## Agreements and launch
 

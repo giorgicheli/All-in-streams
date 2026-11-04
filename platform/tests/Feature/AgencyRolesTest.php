@@ -33,6 +33,7 @@ class AgencyRolesTest extends TestCase
         $this->post('/register', [
             'name' => 'Agency Owner', 'company' => 'Orbit Talent', 'email' => 'agency@example.test',
             'role' => 'agency', 'password' => 'StrongAgency123!', 'password_confirmation' => 'StrongAgency123!',
+            'telegram' => '@orbit_agency',
         ])->assertSessionHasNoErrors()->assertRedirect('/agency/dashboard');
 
         $agency = User::where('email', 'agency@example.test')->sole();
@@ -116,6 +117,56 @@ class AgencyRolesTest extends TestCase
             ->assertSessionHasErrors(['twitch_url', 'kick_url']);
         $this->post('/agency/roster', $this->talentData(['twitch_url' => 'https://twitch.tv.example.test/stream']))->assertSessionHasErrors('twitch_url');
         $this->assertDatabaseCount('agency_talents', 0);
+    }
+
+    public function test_agency_influencers_use_social_profiles_and_remain_distinct_from_streamers(): void
+    {
+        $agency = $this->agency();
+        $streamer = $this->talent($agency);
+        $this->actingAs($agency)->post('/agency/roster', $this->talentData([
+            'creator_type'=>'influencer', 'public_name'=>'Orbit Social Talent', 'platform'=>'Instagram',
+            'instagram_url'=>'https://instagram.com/Orbit_Social/', 'country'=>'Canada', 'audience_geos'=>['Canada'],
+            'twitch_url'=>'https://evil.test/ignored', 'status'=>'approved',
+        ]))->assertSessionHasNoErrors()->assertRedirect(route('agency.roster'));
+        $talent = $agency->agencyTalent()->where('creator_type','influencer')->sole();
+        $this->assertSame('pending', $talent->status);
+        $this->assertSame('https://www.instagram.com/orbit_social', $talent->instagram_url);
+        $this->assertNull($talent->twitch_url);
+        $this->assertNull($talent->kick_url);
+        $this->assertDatabaseCount('creator_profiles', 0);
+        $this->get('/agency/roster?creator_type=influencer')->assertOk()->assertSee('Orbit Social Talent')->assertDontSee($streamer->public_name);
+        $this->get('/agency/roster?creator_type=streamer')->assertOk()->assertSee($streamer->public_name)->assertDontSee('Orbit Social Talent');
+
+        $other = $this->agency('private-roster@example.test');
+        $this->actingAs($other)->patch('/agency/roster/'.$talent->id, $this->talentData(['creator_type'=>'influencer']))->assertForbidden();
+        $this->get('/agency/roster?edit='.$talent->id)->assertNotFound();
+    }
+
+    public function test_roster_rejects_cross_type_or_spoofed_social_profiles(): void
+    {
+        $this->actingAs($this->agency());
+        $this->post('/agency/roster', $this->talentData(['creator_type'=>'influencer','platform'=>'Instagram']))->assertSessionHasErrors(['instagram_url','facebook_url','youtube_url','tiktok_url']);
+        $this->post('/agency/roster', $this->talentData(['creator_type'=>'influencer','platform'=>'Instagram','instagram_url'=>'https://instagram.com.evil.test/person']))->assertSessionHasErrors('instagram_url');
+        $this->post('/agency/roster', $this->talentData(['creator_type'=>'streamer','twitch_url'=>'','kick_url'=>'','instagram_url'=>'https://instagram.com/person']))->assertSessionHasErrors(['twitch_url','kick_url']);
+        $this->assertDatabaseCount('agency_talents', 0);
+    }
+
+    public function test_staff_can_create_and_filter_an_agency_influencer_and_canonicalize_their_profile(): void
+    {
+        $agency = $this->agency();
+        $streamer = $this->talent($agency);
+        $this->actingAs(User::factory()->create(['role'=>'admin']));
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+        Livewire::test(TalentsRelationManager::class, ['ownerRecord'=>$agency->agencyProfile, 'pageClass'=>ViewAgency::class])
+            ->callTableAction('create', data:$this->talentData([
+                'creator_type'=>'influencer','public_name'=>'Admin Social Talent','platform'=>'YouTube',
+                'youtube_url'=>'https://youtube.com/@AdminCreator','country'=>'Canada','audience_geos'=>['Canada'],'status'=>'approved',
+            ]))->assertHasNoActionErrors();
+        $influencer = $agency->agencyTalent()->where('creator_type','influencer')->sole();
+        $this->assertSame('https://www.youtube.com/@AdminCreator', $influencer->youtube_url);
+        $this->assertNull($influencer->twitch_url);
+        Livewire::test(TalentsRelationManager::class, ['ownerRecord'=>$agency->agencyProfile, 'pageClass'=>ViewAgency::class])
+            ->filterTable('creator_type','influencer')->assertCanSeeTableRecords([$influencer])->assertCanNotSeeTableRecords([$streamer]);
     }
 
     public function test_a_selected_agency_cannot_replace_its_profile_during_contracts_or_live_delivery(): void

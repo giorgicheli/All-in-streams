@@ -49,7 +49,7 @@ class PartnerDirectoryTest extends TestCase
             ->assertSee('AGENCY PORTAL')->assertSee('Agency account')->assertSee('Demo workspace');
     }
 
-    public function test_both_channel_urls_stay_private_until_an_introduction_is_authorized(): void
+    public function test_both_channel_urls_stay_private_even_with_legacy_introduction(): void
     {
         $this->seed();
         $creator = CreatorProfile::findOrFail(24);
@@ -64,7 +64,7 @@ class PartnerDirectoryTest extends TestCase
 
         app(CampaignWorkflow::class)->introduce($invitation, User::where('role','admin')->firstOrFail());
         $introduced = $invitation->refresh()->forBusiness();
-        $this->assertSame($creator->twitch_url, $introduced['twitch_url']);
-        $this->assertSame($creator->kick_url, $introduced['kick_url']);
+        $this->assertNull($introduced['twitch_url']);
+        $this->assertNull($introduced['kick_url']);
     }
 }

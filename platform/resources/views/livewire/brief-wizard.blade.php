@@ -60,12 +60,12 @@
                     </div>
                     <div class="form-field">
                         <label for="brief-platform">Preferred platform</label>
-                        <select id="brief-platform" wire:model="platform">@foreach(['Twitch', 'YouTube', 'Kick', 'TikTok', 'Multiple'] as $option)<option>{{ $option }}</option>@endforeach</select>
+                        <select id="brief-platform" wire:model="platform">@foreach(['Twitch', 'Kick', 'Facebook', 'Instagram', 'YouTube', 'TikTok', 'Multiple'] as $option)<option>{{ $option }}</option>@endforeach</select>
                         @error('platform')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <div class="form-field span-two">
                         <label for="brief-provider">Who should deliver this campaign?</label>
-                        <select id="brief-provider" wire:model="provider_type"><option value="either">A creator or an agency — let staff recommend</option><option value="creator">Individual creator / streamer</option><option value="agency">Agency with its own roster</option></select>
+                        <select id="brief-provider" wire:model="provider_type"><option value="either">A creator or an agency — let staff recommend</option><option value="streamer">Streamer — Twitch / Kick</option><option value="influencer">Influencer — social media</option><option value="creator">Any individual creator</option><option value="agency">Agency with its own roster</option></select>
                         @error('provider_type')<p class="field-error" role="alert">{{ $message }}</p>@enderror
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                     <div><small>Language & platform</small><strong>{{ $language }} · {{ $platform }}</strong></div>
                     <div><small>Budget</small><strong>{{ number_format((float) $budget, 2) }} {{ $currency }}</strong></div>
                     <div><small>Commercial model</small><strong>{{ $commercial_model === 'Open' ? 'Open to discussion' : $commercial_model }}</strong></div>
-                    <div><small>Provider preference</small><strong>{{ match($provider_type) { 'creator' => 'Individual creator', 'agency' => 'Agency', default => 'Creator or agency' } }}</strong></div>
+                    <div><small>Provider preference</small><strong>{{ match($provider_type) { 'streamer' => 'Streamer', 'influencer' => 'Influencer', 'creator' => 'Individual creator', 'agency' => 'Agency', default => 'Creator or agency' } }}</strong></div>
                     @if($attachment)<div><small>Private brief attachment</small><strong>PDF attached</strong></div>@endif
                     <div><small>Start date</small><strong>{{ $start_date }}</strong></div>
                     <div><small>End date</small><strong>{{ $end_date }}</strong></div>

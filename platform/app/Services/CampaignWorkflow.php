@@ -74,7 +74,7 @@ class CampaignWorkflow
         return DB::transaction(function () use ($brief, $creator, $actor, $terms) {
             $brief = Brief::lockForUpdate()->findOrFail($brief->id);
             $creator = CreatorProfile::withTrashed()->lockForUpdate()->findOrFail($creator->id);
-            $this->canInvite($brief, 'creator');
+            $this->canInvite($brief, $creator->creator_type ?: 'streamer');
             $this->check(! $creator->trashed() && $creator->status === 'approved', 'creator_profile_id', 'Review and approve this creator before sending an invitation.');
             $this->check(! $brief->invitations()->where('creator_profile_id', $creator->id)->exists(), 'creator_profile_id', 'This creator already has an offer for this campaign. Revise that offer instead.');
             $data = $this->offerTerms($brief, $terms, ['compensation' => $creator->rate]);
@@ -182,7 +182,7 @@ class CampaignWorkflow
             $invitation->brief->invitations()->whereKeyNot($invitation->id)->update(['selection_status' => 'not_selected', 'selected_at' => null, 'selected_by' => null]);
             $invitation->update(['selection_status' => 'selected', 'selected_at' => now(), 'selected_by' => $actor->id, 'introduced_at' => $invitation->introduced_at ?? now()]);
             $this->event($invitation, $actor, 'selected', $invitation->compensation, $invitation->cpa_rate, 'All In Streams approved this provider for the campaign.');
-            Activity::create(['brief_id' => $invitation->brief_id, 'user_id' => $actor->id, 'title' => 'Final provider approved', 'body' => 'Your account manager approved '.$invitation->recipient_code.' and authorized the introduction. Separate agreements are next.', 'audience' => 'business']);
+            Activity::create(['brief_id' => $invitation->brief_id, 'user_id' => $actor->id, 'title' => 'Final provider approved', 'body' => 'Your account manager approved '.$invitation->recipient_code.'. Separate agreements are next. All communication stays with All In Streams.', 'audience' => 'business']);
             return $invitation->refresh();
         });
     }
@@ -197,7 +197,7 @@ class CampaignWorkflow
             $this->check($invitation->selection_status !== 'not_selected', 'status', 'This provider is not in the current proposal.');
             if (! $invitation->introduced_at) {
                 $invitation->update(['introduced_at' => now()]);
-                Activity::create(['brief_id' => $invitation->brief_id, 'user_id' => $actor->id, 'title' => 'Creator introduction authorized', 'body' => 'Your account manager has released the profile for '.$invitation->recipient_code.'.', 'audience' => 'business']);
+                Activity::create(['brief_id' => $invitation->brief_id, 'user_id' => $actor->id, 'title' => 'Provider review recorded', 'body' => 'Your account manager reviewed '.$invitation->recipient_code.'. Identities and contacts remain private to All In Streams.', 'audience' => 'business']);
             }
             return $invitation;
         });
@@ -218,7 +218,9 @@ class CampaignWorkflow
     {
         $this->check($brief->status === 'matching', 'brief_id', 'Review and approve the brief for matching before inviting providers.');
         $this->check(! $brief->invitations()->where('selection_status', 'selected')->exists(), 'brief_id', 'A final provider is already selected for this campaign.');
-        $this->check(in_array($brief->provider_type ?: 'either', ['either', $type], true), 'brief_id', 'This brief requests a different provider type.');
+        $allowed = ['either', $type];
+        if (in_array($type, ['streamer', 'influencer'], true)) $allowed[] = 'creator';
+        $this->check(in_array($brief->provider_type ?: 'either', $allowed, true), 'brief_id', 'This brief requests a different provider type.');
     }
 
     private function offerTerms(Brief $brief, array $terms, array $defaults = []): array

@@ -44,7 +44,7 @@ class ProviderOfferActions
     {
         return [
             Select::make('creator_ids')->label('Independent creators')->multiple()->searchable()
-                ->options(fn () => CreatorProfile::where('status', 'approved')->pluck('public_name', 'id')->all()),
+                ->options(fn () => CreatorProfile::where('status', 'approved')->get()->mapWithKeys(fn (CreatorProfile $profile) => [$profile->id => $profile->public_name.' · '.ucfirst($profile->creator_type).' · '.$profile->country.' · EUR '.$profile->rate])->all()),
             Select::make('agency_ids')->label('Talent agencies')->multiple()->searchable()
                 ->options(fn () => User::where('role', 'agency')->whereHas('agencyProfile', fn ($q) => $q->where('status', 'approved')->whereJsonContains('services', 'supply'))
                     ->get()->mapWithKeys(fn (User $user) => [$user->id => $user->company ?: $user->name])->all()),

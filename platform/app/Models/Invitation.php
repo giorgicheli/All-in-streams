@@ -96,7 +96,7 @@ class Invitation extends Model
     {
         if ($text === null) return null;
         $client = $this->brief->user;
-        $identifiers = array_filter([$this->brief->brand, $this->brief->title, $client?->company, $client?->name, $client?->email], fn ($value) => is_string($value) && mb_strlen($value) >= 3);
+        $identifiers = array_filter([$this->brief->brand, $this->brief->title, $client?->company, $client?->name, $client?->email, $client?->telegram], fn ($value) => is_string($value) && mb_strlen($value) >= 3);
         usort($identifiers, fn ($a, $b) => mb_strlen($b) <=> mb_strlen($a));
         return $identifiers ? str_ireplace($identifiers, '[client]', $text) : $text;
     }
@@ -113,13 +113,26 @@ class Invitation extends Model
             'platform' => $profile ? implode(', ', $profile->platforms ?? []) : $creator?->platform,
             'followers' => $creator?->followers ?? 0, 'average_viewers' => $creator?->average_viewers ?? 0,
             'roster_count' => $this->agency_user_id ? AgencyTalent::where('agency_user_id', $this->agency_user_id)->where('status', 'approved')->count() : 0,
-            'deliverables' => $this->deliverables, 'status' => $this->status, 'selection_status' => $this->selection_status,
-            'public_name' => $this->introduced_at ? $this->recipient_name : null,
-            'channel_url' => $this->introduced_at ? ($profile?->website ?: $creator?->channel_url) : null,
-            'twitch_url' => $this->introduced_at ? $creator?->twitch_url : null,
-            'kick_url' => $this->introduced_at ? $creator?->kick_url : null,
-            'introduced' => $this->introduced_at !== null, 'brief_id' => $this->brief_id,
+            'creator_type' => $creator?->creator_type,
+            'deliverables' => $this->businessText($this->deliverables), 'status' => $this->status, 'selection_status' => $this->selection_status,
+            // Legacy introduction timestamps are audit history, never permission to release identity.
+            'public_name' => null, 'channel_url' => null, 'twitch_url' => null, 'kick_url' => null,
+            'introduced' => false, 'brief_id' => $this->brief_id,
             'brief_status' => $this->brief->status, 'title' => $this->brief->title,
         ];
+    }
+
+    private function businessText(?string $text): ?string
+    {
+        if ($text === null) return null;
+        $creator = $this->creatorProfile;
+        $user = $this->agency_user_id ? $this->agency : $creator?->user;
+        $identifiers = array_filter([
+            $this->recipient_name, $user?->name, $user?->company, $user?->email, $user?->telegram,
+            $this->agency?->agencyProfile?->website,
+            ...array_map(fn ($field) => $creator?->{$field}, ['channel_url', 'twitch_url', 'kick_url', 'facebook_url', 'instagram_url', 'youtube_url', 'tiktok_url']),
+        ], fn ($value) => is_string($value) && mb_strlen($value) >= 3);
+        usort($identifiers, fn ($a, $b) => mb_strlen($b) <=> mb_strlen($a));
+        return $identifiers ? str_ireplace($identifiers, '[provider]', $text) : $text;
     }
 }
