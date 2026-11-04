@@ -1,4 +1,4 @@
-/** Progressive motion: content stays visible until an in-view animation starts. */
+/** Progressive motion: JavaScript arms offscreen content before its entrance. */
 const instances = new WeakMap();
 const controllers = new Set();
 let hookedLivewire = null;
@@ -11,7 +11,7 @@ const REVEAL_TARGETS = [
     '.hero-buttons', '.hero-footnote', '.section-heading', '.audience-card',
     '.industry-card', '.how-intro', '.process-step', '.gallery-tabs',
     '.gallery-empty', '.gallery-privacy', '.faq-wrap > div:first-child',
-    '.faq-list details', '.cta-box', '.auth-story-content', '.auth-form',
+    '.faq-list details', '.cta-copy', '.cta-buttons', '.auth-story-content', '.auth-form',
     '.page-heading', '.overview-banner', '.privacy-note',
     '.portal-content > .stats-grid > .stat-card', '.portal-content > .panel',
     '.dashboard-bottom > .panel', '.campaign-detail-grid > div > .panel',
@@ -23,7 +23,7 @@ const REVEAL_TARGETS = [
 const REVEAL_GROUPS = [
     '[data-motion-group]', '.hero-copy', '.audience-cards', '.stats-grid',
     '.creators-grid', '.dashboard-bottom', '.campaign-detail-grid',
-    '.how-grid', '.faq-wrap', '.process-list', '.invite-list',
+    '.how-grid', '.faq-wrap', '.process-list', '.invite-list', '.cta-box',
 ].join(',');
 
 function connectLivewire() {
@@ -77,7 +77,17 @@ export function initializeMotion(root = document) {
     const listeners = [];
     let disposed = false;
     let refreshFrame = 0;
+    let revealObserver = null;
+    let observerInset = -1;
     const queuedRoots = new Set();
+
+    // Pixel margins track viewport height; IntersectionObserver percentages
+    // would instead be calculated from its width, especially poorly on phones.
+    function revealInset() {
+        return Math.round(Math.max(64, Math.min(160, win.innerHeight * 0.18)));
+    }
+
+    function triggerLine() { return win.innerHeight - revealInset(); }
 
     function listen(target, event, callback, options) {
         target.addEventListener(event, callback, options);
@@ -103,7 +113,7 @@ export function initializeMotion(root = document) {
         if (!disposed) element.setAttribute('data-ais-reveal', 'done');
     }
 
-    function reveal(element, delay = 180) {
+    function reveal(element, delay = 60) {
         if (seen.has(element) || !belongs(element)) return;
         seen.add(element);
         revealObserver?.unobserve(element);
@@ -111,15 +121,16 @@ export function initializeMotion(root = document) {
             element.setAttribute('data-ais-reveal', 'done');
             return;
         }
-        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 900 : 1000;
+        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 780 : 860;
+        const lift = element.matches('.cta-copy, .cta-buttons') ? 8 : 10;
         const frames = canTranslate
-            ? [{ opacity: 0, translate: '0 18px' }, { opacity: 1, translate: '0 0' }]
+            ? [{ opacity: 0, translate: `0 ${lift}px` }, { opacity: 1, translate: '0 0' }]
             : [{ opacity: 0 }, { opacity: 1 }];
 
         try {
             element.setAttribute('data-ais-reveal', 'running');
             const animation = element.animate(frames, {
-                duration, delay, easing: 'cubic-bezier(.22,.6,.3,1)', fill: 'backwards',
+                duration, delay, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards',
             });
             animations.set(element, animation);
             animation.finished.then(() => {
@@ -132,7 +143,7 @@ export function initializeMotion(root = document) {
         }
     }
 
-    function revealBatch(entries) {
+    function revealBatch(entries, initial = false) {
         const entering = entries.filter(entry => entry.isIntersecting && !seen.has(entry.target) && belongs(entry.target));
         if (!entering.length) return;
 
@@ -143,19 +154,39 @@ export function initializeMotion(root = document) {
         for (const element of targets) {
             if (seen.has(element) || !belongs(element) || !element.getClientRects().length) continue;
             const bounds = element.getBoundingClientRect();
-            if (!bounds.width || !bounds.height || bounds.bottom <= 0 || bounds.top >= win.innerHeight - 28 || bounds.right <= 0 || bounds.left >= win.innerWidth) continue;
+            // Edge contact is intersecting even with a zero-area intersection.
+            // Include its rounding epsilon so that target cannot stay armed.
+            if (!bounds.width || !bounds.height || bounds.bottom <= 0 || bounds.top > triggerLine() + 0.5 || bounds.right <= 0 || bounds.left >= win.innerWidth) continue;
             if (win.getComputedStyle(element).visibility === 'hidden') continue;
             candidates.push({ element, bounds, group: element.closest(REVEAL_GROUPS) ?? element.parentElement });
         }
         const schedules = new Map();
         for (const entry of entering) {
             const candidate = candidates.find(item => item.element === entry.target);
-            if (!candidate) { schedules.set(entry.target, 180); continue; }
+            if (!candidate) {
+                if (entry.target.getBoundingClientRect().bottom <= 0) {
+                    seen.add(entry.target);
+                    revealObserver?.unobserve(entry.target);
+                    clearReveal(entry.target);
+                }
+                continue;
+            }
+            // A quick scroll or anchor jump must not leave content near the
+            // header blank while waiting for an entrance from lower down.
+            if (!initial && candidate.bounds.top < win.innerHeight * 0.2) {
+                seen.add(entry.target);
+                revealObserver?.unobserve(entry.target);
+                clearReveal(entry.target);
+                continue;
+            }
             const intro = candidate.group?.matches('.hero-copy');
-            const peers = candidates.filter(item => item.group === candidate.group && (intro || Math.abs(item.bounds.top - candidate.bounds.top) <= 18));
+            const cta = candidate.group?.matches('.cta-box');
+            const peers = candidates.filter(item => item.group === candidate.group && (intro
+                || Math.abs(item.bounds.top - candidate.bounds.top) <= 18
+                || (cta && Math.min(item.bounds.bottom, candidate.bounds.bottom) > Math.max(item.bounds.top, candidate.bounds.top))));
             peers.sort((a, b) => intro ? a.bounds.top - b.bounds.top || a.bounds.left - b.bounds.left : a.bounds.left - b.bounds.left || a.bounds.top - b.bounds.top);
             peers.forEach((item, index) => {
-                const delay = 180 + Math.min(index, intro ? 4 : 5) * (intro ? 80 : 180);
+                const delay = 60 + Math.min(index, intro ? 4 : 3) * (intro ? 70 : 100);
                 if (!schedules.has(item.element)) schedules.set(item.element, delay);
             });
         }
@@ -164,9 +195,21 @@ export function initializeMotion(root = document) {
         schedules.forEach((delay, element) => reveal(element, delay));
     }
 
-    const revealObserver = canObserve ? new win.IntersectionObserver(entries => {
-        revealBatch(entries);
-    }, { threshold: 0.08, rootMargin: '0px 0px -28px 0px' }) : null;
+    function configureRevealObserver() {
+        if (!canObserve) return;
+        const inset = revealInset();
+        if (revealObserver && observerInset === inset) return;
+        revealObserver?.disconnect();
+        observerInset = inset;
+        revealObserver = new win.IntersectionObserver(entries => {
+            if (!reduced.matches) revealBatch(entries);
+        }, { threshold: 0, rootMargin: `0px 0px -${inset}px 0px` });
+        for (const element of targets) {
+            if (!seen.has(element) && belongs(element)) revealObserver.observe(element);
+        }
+    }
+
+    configureRevealObserver();
 
     function setHeroState(hero) {
         const running = !disposed && hero.inView && !doc.hidden && !reduced.matches;
@@ -232,18 +275,32 @@ export function initializeMotion(root = document) {
 
     function scan(scope = root) {
         if (disposed || !scope?.querySelectorAll) return;
+        const initiallyVisible = [];
         for (const element of elementsWithin(scope, REVEAL_TARGETS)) {
             if (!belongs(element) || targets.has(element)) continue;
             // Animate the outer section once; never compound parent/child fades.
             const ancestor = element.parentElement?.closest(REVEAL_TARGETS);
             if (ancestor && belongs(ancestor)) continue;
             targets.add(element);
-            element.setAttribute('data-ais-reveal', 'ready');
             if (reduced.matches || !revealObserver || !canAnimate) {
                 seen.add(element);
                 element.setAttribute('data-ais-reveal', 'done');
-            } else revealObserver.observe(element);
+            } else {
+                const bounds = element.getBoundingClientRect();
+                if (bounds.bottom <= 0) {
+                    seen.add(element);
+                    element.setAttribute('data-ais-reveal', 'done');
+                } else if (bounds.width && bounds.height && bounds.top < triggerLine()) {
+                    // Start the initial viewport in this same task. Never paint
+                    // visible content and hide it in a later observer callback.
+                    initiallyVisible.push({ target: element, isIntersecting: true });
+                } else {
+                    element.setAttribute('data-ais-reveal', 'ready');
+                    revealObserver.observe(element);
+                }
+            }
         }
+        revealBatch(initiallyVisible, true);
         elementsWithin(scope, '.hero-visual').forEach(element => {
             if (belongs(element)) registerHero(element);
         });
@@ -325,8 +382,12 @@ export function initializeMotion(root = document) {
     controllers.add(controller);
     instances.set(root, cleanup);
     listen(root, 'focusin', event => {
-        for (const element of animations.keys()) {
-            if (element.contains(event.target)) clearReveal(element);
+        for (const element of targets) {
+            if (element.contains(event.target)) {
+                seen.add(element);
+                revealObserver?.unobserve(element);
+                clearReveal(element);
+            }
         }
     }, { capture: true });
     listen(doc, 'visibilitychange', () => {
@@ -334,7 +395,10 @@ export function initializeMotion(root = document) {
         heroes.forEach(setHeroState);
     });
     listen(doc, 'livewire:navigating', cleanup);
-    listen(win, 'resize', () => heroes.forEach(resetTilt), { passive: true });
+    listen(win, 'resize', () => {
+        configureRevealObserver();
+        heroes.forEach(resetTilt);
+    }, { passive: true });
     listenMedia(reduced, preferenceChanged);
     listenMedia(desktopPointer, () => heroes.forEach(setHeroState));
     preferenceChanged();

@@ -1,4 +1,4 @@
-/* Motion is opt-in at runtime. No reveal selector makes resting content hidden. */
+/* Content remains visible without JavaScript. Only armed offscreen targets wait. */
 html.ais-motion-smooth {
     scroll-behavior: smooth;
     scroll-padding-top: 108px;
@@ -13,6 +13,11 @@ html.ais-motion-smooth.lenis {
 html.ais-motion-smooth .section[id],
 html.ais-motion-smooth .cta-section[id] {
     scroll-margin-top: 20px;
+}
+
+[data-ais-reveal="ready"] {
+    opacity: 0;
+    pointer-events: none;
 }
 
 [data-ais-reveal="running"] {
@@ -109,5 +114,9 @@ html.ais-motion-smooth .cta-section[id] {
     }
     [data-ais-reveal] {
         will-change: auto;
+    }
+    [data-ais-reveal="ready"] {
+        opacity: 1;
+        pointer-events: auto;
     }
 }
