@@ -18,6 +18,7 @@
 @import './partner-enquiry.css';
 @import './public-refinement.css';
 @import './creator-network.css';
+@import './password-recovery.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

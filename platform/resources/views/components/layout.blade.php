@@ -1,4 +1,4 @@
-@props(['title' => 'Creator partnerships. All in.', 'description' => null, 'lightPreview' => false, 'lightTheme' => true])
+@props(['title' => 'Creator partnerships. All in.', 'description' => null, 'lightPreview' => false, 'lightTheme' => true, 'sensitive' => false])
 <!doctype html>
 <html lang="en" @if($lightTheme) class="light-preview" @endif><head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -6,12 +6,13 @@
     <meta name="description" content="{{ $description ?? $site['site_description'] }}">
     <meta name="theme-color" content="{{ $lightTheme ? '#F6F7F0' : '#090d0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
     @if($lightPreview)<meta name="robots" content="noindex, nofollow">@endif
+    @if($sensitive)<meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer">@endif
     <link rel="icon" href="/favicon.ico?v=2" sizes="any">
     <link rel="icon" href="/favicon-32x32.png?v=2" type="image/png" sizes="32x32">
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180">
     @vite(['resources/css/app.css','resources/js/app.js'])
-    @unless($lightPreview)
+    @unless($lightPreview || $sensitive)
         @livewireStyles
     @endunless
 </head><body @if($lightTheme) class="theme-white" @endif>
@@ -26,7 +27,7 @@
             }, true);
         </script>
     @endif
-    @unless($lightPreview)
+    @unless($lightPreview || $sensitive)
         @livewireScripts
     @endunless
 </body></html>

@@ -11,6 +11,8 @@ use App\Http\Middleware\EnsurePartnerVerified;
 use App\Http\Controllers\AccountSettingsController;
 use App\Http\Controllers\CreatorProofVideoController;
 use App\Http\Controllers\UserFileController;
+use App\Http\Controllers\PasswordResetController;
+use App\Http\Middleware\SensitiveAuthResponse;
 use App\Http\Middleware\EnsureRole;
 use App\Livewire\BriefWizard;
 use App\Livewire\CreatorApplication;
@@ -30,6 +32,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::view('/register', 'auth.register')->name('register');
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
+});
+Route::middleware([SensitiveAuthResponse::class, 'guest'])->group(function () {
+    Route::get('/forgot-password', [PasswordResetController::class, 'requestForm'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'email'])->middleware('throttle:password-email-ip')->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'resetForm'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'update'])->middleware('throttle:password-update-ip')->name('password.update');
 });
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

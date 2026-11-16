@@ -15,5 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn (\Illuminate\Http\Request $request) => '/account');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->dontFlash(['token', 'smtp_password', 'data.password', 'data.smtp_password']);
+        $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response) {
+            return request()->routeIs('password.*')
+                ? \App\Http\Middleware\SensitiveAuthResponse::protect($response)
+                : $response;
+        });
     })->create();

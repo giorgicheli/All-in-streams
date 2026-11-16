@@ -4,9 +4,12 @@
     <div class="auth-form" x-data="{email:{{ Js::from(old('email','')) }},password:''}">
         <a href="/" class="auth-back"><x-ui-icon name="left" size="14"/> {{ $site['auth']['back_label'] }}</a>
         <span class="eyebrow">{{ $copy['eyebrow'] }}</span><h2>{{ $copy['title'] }}</h2><p class="muted">{{ $copy['description'] }}</p>
+        @if(session('status'))<div class="auth-notice" role="status">{{ session('status') }}</div>@endif
+        @if(session('error'))<div class="auth-notice auth-notice-error" role="alert">{{ session('error') }}</div>@endif
         <form method="POST" action="/login">@csrf
             <div class="form-field"><label for="email">{{ $labels['email'] }}</label><input id="email" name="email" type="email" x-model="email" autocomplete="username" placeholder="you@company.com" required autofocus>@error('email')<span class="field-error">{{ $message }}</span>@enderror</div>
             <div class="form-field"><label for="password">{{ $labels['password'] }}</label><input id="password" name="password" type="password" x-model="password" autocomplete="current-password" placeholder="{{ $labels['password'] }}" required>@error('password')<span class="field-error">{{ $message }}</span>@enderror</div>
+            <div class="auth-recovery-links"><a href="{{ route('password.request') }}">Forgot your password?</a></div>
             <label class="field-help flex items-center gap-2 mb-6"><input type="checkbox" name="remember" class="accent-lime-300"> {{ $copy['remember_label'] }}</label>
             <button class="btn btn-primary btn-block">{{ $copy['submit_label'] }} <x-ui-icon name="right" size="16"/></button>
         </form>
