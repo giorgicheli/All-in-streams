@@ -2,6 +2,13 @@ const instances = new WeakMap();
 const svgNamespace = 'http://www.w3.org/2000/svg';
 const connections = [[0, 1], [0, 2], [1, 3], [2, 3]];
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
+const simulationInterval = 1 / 120;
+let sceneSequence = 0;
+const connectorColors = {
+    'anchor-0': ['#72f6e4', '#72f6e4'], 'anchor-1': ['#b0bbff', '#b0bbff'],
+    '0-1': ['#72f6e4', '#b0bbff'], '0-2': ['#72f6e4', '#49d5e6'],
+    '1-3': ['#b0bbff', '#91e5cf'], '2-3': ['#49d5e6', '#eaa6b4'],
+};
 
 export function initializeRopeStatistics(root = document) {
     instances.get(root)?.();
@@ -33,14 +40,17 @@ function createRopeStatistics(element) {
     const listenerOptions = { signal: events.signal };
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     const compact = matchMedia('(max-width: 700px)');
-    const nodes = cards.map((card, index) => ({ card, index, x: 0, y: 0, previousX: 0, previousY: 0, restX: 0, restY: 0, width: 0, height: 0 }));
+    const nodes = cards.map((card, index) => ({ card, index, x: 0, y: 0, previousX: 0, previousY: 0, restX: 0, restY: 0, width: 0, height: 0, rotation: 0, fromX: 0, fromY: 0 }));
     const anchors = [{ fixed: true, x: 0, y: 0 }, { fixed: true, x: 0, y: 0 }];
     const paths = new Map();
+    const ports = new Map();
     const createdPaths = [];
+    const createdElements = [];
     const constraints = [];
     let frame = 0;
     let elapsed = 0;
     let previousTime = 0;
+    let accumulator = 0;
     let width = 0;
     let height = 0;
     let inView = true;
@@ -48,6 +58,11 @@ function createRopeStatistics(element) {
     let pageSuspended = false;
     let disposed = false;
     let drag = null;
+
+    const definitions = document.createElementNS(svgNamespace, 'defs');
+    svg.prepend(definitions);
+    createdElements.push(definitions);
+    const sceneId = `rope-connectors-${++sceneSequence}`;
 
     for (const name of ['anchor-0', 'anchor-1', ...connections.map(pair => pair.join('-'))]) {
         let path = [...svg.querySelectorAll('[data-rope-link]')].find(item => item.dataset.ropeLink === name);
@@ -57,6 +72,28 @@ function createRopeStatistics(element) {
             svg.append(path);
             createdPaths.push(path);
         }
+        const colors = connectorColors[name];
+        const gradient = document.createElementNS(svgNamespace, 'linearGradient');
+        gradient.id = `${sceneId}-${name}`;
+        gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
+        colors.forEach((color, index) => {
+            const stop = document.createElementNS(svgNamespace, 'stop');
+            stop.setAttribute('offset', index === 0 ? '0%' : '100%');
+            stop.setAttribute('stop-color', color);
+            gradient.append(stop);
+        });
+        definitions.append(gradient);
+        path.style.stroke = `url(#${gradient.id})`;
+        const endpoints = colors.map((color, index) => {
+            const port = document.createElementNS(svgNamespace, 'circle');
+            port.dataset.ropePort = `${name}:${index === 0 ? 'start' : 'end'}`;
+            port.setAttribute('r', name.startsWith('anchor-') && index === 0 ? '1.5' : '2.8');
+            port.style.fill = color;
+            svg.append(port);
+            createdElements.push(port);
+            return port;
+        });
+        ports.set(name, { endpoints, gradient });
         paths.set(name, path);
     }
 
@@ -67,6 +104,8 @@ function createRopeStatistics(element) {
     function stop() {
         cancelAnimationFrame(frame);
         frame = previousTime = 0;
+        accumulator = 0;
+        nodes.forEach(node => { node.fromX = node.x; node.fromY = node.y; });
     }
 
     function wake() {
@@ -103,6 +142,9 @@ function createRopeStatistics(element) {
             bounds(node);
             node.restX = node.previousX = node.x;
             node.restY = node.previousY = node.y;
+            node.fromX = node.x;
+            node.fromY = node.y;
+            node.rotation = 0;
         });
         anchors.forEach((anchor, index) => {
             anchor.x = nodes[index].restX;
@@ -116,7 +158,7 @@ function createRopeStatistics(element) {
         wake();
     }
 
-    function solveRopes() {
+    function solveRopes(step) {
         for (const constraint of constraints) {
             const { first, second, length, stiffness } = constraint;
             const dx = second.x - first.x;
@@ -126,7 +168,7 @@ function createRopeStatistics(element) {
             const secondWeight = drag?.node === second ? 0 : 1;
             const weight = firstWeight + secondWeight;
             if (!weight) continue;
-            const correction = (distance - length) / distance * stiffness;
+            const correction = (distance - length) / distance * (1 - Math.pow(1 - stiffness, step));
             first.x += dx * correction * firstWeight / weight;
             first.y += dy * correction * firstWeight / weight;
             second.x -= dx * correction * secondWeight / weight;
@@ -180,40 +222,73 @@ function createRopeStatistics(element) {
         });
     }
 
-    function paintRope(path, first, second, ceiling) {
-        const dx = second.x - first.x;
-        const dy = second.y - first.y;
-        const bend = ceiling ? 2 : clamp(Math.abs(dx) * .035 + 4, 4, 15);
-        const middleX = (first.x + second.x) / 2 + (Math.abs(dy) > Math.abs(dx) ? bend : 0);
-        const middleY = (first.y + second.y) / 2 + (Math.abs(dx) >= Math.abs(dy) ? bend : 0);
-        path.setAttribute('d', `M${first.x.toFixed(2)} ${first.y.toFixed(2)} Q${middleX.toFixed(2)} ${middleY.toFixed(2)} ${second.x.toFixed(2)} ${second.y.toFixed(2)}`);
+    function cardPort(node, side) {
+        const radians = node.rotation * Math.PI / 180;
+        const cos = Math.cos(radians);
+        const sin = Math.sin(radians);
+        const direction = { left: [-1, 0], right: [1, 0], top: [0, -1], bottom: [0, 1] }[side];
+        const localX = direction[0] * (node.width / 2 + 1);
+        const localY = direction[1] * (node.height / 2 + 1);
+        return {
+            x: node.visualX + localX * cos - localY * sin,
+            y: node.visualY + localX * sin + localY * cos,
+            nx: direction[0] * cos - direction[1] * sin,
+            ny: direction[0] * sin + direction[1] * cos,
+        };
     }
 
-    function paint() {
-        nodes.forEach(node => {
-            const idleRotation = reducedMotion.matches ? 0 : Math.sin(elapsed * .72 + node.index * .9) * .65;
-            const rotation = reducedMotion.matches ? 0 : clamp((node.x - node.restX) * .055 + (node.x - node.previousX) * .75 + idleRotation, -6, 6);
-            node.card.style.transform = `translate3d(${(node.x - node.width / 2).toFixed(2)}px, ${(node.y - node.height / 2).toFixed(2)}px, 0) rotate(${rotation.toFixed(3)}deg)`;
+    function paintRope(name, first, second, ceiling) {
+        const path = paths.get(name);
+        const dx = second.x - first.x;
+        const dy = second.y - first.y;
+        const distance = Math.max(1, Math.hypot(dx, dy));
+        const handle = clamp(distance * .42, compact.matches ? 10 : 16, ceiling ? 34 : 88);
+        const sag = ceiling ? 0 : Math.min(compact.matches ? 9 : 18, distance * .22);
+        const horizontal = Math.abs(first.nx) > Math.abs(first.ny);
+        const bendX = horizontal ? 0 : sag;
+        const bendY = horizontal ? sag : 0;
+        path.setAttribute('d', `M${first.x.toFixed(2)} ${first.y.toFixed(2)} C${(first.x + first.nx * handle + bendX).toFixed(2)} ${(first.y + first.ny * handle + bendY).toFixed(2)} ${(second.x + second.nx * handle + bendX).toFixed(2)} ${(second.y + second.ny * handle + bendY).toFixed(2)} ${second.x.toFixed(2)} ${second.y.toFixed(2)}`);
+        const { endpoints, gradient } = ports.get(name);
+        [first, second].forEach((point, index) => {
+            endpoints[index].setAttribute('cx', point.x.toFixed(2));
+            endpoints[index].setAttribute('cy', point.y.toFixed(2));
         });
-        anchors.forEach((anchor, index) => paintRope(paths.get(`anchor-${index}`), anchor, nodes[index], true));
-        connections.forEach(([first, second]) => paintRope(paths.get(`${first}-${second}`), nodes[first], nodes[second], false));
+        gradient.setAttribute('x1', first.x);
+        gradient.setAttribute('y1', first.y);
+        gradient.setAttribute('x2', second.x);
+        gradient.setAttribute('y2', second.y);
+    }
+
+    function paint(alpha = 1, frameSeconds = 1 / 60) {
+        nodes.forEach(node => {
+            node.visualX = drag?.node === node ? drag.x : node.fromX + (node.x - node.fromX) * alpha;
+            node.visualY = drag?.node === node ? drag.y : node.fromY + (node.y - node.fromY) * alpha;
+            const idleRotation = Math.sin(elapsed * .65 + node.index * .9) * .45;
+            const target = clamp((node.x - node.restX) * .04 + (node.x - node.previousX) * 1.1 + idleRotation, -4.5, 4.5);
+            node.rotation = reducedMotion.matches ? 0 : node.rotation + (target - node.rotation) * (1 - Math.exp(-11 * frameSeconds));
+            node.card.style.transform = `translate3d(${(node.visualX - node.width / 2).toFixed(2)}px, ${(node.visualY - node.height / 2).toFixed(2)}px, 0) rotate(${node.rotation.toFixed(3)}deg)`;
+        });
+        anchors.forEach((anchor, index) => paintRope(`anchor-${index}`, { ...anchor, nx: 0, ny: 1 }, cardPort(nodes[index], 'top'), true));
+        connections.forEach(([first, second]) => {
+            const horizontal = first === 0 && second === 1 || first === 2 && second === 3;
+            paintRope(`${first}-${second}`, cardPort(nodes[first], horizontal ? 'right' : 'bottom'), cardPort(nodes[second], horizontal ? 'left' : 'top'), false);
+        });
         element.dataset.ropeState = drag ? 'dragging' : 'ready';
     }
 
-    function animate(time) {
-        frame = 0;
-        if (!permitted()) return;
-        const step = previousTime ? Math.min((time - previousTime) / (1000 / 60), 2) : 1;
-        previousTime = time;
+    function simulate() {
+        const step = .5;
         elapsed += step / 60;
         nodes.forEach(node => {
+            node.fromX = node.x;
+            node.fromY = node.y;
             if (drag?.node === node) {
                 node.x = drag.x;
                 node.y = drag.y;
                 return;
             }
-            const velocityX = (node.x - node.previousX) * Math.pow(.965, step);
-            const velocityY = (node.y - node.previousY) * Math.pow(.965, step);
+            const velocityX = (node.x - node.previousX) * Math.pow(.955, step);
+            const velocityY = (node.y - node.previousY) * Math.pow(.955, step);
             node.previousX = node.x;
             node.previousY = node.y;
             const breeze = reducedMotion.matches ? 0 : Math.sin(elapsed * .75 + node.index * .6) * .014;
@@ -221,11 +296,23 @@ function createRopeStatistics(element) {
             node.y += velocityY + ((node.restY - node.y) * .0035 + .04) * step * step;
         });
         for (let pass = 0; pass < 4; pass++) {
-            solveRopes();
+            solveRopes(step);
             separateCards();
             nodes.forEach(bounds);
         }
-        paint();
+    }
+
+    function animate(time) {
+        frame = 0;
+        if (!permitted()) return;
+        const delta = previousTime ? Math.min((time - previousTime) / 1000, 1 / 15) : 1 / 60;
+        previousTime = time;
+        accumulator += delta;
+        while (accumulator >= simulationInterval) {
+            simulate();
+            accumulator -= simulationInterval;
+        }
+        paint(accumulator / simulationInterval, delta);
         wake();
     }
 
@@ -236,8 +323,8 @@ function createRopeStatistics(element) {
         const { node, pointerId } = previousDrag;
         const pointerRestTime = performance.now() - previousDrag.lastTime;
         const inertia = cancelled || reducedMotion.matches ? 0 : .72 * Math.exp(-pointerRestTime / 110);
-        node.previousX = node.x - previousDrag.velocityX * inertia;
-        node.previousY = node.y - previousDrag.velocityY * inertia;
+        node.previousX = node.x - previousDrag.velocityX * inertia * .5;
+        node.previousY = node.y - previousDrag.velocityY * inertia * .5;
         delete node.card.dataset.ropeDragging;
         if (node.card.hasPointerCapture(pointerId)) node.card.releasePointerCapture(pointerId);
         if (reducedMotion.matches) {
@@ -363,6 +450,8 @@ function createRopeStatistics(element) {
         resizeObserver.disconnect();
         nodes.forEach(node => { node.card.style.removeProperty('transform'); delete node.card.dataset.ropeDragging; });
         createdPaths.forEach(path => path.remove());
+        createdElements.forEach(item => item.remove());
+        paths.forEach(path => path.style.removeProperty('stroke'));
         delete element.dataset.ropeState;
     }
 

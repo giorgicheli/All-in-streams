@@ -27,16 +27,36 @@
 
 .rope-statistics-ropes path {
     fill: none;
-    stroke: #8cacae;
-    stroke-width: 1.25px;
+    stroke: #72f6e4;
+    stroke-width: 1.65px;
     stroke-linecap: round;
-    opacity: .52;
+    opacity: .8;
     vector-effect: non-scaling-stroke;
 }
 
 .rope-statistics-ropes path[data-rope-link^='anchor-'] {
-    stroke: #a9b5d6;
-    opacity: .56;
+    stroke-width: 1.15px;
+    opacity: .32;
+}
+
+.rope-statistics-ropes path[data-rope-link='0-2'] {
+    stroke-dasharray: 6 6;
+    opacity: .85;
+}
+
+.rope-statistics-ropes path[data-rope-link='2-3'] {
+    stroke-dasharray: 2.5 5.5;
+    opacity: .9;
+}
+
+.rope-statistics-ropes circle {
+    stroke: #0b1418;
+    stroke-width: 1.8px;
+    vector-effect: non-scaling-stroke;
+}
+
+.rope-statistics-ropes circle[data-rope-port^='anchor-'] {
+    opacity: .6;
 }
 
 .rope-statistics-board {
@@ -67,7 +87,7 @@
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    transform-origin: 50% 0;
+    transform-origin: 50% 50%;
     will-change: transform;
 }
 
