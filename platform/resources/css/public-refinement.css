@@ -52,18 +52,25 @@
 .theme-white .faq-list details:last-child { border-bottom:0; }
 .theme-white .faq-list summary { font-size:14px; }
 .theme-white .faq-list summary .icon { color:#6b8e51; }
-.theme-white .about-section { background:#0B4B3A; color:#FFFFFF; border:0; }
-.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
-.about-grid h2 { max-width:510px; font-size:clamp(31px,3.4vw,48px); line-height:1.12; margin-top:18px; }
-.theme-white .about-grid .eyebrow { color:#bdcf9a; }
-.about-grid > p { font-size:15px; line-height:1.95; color:#d1dfd4; max-width:520px; }
 .theme-white .cta-section { background:#F6F7F0; padding-top:70px; }
 .theme-white .cta-box { background:#e3edd8; border-color:#cdddc0; box-shadow:none; }
 .theme-white .cta-box h2 { color:#0B4B3A; }
 .theme-white .cta-box p { color:#6B7970; }
 .theme-white .cta-box .btn { background:#0B4B3A; }
-.theme-white .site-footer { background:#FFFFFF; border-top-color:#CAD4C6; }
-.theme-white .footer-top > p,.theme-white .footer-legal a,.theme-white .footer-bottom { color:#6B7970; }
+.theme-white .site-footer { background:#0B4B3A; color:#F6F7F0; border-top:0; padding:38px 0 26px; scroll-margin-top:88px; }
+.theme-white .site-footer-has-intro { padding-top:72px; }
+.footer-intro { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; padding-bottom:52px; margin-bottom:32px; border-bottom:1px solid #ffffff26; }
+.footer-intro h2 { max-width:510px; font-size:clamp(31px,3.4vw,48px); line-height:1.12; margin-top:18px; color:#F6F7F0; }
+.theme-white .footer-intro .eyebrow { color:#bdcf9a; }
+.footer-intro > p { max-width:520px; font-size:14px; line-height:1.95; color:#d1dfd4; }
+.theme-white .site-footer .brand { color:#a8cb69; }
+.theme-white .site-footer .brand > span,.theme-white .site-footer .brand b { color:#F6F7F0; }
+.theme-white .site-footer .brand small { color:#bbcebb; }
+.theme-white .site-footer .text-link { color:#F6F7F0; }
+.theme-white .site-footer .footer-bottom { color:#c0d1c3; border-top-color:#ffffff26; margin-top:28px; padding-top:22px; }
+.theme-white .site-footer .footer-legal a { color:#d8e3d4; }
+.theme-white .site-footer :is(.text-link,.footer-legal a):hover { color:#c8e6a6; }
+.theme-white .site-footer a:focus-visible { outline:1px solid #bdcf9a; outline-offset:5px; border-radius:2px; }
 .theme-white .live-dot { background:#82B536; }
 /* The brighter band travels left to right through the complete active headline. */
 .theme-white .hero-reference .hero-headline-item { background-image:linear-gradient(90deg,#0B4B3A 0%,#0B4B3A 40%,#147455 46%,#198e64 50%,#147455 54%,#0B4B3A 60%,#0B4B3A 100%); background-size:300% 100%; background-position:100% 0; -webkit-background-clip:text; background-clip:text; color:transparent; animation:headline-light-pass 6s linear infinite; }
@@ -82,8 +89,19 @@
     .theme-white .faq-list summary { font-size:13px; }
     .theme-white .faq-list details { padding-block:20px; }
     .theme-white .process-list { padding:25px 21px; }
-    .about-grid { grid-template-columns:1fr; gap:26px; }
-    .about-grid > p { font-size:14px; }
+    .theme-white .site-footer { padding-bottom:24px; scroll-margin-top:76px; }
+    .theme-white .site-footer-has-intro { padding-top:46px; }
+    .footer-intro { grid-template-columns:1fr; gap:23px; padding-bottom:32px; margin-bottom:27px; }
+    .footer-intro h2 { margin-top:15px; max-width:420px; font-size:clamp(31px,8vw,38px); }
+    .footer-intro > p { font-size:13px; line-height:1.9; }
+    .theme-white .site-footer .footer-top { flex-direction:row; align-items:center; gap:18px; }
+    .theme-white .site-footer .brand { gap:8px; }
+    .theme-white .site-footer .brand > span { font-size:20px; }
+    .theme-white .site-footer .brand svg,.theme-white .site-footer .brand-upload { width:31px; height:34px; }
+    .theme-white .site-footer .brand small { font-size:6px; }
+    .theme-white .site-footer .text-link { font-size:11px; gap:7px; white-space:nowrap; }
+    .theme-white .site-footer .footer-bottom { margin-top:26px; padding-top:20px; gap:13px; }
+    .theme-white .site-footer .footer-legal { gap:10px 19px; font-size:10px; }
     .theme-white .cta-section { padding-top:40px; }
     .mobile-platform-dropdown > summary { list-style:none; cursor:pointer; }
     .mobile-platform-dropdown[open] .site-mobile-menu-arrow { rotate:180deg; }

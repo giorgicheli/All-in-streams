@@ -23,9 +23,6 @@
             @if($block['type'] === 'audiences' && ($site['creator_network']['enabled'] ?? false))
                 @include('site.blocks.creator-network', ['data' => $site['creator_network']])
             @endif
-            @if($block['type'] === 'faq' && ($site['about']['enabled'] ?? false))
-                @include('site.about', ['data' => $site['about']])
-            @endif
         @endforeach
     </main>
     @include('site.footer')

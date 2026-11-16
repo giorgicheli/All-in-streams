@@ -109,7 +109,7 @@ class SiteContentDefaults
                     ],
                 ]],
                 ['type' => 'cta', 'data' => [
-                    'enabled' => true, 'title' => 'Ready to go all in?', 'description' => 'Your audience is out there. Let’s find your people.',
+                    'enabled' => false, 'title' => 'Ready to go all in?', 'description' => 'Your audience is out there. Let’s find your people.',
                     'primary_label' => 'Start a campaign', 'primary_url' => '/talk-to-us?type=brand',
                     'secondary_label' => 'Join as a creator', 'secondary_url' => '/talk-to-us?type=creator',
                     'image_path' => null, 'image_alt' => '',
