@@ -129,8 +129,8 @@ class SiteContentDefaults
                 ['label' => 'For agencies', 'description' => 'Expand your creator partnerships', 'url' => '/talk-to-us?type=agency'],
                 ['label' => 'For creators', 'description' => 'Join our creator network', 'url' => '/talk-to-us?type=creator'],
             ],
-            'header' => ['sign_in_label' => 'Partner sign in', 'workspace_label' => 'Your workspace', 'cta_label' => "Let's talk", 'cta_url' => '/talk-to-us'],
-            'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Partner sign in', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
+            'header' => ['sign_in_label' => 'Sign in', 'workspace_label' => 'Your workspace', 'cta_label' => 'Register', 'cta_url' => '/talk-to-us'],
+            'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Sign in', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
             'network_stats' => [
                 'enabled' => true, 'eyebrow' => 'THE NETWORK BEHIND THE STREAM',
                 'title' => 'Be part of a growing network.',

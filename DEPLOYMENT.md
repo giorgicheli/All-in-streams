@@ -133,7 +133,7 @@ Combined Streamer & influencer profiles retain both channel types, appear in bot
 
 The owner prefers minimal borders. Public sections, header, GEO strip and footer have no separator rules; cards and content panels use contrasting surfaces and spacing instead of outlines. Tabs and secondary controls use soft filled backgrounds. Preserve visible form fields and keyboard focus indicators.
 
-Guest navigation uses a single Let's talk action. The duplicate Partner sign in link is omitted from the desktop header and mobile menu; existing partners can sign in from the footer or the account forms. Authenticated visitors retain their Your workspace shortcut.
+Guest navigation pairs Sign in (`/login`) with Register (`/talk-to-us`, followed by the role chooser). Mobile places Register in the header and Sign in inside the full-screen menu. The footer also uses the concise Sign in label. These labels remain editable in site settings. Authenticated visitors retain their Your workspace shortcut.
 
 The audience flag strip supports captured mouse dragging with a short momentum glide, native touch swiping and keyboard scrolling. Native touch preserves vertical page scrolling and pinch zoom. The fixed GEO captions sit outside the scrolling viewport. Autoplay pauses during hover, dragging and native momentum; it resumes after scrolling settles and the pointer leaves. Reduced motion disables autoplay and the extra mouse glide while retaining manual navigation.
 
