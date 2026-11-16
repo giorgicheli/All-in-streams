@@ -80,22 +80,25 @@ class UserAccountResource extends ManagedResource
                 ->requiresConfirmation()->modalDescription('Approve this partner account and activate its workspace.')
                 ->action(function (User $record): void {
                     app(PartnerVerification::class)->verify(auth()->user(), $record);
+                    $record->refresh();
                     Notification::make()->title('Partner account approved')->success()->send();
-                }),
+                })->after(fn ($livewire) => $livewire->flushCachedTableRecords()),
             Action::make('rejectPartner')->label('Reject account')->icon('heroicon-o-x-circle')->color('danger')
                 ->visible(fn (User $record) => $record->role !== 'admin' && $record->partner_verification_status !== 'rejected')
                 ->requiresConfirmation()->modalDescription('The partner will see the account review decision when signed in.')
                 ->action(function (User $record): void {
                     app(PartnerVerification::class)->reject(auth()->user(), $record);
+                    $record->refresh();
                     Notification::make()->title('Partner account rejected')->success()->send();
-                }),
+                })->after(fn ($livewire) => $livewire->flushCachedTableRecords()),
             Action::make('revokePartner')->label('Return to review')->icon('heroicon-o-arrow-path')
                 ->visible(fn (User $record) => $record->role !== 'admin' && $record->hasVerifiedPartnerAccount())
                 ->requiresConfirmation()->modalDescription('Return the account to pending verification and pause workspace access.')
                 ->action(function (User $record): void {
                     app(PartnerVerification::class)->revoke(auth()->user(), $record);
+                    $record->refresh();
                     Notification::make()->title('Partner account returned to review')->success()->send();
-                }),
+                })->after(fn ($livewire) => $livewire->flushCachedTableRecords()),
             Action::make('telegram')->label('Telegram')->icon('heroicon-o-chat-bubble-left-right')->fillForm(fn (User $record) => ['telegram' => $record->telegram])
                 ->schema([TextInput::make('telegram')->label('Telegram username')->required()->maxLength(80)->rules([new TelegramHandle])->helperText('@username or https://t.me/username')])
                 ->action(function (User $record, array $data): void {

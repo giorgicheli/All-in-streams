@@ -93,11 +93,14 @@ class PartnerVerificationTest extends TestCase
         $partner = User::factory()->pendingPartner()->create(['role' => 'agency']);
         $this->actingAs($admin);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
-        Livewire::test(ListUserAccounts::class)->callTableAction('verifyPartner', $partner)->assertHasNoActionErrors();
+        Livewire::test(ListUserAccounts::class)->callTableAction('verifyPartner', $partner)->assertHasNoActionErrors()
+            ->assertTableColumnStateSet('partner_verification_status', 'verified', $partner);
         $this->assertTrue($partner->fresh()->hasVerifiedPartnerAccount());
-        Livewire::test(ListUserAccounts::class)->callTableAction('revokePartner', $partner->fresh())->assertHasNoActionErrors();
+        Livewire::test(ListUserAccounts::class)->callTableAction('revokePartner', $partner->fresh())->assertHasNoActionErrors()
+            ->assertTableColumnStateSet('partner_verification_status', 'pending', $partner);
         $this->assertSame('pending', $partner->fresh()->partner_verification_status);
-        Livewire::test(ListUserAccounts::class)->callTableAction('rejectPartner', $partner->fresh())->assertHasNoActionErrors();
+        Livewire::test(ListUserAccounts::class)->callTableAction('rejectPartner', $partner->fresh())->assertHasNoActionErrors()
+            ->assertTableColumnStateSet('partner_verification_status', 'rejected', $partner);
         $this->assertSame('rejected', $partner->fresh()->partner_verification_status);
         $this->assertNull($partner->fresh()->partner_verified_by);
     }
