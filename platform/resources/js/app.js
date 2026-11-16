@@ -6,6 +6,9 @@ import { initializeMobileNavigation } from './navigation';
 import { initializePublicResults, initializeNetworkCounters } from './public-results';
 import { initializePartnerEnquiry } from './partner-enquiry';
 import { initializeHeroHeadlines } from './hero-headlines';
+import { initializeAudiencePickers } from './audience-picker';
+import { initializePublicRefinements } from './public-refinement';
+import { initializeCreatorNetwork } from './creator-network';
 
 let cleanup = () => {};
 
@@ -20,6 +23,9 @@ function initializePage() {
     const disposeCounters = initializeNetworkCounters();
     const disposeEnquiry = initializePartnerEnquiry();
     const disposeHeadlines = initializeHeroHeadlines();
+    const disposeAudience = initializeAudiencePickers();
+    const disposeRefinements = initializePublicRefinements();
+    const disposeCreatorNetwork = initializeCreatorNetwork();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -40,6 +46,9 @@ function initializePage() {
         disposeCounters();
         disposeEnquiry();
         disposeHeadlines();
+        disposeAudience();
+        disposeRefinements();
+        disposeCreatorNetwork();
     };
 }
 

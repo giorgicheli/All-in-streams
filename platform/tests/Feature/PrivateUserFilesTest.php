@@ -146,4 +146,31 @@ class PrivateUserFilesTest extends TestCase
         $this->deleteJson(route('admin.user-files.destroy', $file))->assertNotFound();
         Storage::disk('local')->assertExists('unrelated-secret.pdf');
     }
+
+    public function test_repeated_batches_keep_every_attachment_and_mark_only_the_latest_per_user(): void
+    {
+        $admin = $this->staff();
+        $account = User::factory()->create(['role' => 'agency']);
+        $other = User::factory()->create(['role' => 'creator']);
+        $this->freezeTime();
+        [$first, $second] = app(PrivateUserFiles::class)->upload($admin, $account, [$this->pdf('contract.pdf'), $this->pdf('appendix.pdf')]);
+        [$third, $fourth] = app(PrivateUserFiles::class)->upload($admin, $account, [$this->pdf('revised-contract.pdf'), $this->pdf('signed-contract.pdf')]);
+        [$otherFile] = app(PrivateUserFiles::class)->upload($admin, $other, [$this->pdf('other-contract.pdf')]);
+
+        $records = UserFileResource::getEloquentQuery()->orderBy('id')->get();
+        $this->assertCount(5, $records);
+        $this->assertSame([$fourth->id, $otherFile->id], $records->filter->is_latest_attachment->pluck('id')->all());
+        foreach ($records as $record) Storage::disk('local')->assertExists($record->file_path);
+
+        Livewire::test(ManageUserFiles::class)
+            ->assertTableColumnStateSet('is_latest_attachment', false, $first)
+            ->assertTableColumnStateSet('is_latest_attachment', true, $fourth)
+            ->assertSee('ბოლო მიბმული');
+
+        app(PrivateUserFiles::class)->delete($admin, $fourth);
+        $records = UserFileResource::getEloquentQuery()->orderBy('id')->get();
+        $this->assertSame([$third->id, $otherFile->id], $records->filter->is_latest_attachment->pluck('id')->all());
+        Storage::disk('local')->assertMissing($fourth->file_path);
+        foreach ([$first, $second, $third, $otherFile] as $record) Storage::disk('local')->assertExists($record->file_path);
+    }
 }

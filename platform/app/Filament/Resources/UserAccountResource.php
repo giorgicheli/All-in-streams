@@ -107,7 +107,8 @@ class UserAccountResource extends ManagedResource
                     Notification::make()->title('Telegram updated')->success()->send();
                 }),
             Action::make('attachFiles')->label('Attach files')->icon('heroicon-o-paper-clip')->schema(fn (User $record) => UserFileResource::uploadSchema($record->id))
-                ->action(fn (User $record, array $data) => UserFileResource::upload($data, $record)),
+                ->action(fn (User $record, array $data) => UserFileResource::upload($data, $record))
+                ->after(fn ($livewire) => $livewire->flushCachedTableRecords()),
             Action::make('files')->label('Private files')->icon('heroicon-o-folder')->url(fn (User $record) => UserFileResource::forUserUrl($record)),
         ]);
     }

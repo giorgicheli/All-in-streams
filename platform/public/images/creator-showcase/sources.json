@@ -1,0 +1,38 @@
+[
+    {
+        "usage":  "Generic empty creator studio photograph. No person or partner identity is represented.",
+        "bytes":  191491,
+        "author":  "Branden Skeli",
+        "download_url":  "https://images.unsplash.com/photo-1775410633801-5d7997f795c6?auto=format\u0026fit=crop\u0026fm=jpg\u0026q=82\u0026w=1100",
+        "license":  "Unsplash License",
+        "license_url":  "https://unsplash.com/license",
+        "sha256":  "2a9fdf959eb5e6a58b631540436346460b367a219e9c03eadcbace85a36152ca",
+        "downloaded_on":  "2026-11-16",
+        "source_url":  "https://unsplash.com/photos/gamers-setup-with-multiple-monitors-and-rgb-lighting-cxSBgaJOEuU",
+        "file":  "gaming-studio.jpg"
+    },
+    {
+        "usage":  "Generic empty creator studio photograph. No person or partner identity is represented.",
+        "bytes":  159162,
+        "author":  "Gabriel Weyand",
+        "download_url":  "https://images.unsplash.com/photo-1776690329305-fb4141bd528a?auto=format\u0026fit=crop\u0026fm=jpg\u0026q=82\u0026w=1100",
+        "license":  "Unsplash License",
+        "license_url":  "https://unsplash.com/license",
+        "sha256":  "b3b188edee89c31f8f78706caa565864db53f6b9fa903286b71a6c9255d58088",
+        "downloaded_on":  "2026-11-16",
+        "source_url":  "https://unsplash.com/photos/a-professional-microphone-in-a-recording-studio-lwR2vJy1zgs",
+        "file":  "creator-microphone.jpg"
+    },
+    {
+        "usage":  "Generic empty creator studio photograph. No person or partner identity is represented.",
+        "bytes":  104778,
+        "author":  "Aditya Sethia",
+        "download_url":  "https://images.unsplash.com/photo-1761295908868-a222bbeff6b1?auto=format\u0026fit=crop\u0026fm=jpg\u0026q=82\u0026w=1100",
+        "license":  "Unsplash License",
+        "license_url":  "https://unsplash.com/license",
+        "sha256":  "c9ba638f69f219c36ae4f202e3e3763144509ec90ed8844d965928a6041d06f5",
+        "downloaded_on":  "2026-11-16",
+        "source_url":  "https://unsplash.com/photos/a-gaming-setup-with-a-computer-and-chair-UdI9PEmkO8c",
+        "file":  "streaming-desk.jpg"
+    }
+]

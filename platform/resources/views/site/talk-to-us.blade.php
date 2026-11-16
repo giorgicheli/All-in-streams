@@ -13,6 +13,9 @@
     $selectedGeos = is_array($rawGeos) ? $rawGeos : [];
     $currencyOptions = $currencies ?? ['EUR', 'USD', 'GBP', 'CAD', 'AUD', 'CHF', 'BRL'];
     $enquiryKey = $submissionKey ?? $submission_key ?? (string) \Illuminate\Support\Str::uuid();
+    $enquiryContext = [];
+    if (($selectedProfiles ?? collect())->isNotEmpty()) $enquiryContext['profiles'] = $selectedProfiles->pluck('public_id')->all();
+    if ($requestedRegion ?? null) $enquiryContext['region'] = $requestedRegion;
 @endphp
 <x-layout title="Talk to us" description="Create your All In Streams partner account and tell us about your brand, agency or creator profile.">
     <main class="partner-enquiry" data-partner-enquiry data-enquiry-kind="{{ $selectedKind }}" data-enquiry-creator-type="{{ $selectedCreatorType }}">
@@ -34,7 +37,7 @@
                 </header>
                 <nav class="enquiry-category-tabs" aria-label="Your partner category">
                     @foreach(['brand' => 'Brand', 'agency' => 'Agency', 'creator' => 'Creator'] as $category => $label)
-                        <a href="/talk-to-us?type={{ $category }}" class="enquiry-choice {{ $selectedKind === $category ? 'is-selected' : '' }}" data-enquiry-category="{{ $category }}" @if($selectedKind === $category) aria-current="page" @endif>{{ $label }}</a>
+                        <a href="/talk-to-us?{{ http_build_query(['type' => $category] + $enquiryContext) }}" class="enquiry-choice {{ $selectedKind === $category ? 'is-selected' : '' }}" data-enquiry-category="{{ $category }}" @if($selectedKind === $category) aria-current="page" @endif>{{ $label }}</a>
                     @endforeach
                 </nav>
                 <p class="enquiry-review-note"><x-ui-icon name="shield" size="15"/>Create your partner account. The All In Streams team will review your details before approving access.</p>
@@ -48,6 +51,14 @@
 
                 <form method="POST" action="/talk-to-us" enctype="multipart/form-data" class="enquiry-form" data-enquiry-form>
                     @csrf
+                    @if(($selectedProfiles ?? collect())->isNotEmpty() || ($requestedRegion ?? null))
+                        <div class="enquiry-shortlist-context" data-enquiry-for="brand agency" @if($isCreator) hidden @endif>
+                            <p class="enquiry-group-label">Your creator request</p>
+                            @if($requestedRegion ?? null)<p class="enquiry-help">Audience region: {{ $requestedRegion }}</p><input type="hidden" name="requested_region" value="{{ $requestedRegion }}">@endif
+                            <div class="enquiry-shortlist-chips">@foreach($selectedProfiles ?? [] as $profile)<span>{{ $profile['country'] }} · {{ $profile['type_label'] }}</span><input type="hidden" name="profiles[]" value="{{ $profile['public_id'] }}">@endforeach</div>
+                            @error('profiles.*')<p class="enquiry-error">{{ $message }}</p>@enderror
+                        </div>
+                    @endif
                     <input type="hidden" name="kind" value="{{ $selectedKind }}" data-enquiry-kind-input>
                     <input type="hidden" name="submission_key" value="{{ $enquiryKey }}">
                     <fieldset class="enquiry-type-field" data-enquiry-for="creator" @unless($isCreator) hidden disabled @endunless>
@@ -55,7 +66,7 @@
                         <input type="hidden" name="creator_type" value="{{ $selectedCreatorType }}" data-enquiry-creator-input>
                         <div class="enquiry-type-options" aria-label="Creator type">
                             @foreach(['streamer' => 'Streamer', 'influencer' => 'Influencer', 'both' => 'Both'] as $type => $label)
-                                <a href="/talk-to-us?type=creator&amp;creator_type={{ $type }}" class="enquiry-choice {{ $selectedCreatorType === $type ? 'is-selected' : '' }}" data-enquiry-type="{{ $type }}" @if($selectedCreatorType === $type) aria-current="page" @endif>{{ $label }}</a>
+                                <a href="/talk-to-us?{{ http_build_query(['type' => 'creator', 'creator_type' => $type] + $enquiryContext) }}" class="enquiry-choice {{ $selectedCreatorType === $type ? 'is-selected' : '' }}" data-enquiry-type="{{ $type }}" @if($selectedCreatorType === $type) aria-current="page" @endif>{{ $label }}</a>
                             @endforeach
                         </div>
                         @error('creator_type')<p class="enquiry-error">{{ $message }}</p>@enderror
@@ -162,18 +173,8 @@
                         </section>
                         <section class="enquiry-form-section" aria-labelledby="enquiry-audience-title">
                             <h2 id="enquiry-audience-title">Your audience</h2>
-                            <div class="enquiry-grid">
-                                @foreach(['Primary audience country', 'Second audience country'] as $index => $label)
-                                    <div class="enquiry-field">
-                                        <label for="enquiry-creator-geo-{{ $index }}">{{ $label }} <span aria-hidden="true">*</span></label>
-                                        <select id="enquiry-creator-geo-{{ $index }}" name="audience_geos[]" data-enquiry-required="creator" @if($isCreator) required @endif>
-                                            <option value="">Select country</option>
-                                            @foreach($countries as $country)<option value="{{ $country }}" @selected(($selectedGeos[$index] ?? '') === $country)>{{ $country }}</option>@endforeach
-                                        </select>
-                                        @error('audience_geos.'.$index)<p class="enquiry-error">{{ $message }}</p>@enderror
-                                    </div>
-                                @endforeach
-                            </div>
+                            <p class="enquiry-help">Choose every country your audience comes from.</p>
+                            <x-audience-picker :countries="$countries" :selected="$selectedGeos"/>
                             @error('audience_geos')<p class="enquiry-error">{{ $message }}</p>@enderror
                         </section>
                         <section class="enquiry-form-section" aria-labelledby="enquiry-rates-title">

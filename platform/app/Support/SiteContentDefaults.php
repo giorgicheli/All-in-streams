@@ -62,10 +62,10 @@ class SiteContentDefaults
                     'end_label' => 'YOUR NEXT AUDIENCE',
                 ]],
                 ['type' => 'audiences', 'data' => [
-                    'enabled' => true, 'eyebrow' => 'One ecosystem. Every side of the stream.', 'title' => 'Your next move starts here.',
+                    'enabled' => true, 'eyebrow' => 'One ecosystem. Every side of the stream.', 'title' => 'Your growth. Our game plan.',
                     'description' => "Great partnerships take the right people.\nWe bring every side together.",
                     'cards' => [
-                        ['icon' => 'target', 'title' => 'For businesses', 'description' => 'Reach the right communities. We handle creator matching, campaign delivery, and reporting around your brief.', 'label' => 'Build your campaign', 'url' => '/talk-to-us?type=brand', 'image_path' => null, 'image_alt' => ''],
+                        ['icon' => 'target', 'title' => 'For brands', 'description' => 'Reach the right communities. We handle creator matching, campaign delivery, and reporting around your brief.', 'label' => 'Build your campaign', 'url' => '/talk-to-us?type=brand', 'image_path' => null, 'image_alt' => ''],
                         ['icon' => 'layers', 'title' => 'For agencies', 'description' => 'Extend your team. Bring your client brief; we coordinate the creator partnership from start to finish.', 'label' => 'Let’s work together', 'url' => '/talk-to-us?type=agency', 'image_path' => null, 'image_alt' => ''],
                         ['icon' => 'users', 'title' => 'For creators', 'description' => 'Keep creating. Find brand opportunities aligned with your content, your audience, and the markets you know best.', 'label' => 'Join the creator network', 'url' => '/talk-to-us?type=creator', 'image_path' => null, 'image_alt' => ''],
                     ],
@@ -99,7 +99,7 @@ class SiteContentDefaults
                 ]],
                 ['type' => 'faq', 'data' => [
                     'enabled' => true, 'eyebrow' => 'A little more clarity', 'title_line_1' => 'Frequently Asked', 'title_line_2' => 'Questions',
-                    'label' => 'Talk to us', 'url' => '/talk-to-us?type=brand',
+                    'label' => 'Talk to us', 'url' => '/talk-to-us',
                     'items' => [
                         ['question' => 'Which markets do you work with?', 'answer' => 'We work globally, matching brands and agencies with creators based on audience GEO, language, and campaign goals. Share your target markets so we can find the right fit.'],
                         ['question' => 'How are campaign terms agreed?', 'answer' => 'Each proposal sets out the stream package, deliverables, pricing, payment schedule, tracking, and any performance commitments. Fixed-fee, CPA, revenue share, or hybrid terms depend on the creator and the campaign.'],
@@ -123,8 +123,13 @@ class SiteContentDefaults
         return [
             'brand_name' => 'All In Streams', 'brand_tagline' => 'Creator partnerships', 'logo_path' => null,
             'site_description' => 'All In Streams connects brands with gaming creators. From your first brief to the final campaign report, managed end to end.',
-            'navigation' => [['label' => 'Platform', 'url' => '#platform'], ['label' => 'Industries', 'url' => '#industries'], ['label' => 'How it works', 'url' => '#how-it-works']],
-            'header' => ['sign_in_label' => 'Partner sign in', 'workspace_label' => 'Your workspace', 'cta_label' => 'Talk to us', 'cta_url' => '/talk-to-us'],
+            'navigation' => [['label' => 'Platform', 'url' => '#platform'], ['label' => 'How it works', 'url' => '#how-it-works'], ['label' => 'Creator network', 'url' => '#creators'], ['label' => 'About us', 'url' => '#about']],
+            'platform_menu' => [
+                ['label' => 'For brands', 'description' => 'Find creators for your next campaign', 'url' => '/talk-to-us?type=brand'],
+                ['label' => 'For agencies', 'description' => 'Expand your creator partnerships', 'url' => '/talk-to-us?type=agency'],
+                ['label' => 'For creators', 'description' => 'Join our creator network', 'url' => '/talk-to-us?type=creator'],
+            ],
+            'header' => ['sign_in_label' => 'Partner sign in', 'workspace_label' => 'Your workspace', 'cta_label' => "Let's talk", 'cta_url' => '/talk-to-us'],
             'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Partner sign in', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
             'network_stats' => [
                 'enabled' => true, 'eyebrow' => 'THE NETWORK BEHIND THE STREAM',
@@ -136,6 +141,25 @@ class SiteContentDefaults
                     ['icon'=>'layers','count'=>18,'suffix'=>'+','label'=>'Agencies','description'=>'Talent & campaign partners'],
                     ['icon'=>'globe','count'=>24,'suffix'=>'','label'=>'Countries','description'=>'Local voices. Global reach.'],
                     ['icon'=>'briefcase','count'=>60,'suffix'=>'+','label'=>'Companies','description'=>'Brands building connections'],
+                ],
+            ],
+            'about' => [
+                'enabled' => true, 'eyebrow' => 'ALL IN, TOGETHER', 'title' => 'Real people. Shared ambition.',
+                'description' => 'All In Streams connects brands, agencies and creators through one dedicated team. We bring the people, process and performance together, from the first conversation to the final report.',
+            ],
+            'creator_network' => [
+                'enabled' => true, 'eyebrow' => 'DISCOVER YOUR NEXT MATCH',
+                'title_line_1' => 'Different voices.', 'title_line_2' => 'The right influence.',
+                'description' => 'Discover streamers and influencers by audience region. Compare their audiences, build your shortlist, and send us your brief to find the right match.',
+                'request_label' => 'Request more profiles', 'request_url' => '/talk-to-us?type=brand',
+            ],
+            'enquiry_entry' => [
+                'eyebrow' => 'LET’S MAKE IT HAPPEN', 'title' => 'Let’s find your right match.',
+                'description' => 'Choose how you would like to work with All In Streams.',
+                'cards' => [
+                    ['icon' => 'target', 'title' => 'Brand', 'description' => 'Find creators for your next campaign.', 'url' => '/talk-to-us?type=brand'],
+                    ['icon' => 'layers', 'title' => 'Agency', 'description' => 'Expand your creator partnerships.', 'url' => '/talk-to-us?type=agency'],
+                    ['icon' => 'users', 'title' => 'Creator', 'description' => 'Join our creator network.', 'url' => '/talk-to-us?type=creator'],
                 ],
             ],
             'auth_story' => [

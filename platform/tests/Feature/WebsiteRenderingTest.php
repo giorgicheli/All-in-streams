@@ -41,7 +41,7 @@ class WebsiteRenderingTest extends TestCase
         [$content['blocks'][0], $content['blocks'][3]] = [$content['blocks'][3], $content['blocks'][0]];
         app(SiteContent::class)->publish(User::factory()->create(['role' => 'admin']), 'home', $content);
         $this->get('/')->assertOk()->assertSeeInOrder(['Native to your world.', 'Trusted'])
-            ->assertDontSee('Your next move starts here.');
+            ->assertDontSee('Your growth. Our game plan.');
     }
 
     public function test_brand_and_auth_copy_are_published_together_but_previewed_privately(): void
@@ -88,12 +88,12 @@ class WebsiteRenderingTest extends TestCase
         $pagesBefore = \App\Models\SitePage::all()->toArray();
 
         $this->get('/white')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow')
-            ->assertSee('class="theme-white"', false)->assertSee('content="#f7f8f1"', false)
+            ->assertSee('class="theme-white"', false)->assertSee('content="#F6F7F0"', false)
             ->assertSee('Trusted')->assertSee('site-footer')->assertSee('data-network-count', false)
             ->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE')->assertDontSee('livewire.js')
             ->assertDontSee('network-stat-index')->assertDontSee('card-number')->assertDontSee('step-number');
         $this->get('/')->assertOk()->assertSee('class="theme-white"', false)
-            ->assertSee('content="#f7f8f1"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
+            ->assertSee('content="#F6F7F0"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
         $this->assertSame($pagesBefore, \App\Models\SitePage::all()->toArray());
     }
 

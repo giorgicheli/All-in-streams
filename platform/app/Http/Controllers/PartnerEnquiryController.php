@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePartnerEnquiryRequest;
 use App\Models\PartnerEnquiry;
+use App\Models\CreatorShowcase;
 use App\Models\User;
 use App\Rules\SocialProfileUrl;
 use App\Rules\StreamingChannelUrl;
@@ -24,20 +25,31 @@ class PartnerEnquiryController extends Controller
 {
     public function create(Request $request): Response
     {
+        if (!in_array($request->query('type'), array_keys(PartnerEnquiry::KINDS), true) && !$request->session()->hasOldInput('kind')) {
+            return response()->view('site.choose-role', ['site' => app(\App\Services\SiteContent::class)->getPublished('settings')])->header('Cache-Control', 'private, no-store, max-age=0');
+        }
         $kind = in_array($request->query('type'), array_keys(PartnerEnquiry::KINDS), true) ? $request->query('type') : 'brand';
         $creatorType = in_array($request->query('creator_type'), array_keys(PartnerEnquiry::CREATOR_TYPES), true) ? $request->query('creator_type') : 'streamer';
+        $profileIds = $request->old('profiles', $request->query('profiles', []));
+        $profileIds = is_array($profileIds) ? array_slice(array_filter($profileIds, fn ($id) => is_string($id) && Str::isUuid($id)), 0, 24) : [];
+        $selectedProfiles = CreatorShowcase::published()->whereIn('public_id', $profileIds)->get()->map->publicData();
+        $region = $request->old('requested_region', $request->query('region'));
         return response()->view('site.talk-to-us', [
             'kind' => $kind,
             'creatorType' => $creatorType,
             'countries' => PartnerEnquiry::countries(),
             'currencies' => PartnerEnquiry::CURRENCIES,
             'submissionKey' => (string) Str::uuid(),
+            'selectedProfiles' => $selectedProfiles,
+            'requestedRegion' => is_string($region) && array_key_exists($region, CreatorShowcase::COUNTRIES_BY_REGION) ? $region : null,
         ])->header('Cache-Control', 'private, no-store, max-age=0');
     }
 
     public function store(StorePartnerEnquiryRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $data['shortlisted_profiles'] = $data['profiles'] ?? [];
+        unset($data['profiles']);
         $data['telegram'] = TelegramHandle::canonicalize($data['telegram']);
         if (isset($data['twitch_url'])) $data['twitch_url'] = StreamingChannelUrl::canonicalize($data['twitch_url'], 'Twitch');
         if (isset($data['kick_url'])) $data['kick_url'] = StreamingChannelUrl::canonicalize($data['kick_url'], 'Kick');

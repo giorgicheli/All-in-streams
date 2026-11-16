@@ -18,6 +18,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class UserFileResource extends ManagedResource
@@ -32,14 +34,24 @@ class UserFileResource extends ManagedResource
     public static function canCreate(): bool { return false; }
     public static function canEdit(Model $record): bool { return false; }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['user', 'uploader'])->select('user_files.*')
+            ->selectSub(DB::table('user_files as latest_user_file')->select('latest_user_file.id')
+                ->whereColumn('latest_user_file.user_id', 'user_files.user_id')
+                ->orderByDesc('latest_user_file.created_at')->orderByDesc('latest_user_file.id')->limit(1), 'latest_attachment_id');
+    }
+
     public static function uploadSchema(?int $userId = null): array
     {
         return [
             Select::make('user_id')->label('User account')->options(fn () => User::query()->orderBy('name')->get()->mapWithKeys(fn (User $user) => [$user->id => $user->name.' — '.$user->email.' ('.$user->account_type_label.')'])->all())
                 ->searchable()->required()->default($userId)->disabled($userId !== null)->dehydrated()->rules(['exists:users,id']),
             TextInput::make('title')->label('File label')->maxLength(180)->helperText('Optional. Leave empty to use each file name.'),
-            FileUpload::make('files')->label('Private documents')->multiple()->storeFiles(false)->visibility('private')->acceptedFileTypes(PrivateUserFiles::MIME_TYPES)
-                ->maxSize(PrivateUserFiles::MAX_KILOBYTES)->minFiles(1)->maxFiles(10)->required()->helperText('PDF, DOC or DOCX. Up to 10 files, 10 MB each. Only administrators can see or download these files.'),
+            FileUpload::make('files')->label('Private documents')->multiple()->appendFiles()->panelLayout(null)->maxParallelUploads(1)
+                ->storeFiles(false)->visibility('private')->acceptedFileTypes(PrivateUserFiles::MIME_TYPES)
+                ->maxSize(PrivateUserFiles::MAX_KILOBYTES)->minFiles(1)->maxFiles(10)->required()
+                ->helperText('Select several PDF, DOC or DOCX files together, or add more before attaching. Up to 10 files, 10 MB each. Existing documents are retained; only administrators can access them.'),
             Textarea::make('notes')->label('Internal notes')->maxLength(3000)->rows(3),
         ];
     }
@@ -58,8 +70,10 @@ class UserFileResource extends ManagedResource
 
     public static function table(Table $table): Table
     {
-        return $table->defaultSort('created_at', 'desc')->columns([
+        return $table->defaultSort(fn (Builder $query) => $query->orderByDesc('created_at')->orderByDesc('id'))->columns([
             TextColumn::make('title')->searchable()->wrap()->weight('semibold')->description(fn (UserFile $record) => $record->original_name),
+            TextColumn::make('is_latest_attachment')->label('Latest attachment')->badge(fn (UserFile $record) => $record->is_latest_attachment)
+                ->formatStateUsing(fn (bool $state) => $state ? 'ბოლო მიბმული' : '')->color('success'),
             TextColumn::make('user.name')->label('User')->searchable()->description(fn (UserFile $record) => $record->user?->email),
             TextColumn::make('user.account_type_label')->label('Account type')->badge(),
             TextColumn::make('size')->label('Size')->formatStateUsing(fn (int $state) => number_format($state / 1048576, 2).' MB')->sortable(),

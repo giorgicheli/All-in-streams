@@ -14,13 +14,13 @@ class PartnerEnquiry extends Model
     public const CURRENCIES = ['EUR', 'USD', 'GBP', 'CAD', 'AUD', 'NZD', 'CHF', 'PLN', 'SEK', 'NOK', 'BRL', 'GEL'];
     public const STATUSES = ['new' => 'New', 'in_review' => 'In review', 'contacted' => 'Contacted', 'closed' => 'Closed'];
 
-    protected $fillable = ['user_id', 'submission_key', 'kind', 'creator_type', 'name', 'email', 'telegram', 'website', 'audience_geos', 'streams', 'budget', 'currency', 'budget_scope', 'requirements', 'twitch_url', 'kick_url', 'instagram_url', 'stream_rate', 'story_rate', 'reel_rate', 'age_confirmed_at', 'status', 'staff_notes'];
+    protected $fillable = ['shortlisted_profiles', 'requested_region', 'user_id', 'submission_key', 'kind', 'creator_type', 'name', 'email', 'telegram', 'website', 'audience_geos', 'streams', 'budget', 'currency', 'budget_scope', 'requirements', 'twitch_url', 'kick_url', 'instagram_url', 'stream_rate', 'story_rate', 'reel_rate', 'age_confirmed_at', 'status', 'staff_notes'];
     protected $hidden = ['submission_key'];
     protected $attributes = ['status' => 'new'];
 
     protected function casts(): array
     {
-        return ['audience_geos' => 'array', 'streams' => 'integer', 'budget' => 'decimal:2', 'stream_rate' => 'decimal:2', 'story_rate' => 'decimal:2', 'reel_rate' => 'decimal:2', 'age_confirmed_at' => 'datetime'];
+        return ['shortlisted_profiles' => 'array', 'audience_geos' => 'array', 'streams' => 'integer', 'budget' => 'decimal:2', 'stream_rate' => 'decimal:2', 'story_rate' => 'decimal:2', 'reel_rate' => 'decimal:2', 'age_confirmed_at' => 'datetime'];
     }
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }

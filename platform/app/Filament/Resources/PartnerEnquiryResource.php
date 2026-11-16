@@ -12,6 +12,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -46,6 +47,8 @@ class PartnerEnquiryResource extends ManagedResource
                 Select::make('audience_geos')->label('Audience countries')->multiple()->options(array_combine(PartnerEnquiry::countries(), PartnerEnquiry::countries()))->disabled()->dehydrated(false)->columnSpanFull(),
                 $readonly('streams', 'Number of streams'), $readonly('budget', 'Campaign budget'),
                 $readonly('currency', 'Currency'),
+                $readonly('requested_region', 'Requested audience region'),
+                TagsInput::make('shortlisted_profiles')->label('Shortlisted public profile references')->disabled()->dehydrated(false)->columnSpanFull(),
                 Select::make('budget_scope')->label('Budget applies to')->options(['total' => 'Total campaign', 'per_stream' => 'Per stream'])->disabled()->dehydrated(false),
                 Textarea::make('requirements')->label('Additional requirements / goals')->rows(4)->disabled()->dehydrated(false)->columnSpanFull(),
                 $readonly('twitch_url', 'Twitch profile'), $readonly('kick_url', 'Kick profile'),

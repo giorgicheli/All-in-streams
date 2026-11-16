@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\SiteContent;
 use App\Models\PublicCampaignResult;
+use App\Models\CreatorShowcase;
 use Illuminate\Http\Request;
 
 class WebsiteController extends Controller
@@ -14,6 +15,7 @@ class WebsiteController extends Controller
             'home' => $content->getPublished('home'),
             'site' => $content->getPublished('settings'),
             'publicResults' => PublicCampaignResult::published()->latest('completed_on')->get(PublicCampaignResult::PUBLIC_COLUMNS),
+            'creatorShowcases' => CreatorShowcase::published()->orderBy('sort_order')->orderBy('id')->get()->map->publicData(),
         ]);
     }
 
@@ -23,6 +25,7 @@ class WebsiteController extends Controller
             'home' => $content->getPublished('home'),
             'site' => $content->getPublished('settings'),
             'publicResults' => PublicCampaignResult::published()->latest('completed_on')->get(PublicCampaignResult::PUBLIC_COLUMNS),
+            'creatorShowcases' => CreatorShowcase::published()->orderBy('sort_order')->orderBy('id')->get()->map->publicData(),
             'lightPreview' => true,
         ])->header('X-Robots-Tag', 'noindex, nofollow');
     }

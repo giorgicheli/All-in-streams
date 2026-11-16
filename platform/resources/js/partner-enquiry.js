@@ -16,8 +16,6 @@ export function initializePartnerEnquiry(root = document) {
     const submitLabel = form.querySelector('[data-enquiry-submit-label]');
     const kick = form.querySelector('[name="kick_url"]');
     const twitch = form.querySelector('[name="twitch_url"]');
-    const firstGeo = form.querySelector('#enquiry-creator-geo-0');
-    const secondGeo = form.querySelector('#enquiry-creator-geo-1');
     const password = form.querySelector('[name="password"]');
     const confirmation = form.querySelector('[name="password_confirmation"]');
     let kind = page.dataset.enquiryKind || 'brand';
@@ -58,11 +56,6 @@ export function initializePartnerEnquiry(root = document) {
         const needsChannel = kind === 'creator' && ['streamer', 'both'].includes(creatorType);
         twitch?.setCustomValidity(needsChannel && !twitch.value.trim() && !kick?.value.trim()
             ? 'Add at least one Kick or Twitch profile link.' : '');
-    }
-
-    function validateCountries() {
-        secondGeo?.setCustomValidity(kind === 'creator' && firstGeo?.value && firstGeo.value === secondGeo.value
-            ? 'Choose a different second audience country.' : '');
     }
 
     function validatePasswordConfirmation() {
@@ -119,7 +112,7 @@ export function initializePartnerEnquiry(root = document) {
             form.querySelector('[name="requirements"]').placeholder = current.requirementsPlaceholder;
         }
         validateChannels();
-        validateCountries();
+        page.dispatchEvent(new Event('enquiry:changed'));
         validatePasswordConfirmation();
         if (updateUrl) {
             const url = new URL(location.href);
@@ -154,7 +147,6 @@ export function initializePartnerEnquiry(root = document) {
         refresh({ animate: true, updateUrl: true });
     }, { signal: events.signal }));
     [kick, twitch].forEach(input => input?.addEventListener('input', validateChannels, { signal: events.signal }));
-    [firstGeo, secondGeo].forEach(select => select?.addEventListener('change', validateCountries, { signal: events.signal }));
     [password, confirmation].forEach(input => input?.addEventListener('input', validatePasswordConfirmation, { signal: events.signal }));
     form.addEventListener('submit', event => {
         if (submitting) { event.preventDefault(); return; }

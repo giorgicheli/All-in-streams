@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Resources\PartnerEnquiryResource;
 use App\Filament\Resources\PartnerEnquiryResource\Pages\ManagePartnerEnquiries;
 use App\Models\PartnerEnquiry;
+use App\Models\CreatorShowcase;
 use App\Models\User;
 use App\Services\CreatorProofVideo;
 use Illuminate\Http\UploadedFile;
@@ -51,6 +52,65 @@ class PartnerEnquiryTest extends TestCase
         if (in_array($type, ['streamer', 'both'], true)) $data += ['twitch_url' => 'https://twitch.tv/Creator_Test', 'stream_rate' => '500'];
         if (in_array($type, ['influencer', 'both'], true)) $data += ['instagram_url' => 'https://instagram.com/Creator.Test', 'story_rate' => '100.50', 'reel_rate' => '300'];
         return array_replace($data, $changes);
+    }
+
+    public function test_creator_signup_keeps_every_selected_audience_country(): void
+    {
+        $countries = ['Canada', 'Portugal', 'Germany', 'Kyrgyzstan'];
+        $this->post('/talk-to-us', $this->creator('both', ['audience_geos' => $countries]))->assertRedirect('/account/pending');
+        $this->assertSame($countries, PartnerEnquiry::sole()->audience_geos);
+        $this->assertSame($countries, User::sole()->creatorProfile->audience_geos);
+    }
+
+    public function test_generic_contact_entry_asks_for_a_role_before_showing_signup(): void
+    {
+        $this->get('/talk-to-us')->assertOk()->assertSee('Choose how you would like to work')
+            ->assertSee('/talk-to-us?type=brand')->assertSee('/talk-to-us?type=agency')->assertSee('/talk-to-us?type=creator')
+            ->assertDontSee('name="password"', false);
+        foreach (['brand', 'agency', 'creator'] as $kind) $this->get('/talk-to-us?type='.$kind)->assertOk()->assertSee('name="password"', false);
+    }
+
+    public function test_public_shortlist_is_carried_into_the_private_signup_requirements(): void
+    {
+        User::factory()->create(['role' => 'admin']);
+        $this->artisan('showcase:creators')->assertSuccessful();
+        $profiles = CreatorShowcase::published()->where('region', 'Europe')->limit(2)->get();
+        $ids = $profiles->pluck('public_id')->all();
+        $this->get('/talk-to-us?'.http_build_query(['type' => 'brand', 'profiles' => $ids, 'region' => 'Europe']))
+            ->assertOk()->assertSee('Your creator request')->assertSee('Audience region: Europe')
+            ->assertSee($ids[0])->assertSee($ids[1]);
+        $this->post('/talk-to-us', $this->brand(['profiles' => $ids, 'requested_region' => 'Europe']))->assertRedirect('/account/pending');
+        $this->assertSame($ids, PartnerEnquiry::sole()->shortlisted_profiles);
+        $this->assertSame('Europe', PartnerEnquiry::sole()->requested_region);
+    }
+
+    public function test_unpublished_or_invented_shortlist_references_are_rejected(): void
+    {
+        User::factory()->create(['role' => 'admin']);
+        $this->artisan('showcase:creators')->assertSuccessful();
+        $profile = CreatorShowcase::firstOrFail();
+        $profile->update(['is_published' => false]);
+        foreach ([$profile->public_id, (string) Str::uuid(), 'private-user-id-1', [$profile->public_id], null] as $id) {
+            $this->postJson('/talk-to-us', $this->brand(['profiles' => [$id]]))->assertUnprocessable()->assertJsonValidationErrors('profiles.0');
+        }
+        $this->assertDatabaseCount('partner_enquiries', 0);
+    }
+
+    public function test_shortlist_survives_validation_without_query_and_plain_role_links(): void
+    {
+        User::factory()->create(['role' => 'admin']);
+        $this->artisan('showcase:creators')->assertSuccessful();
+        $ids = CreatorShowcase::published()->where('region', 'Europe')->limit(2)->pluck('public_id')->all();
+        $context = ['profiles' => $ids, 'region' => 'Europe'];
+        $this->get('/talk-to-us?'.http_build_query(['type' => 'brand'] + $context))->assertOk()
+            ->assertSee('/talk-to-us?'.http_build_query(['type' => 'agency'] + $context));
+        $this->from('/talk-to-us')->post('/talk-to-us', $this->brand([
+            'profiles' => $ids, 'requested_region' => 'Europe', 'password_confirmation' => 'DoesNotMatch123!',
+        ]))->assertRedirect('/talk-to-us')->assertSessionHasErrors('password');
+        $this->get('/talk-to-us')->assertOk()->assertSee('Your creator request')->assertSee('Audience region: Europe')
+            ->assertSee($ids[0])->assertSee($ids[1]);
+        $this->assertDatabaseCount('partner_enquiries', 0);
+        $this->assertDatabaseCount('users', 1);
     }
 
     public function test_brand_signup_creates_a_private_pending_account_without_campaign_commitments(): void
@@ -149,7 +209,7 @@ class PartnerEnquiryTest extends TestCase
             [$this->creator('both', ['stream_rate' => -1]), 'stream_rate'],
             [$this->creator('both', ['reel_rate' => '10.001']), 'reel_rate'],
             [$this->creator('both', ['currency' => 'BTC']), 'currency'],
-            [$this->creator('both', ['audience_geos' => ['Canada']]), 'audience_geos'],
+            [$this->creator('both', ['audience_geos' => []]), 'audience_geos'],
             [$this->creator('both', ['audience_geos' => ['Canada', 'Canada']]), 'audience_geos.0'],
             [$this->brand(['requirements' => '<script>alert(1)</script>']), 'requirements'],
         ];

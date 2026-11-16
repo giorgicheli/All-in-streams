@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\PartnerEnquiry;
+use App\Models\CreatorShowcase;
 use App\Rules\SocialProfileUrl;
 use App\Rules\StreamingChannelUrl;
 use App\Rules\TelegramHandle;
@@ -43,6 +44,11 @@ class StorePartnerEnquiryRequest extends FormRequest
         return [
             'submission_key' => ['required', 'uuid'],
             'kind' => ['required', 'string', Rule::in(array_keys(PartnerEnquiry::KINDS))],
+            'profiles' => $creator ? ['exclude'] : ['nullable', 'array', 'max:24'],
+            'profiles.*' => $creator ? ['exclude'] : ['bail', 'string', 'uuid', 'distinct', function (string $attribute, mixed $value, \Closure $fail): void {
+                if (!CreatorShowcase::published()->where('public_id', $value)->exists()) $fail('One selected profile is no longer available. Please update your shortlist.');
+            }],
+            'requested_region' => $creator ? ['exclude'] : ['nullable', 'string', Rule::in(array_keys(CreatorShowcase::COUNTRIES_BY_REGION))],
             'creator_type' => $creator ? ['required', 'string', Rule::in(array_keys(PartnerEnquiry::CREATOR_TYPES))] : ['exclude'],
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
@@ -52,7 +58,7 @@ class StorePartnerEnquiryRequest extends FormRequest
                 $url = is_string($value) ? parse_url($value) : false;
                 if (!is_array($url) || isset($url['user']) || isset($url['pass']) || preg_match('/[\x00-\x20]/', $value)) $fail('Enter a company or agency website URL without login credentials.');
             }],
-            'audience_geos' => ['required', 'array', 'min:'.($creator ? 2 : 1), 'max:'.($creator ? 2 : 30)],
+            'audience_geos' => ['required', 'array', 'min:1', 'max:30'],
             'audience_geos.*' => ['required', 'string', 'distinct:strict', Rule::in(PartnerEnquiry::countries())],
             'streams' => $agency ? ['required', 'integer', 'min:1', 'max:10000'] : ['exclude'],
             'budget' => $creator ? ['exclude'] : array_merge($agency ? ['required'] : ['nullable'], $money),

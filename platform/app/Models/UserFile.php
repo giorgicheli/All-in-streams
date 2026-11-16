@@ -13,4 +13,13 @@ class UserFile extends Model
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function uploader(): BelongsTo { return $this->belongsTo(User::class, 'uploaded_by'); }
+
+    public function getIsLatestAttachmentAttribute(): bool
+    {
+        $latest = $this->getAttribute('latest_attachment_id');
+        if ($latest === null) {
+            $latest = self::query()->where('user_id', $this->user_id)->orderByDesc('created_at')->orderByDesc('id')->value('id');
+        }
+        return (int) $latest === (int) $this->id;
+    }
 }
