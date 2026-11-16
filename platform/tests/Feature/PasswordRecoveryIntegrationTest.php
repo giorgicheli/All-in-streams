@@ -38,6 +38,9 @@ class PasswordRecoveryIntegrationTest extends TestCase
         foreach ($responses as $response) {
             $response->assertHeader('Referrer-Policy', 'no-referrer')->assertHeader('X-Robots-Tag', 'noindex, nofollow');
             $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+            $this->assertStringContainsString('no-transform', $response->headers->get('Cache-Control'));
+            $this->assertStringContainsString("script-src 'self'", $response->headers->get('Content-Security-Policy'));
+            $this->assertStringContainsString("connect-src 'self'", $response->headers->get('Content-Security-Policy'));
         }
         $this->assertSame(['email' => 'test@example.test'], session('_old_input'));
     }
@@ -61,6 +64,8 @@ class PasswordRecoveryIntegrationTest extends TestCase
         $response->assertStatus(429)->assertHeader('Referrer-Policy', 'no-referrer')
             ->assertHeader('X-Robots-Tag', 'noindex, nofollow');
         $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('no-transform', $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString("script-src 'self'", $response->headers->get('Content-Security-Policy'));
         $this->assertSame(0, DB::table('password_reset_tokens')->count());
     }
 }
