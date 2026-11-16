@@ -81,6 +81,7 @@ class DemoRoleWorkspaceTest extends TestCase
         foreach ($accounts as $account) {
             $user = User::where('email', $account['email'])->sole();
             $this->assertTrue($user->is_demo);
+            $this->assertSame('verified', $user->partner_verification_status);
             $this->assertStringStartsWith('@ais_demo_', $user->telegram);
             $this->assertTrue(Hash::check($account['password'], $user->password));
             $this->assertTrue($account['password_is_current']);
@@ -118,6 +119,7 @@ class DemoRoleWorkspaceTest extends TestCase
         $real = User::factory()->create(['role' => 'business', 'name' => 'Real Account', 'is_demo' => false]);
         $user = User::where('email', 'streamer@demo.allinstreams.example')->sole();
         $user->update(['password' => 'Changed-By-Test-User-Only!']);
+        $user->forceFill(['partner_verification_status' => 'pending', 'partner_verified_at' => null])->save();
         $profile = $user->creatorProfile;
         $profile->update(['public_name' => 'Edited by staff', 'rate' => 777]);
         $pending = Invitation::where('status', 'pending')->sole();
@@ -132,6 +134,8 @@ class DemoRoleWorkspaceTest extends TestCase
         $this->assertDatabaseCount('campaign_documents', 6);
         $this->assertDatabaseCount('user_files', 10);
         $this->assertTrue(Hash::check('Changed-By-Test-User-Only!', $user->fresh()->password));
+        $this->assertSame('pending', $user->fresh()->partner_verification_status);
+        $this->assertNull($user->fresh()->partner_verified_at);
         $this->assertSame('Edited by staff', $profile->fresh()->public_name);
         $this->assertSame('777.00', $profile->fresh()->rate);
         $this->assertSame('declined', $pending->fresh()->status);

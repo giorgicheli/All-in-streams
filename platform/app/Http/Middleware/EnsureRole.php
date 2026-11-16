@@ -11,6 +11,7 @@ class EnsureRole
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         abort_unless($request->user() && in_array($request->user()->role, $roles, true), 403);
+        if (! $request->user()->hasVerifiedPartnerAccount()) return redirect()->route('account.pending');
         return $next($request);
     }
 }

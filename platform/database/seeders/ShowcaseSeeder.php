@@ -274,6 +274,7 @@ class ShowcaseSeeder extends Seeder
         $user->forceFill([
             'name' => $name, 'email' => $email, 'password' => $password,
             'role' => $role, 'company' => $company, 'account_type' => $type, 'is_demo' => true,
+            'partner_verification_status' => 'verified', 'partner_verified_at' => now(),
             'created_at' => now()->startOfDay()->subDays($age)->addHours(9), 'updated_at' => now()->subDays(max(1, $age - 4)),
         ])->save();
         $credentials[] = ['name' => $name, 'email' => $email, 'password' => $password, 'role' => $role, 'account_type' => $type];

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
@@ -43,6 +44,8 @@ class User extends Authenticatable implements FilamentUser
         'remember_token',
     ];
 
+    protected $attributes = ['partner_verification_status' => 'pending'];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -54,6 +57,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_demo' => 'boolean',
+            'partner_verified_at' => 'datetime',
         ];
     }
 
@@ -78,11 +82,22 @@ class User extends Authenticatable implements FilamentUser
 
     public function internalFiles(): HasMany { return $this->hasMany(UserFile::class); }
 
+    public function partnerVerifier(): BelongsTo { return $this->belongsTo(self::class, 'partner_verified_by'); }
+
+    public function hasVerifiedPartnerAccount(): bool
+    {
+        return $this->role === 'admin' || $this->partner_verification_status === 'verified';
+    }
+
     public function getAccountTypeLabelAttribute(): string
     {
         return match ($this->role) {
             'admin' => 'Administrator',
-            'creator' => $this->creatorProfile?->creator_type === 'influencer' ? 'Influencer' : 'Streamer',
+            'creator' => match ($this->creatorProfile?->creator_type) {
+                'influencer' => 'Influencer',
+                'both' => 'Streamer & influencer',
+                default => 'Streamer',
+            },
             'agency' => 'Agency',
             default => $this->account_type === 'agency' ? 'Agency' : 'Business',
         };

@@ -51,13 +51,16 @@ class DemoRoleWorkspace
                     if ($user && (! $user->is_demo || $user->role !== $actualRole)) throw new LogicException('A reserved demo email belongs to an existing account. That account was preserved.');
                     if (! $user) {
                         $password = $credentials[$email]['password'] ?? Str::password(24);
-                        $user = User::create([
+                        $user = new User([
                             'name' => 'DEMO '.ucfirst($role).($actualRole === 'creator' ? ' Canada' : ''),
                             'email' => $email, 'password' => $password, 'role' => $actualRole,
                             'company' => match ($role) { 'business' => 'DEMO Pixel North Games', 'agency' => 'DEMO Maple Talent Agency', default => null },
                             'account_type' => in_array($role, ['business', 'agency'], true) ? $role : null,
                             'telegram' => '@ais_demo_'.$role, 'is_demo' => true,
                         ]);
+                        // Only brand-new accounts in this explicitly requested
+                        // fictional CLI workspace bypass the public review queue.
+                        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
                         $credentials[$email] = ['role' => $role, 'email' => $email, 'password' => $password, 'login_url' => rtrim(config('app.url'), '/').($role === 'admin' ? '/admin/login' : '/login')];
                         $newCount++;
                     }

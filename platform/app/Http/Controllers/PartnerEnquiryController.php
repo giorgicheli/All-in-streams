@@ -4,13 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePartnerEnquiryRequest;
 use App\Models\PartnerEnquiry;
+use App\Models\User;
 use App\Rules\SocialProfileUrl;
 use App\Rules\StreamingChannelUrl;
 use App\Rules\TelegramHandle;
+use App\Services\CreatorProofVideo;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class PartnerEnquiryController extends Controller
 {
@@ -30,13 +38,78 @@ class PartnerEnquiryController extends Controller
     public function store(StorePartnerEnquiryRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        unset($data['age_confirmed']);
         $data['telegram'] = TelegramHandle::canonicalize($data['telegram']);
         if (isset($data['twitch_url'])) $data['twitch_url'] = StreamingChannelUrl::canonicalize($data['twitch_url'], 'Twitch');
         if (isset($data['kick_url'])) $data['kick_url'] = StreamingChannelUrl::canonicalize($data['kick_url'], 'Kick');
         if (isset($data['instagram_url'])) $data['instagram_url'] = SocialProfileUrl::canonicalize($data['instagram_url'], 'Instagram');
-        $data['age_confirmed_at'] = now();
-        PartnerEnquiry::firstOrCreate(['submission_key' => $data['submission_key']], $data);
-        return redirect('/talk-to-us?type='.$data['kind'].'#success')->with('enquiry_submitted', true);
+
+        // A replayed key never authenticates an existing account, regardless of
+        // the contact details supplied with it.
+        if (PartnerEnquiry::where('submission_key', $data['submission_key'])->exists()) return $this->alreadyReceived();
+        $creator = $data['kind'] === 'creator';
+        $media = app(CreatorProofVideo::class);
+        $video = $creator ? $media->store($request->file('verification_video')) : [];
+
+        try {
+            $user = DB::transaction(function () use ($data, $creator, $video): ?User {
+                if (PartnerEnquiry::where('submission_key', $data['submission_key'])->lockForUpdate()->exists()) return null;
+                $role = match ($data['kind']) { 'brand' => 'business', 'agency' => 'agency', default => 'creator' };
+                $user = new User(Arr::only($data, ['name', 'email', 'password', 'telegram']));
+                $user->forceFill([
+                    'role' => $role,
+                    'account_type' => $creator ? null : $role,
+                    'company' => $creator ? null : Str::limit((string) parse_url($data['website'], PHP_URL_HOST), 180, ''),
+                    'partner_verification_status' => 'pending',
+                    'partner_verified_at' => null,
+                    'partner_verified_by' => null,
+                ])->save();
+
+                if ($creator) {
+                    $streamer = in_array($data['creator_type'], ['streamer', 'both'], true);
+                    $twitch = $data['twitch_url'] ?? null;
+                    $kick = $data['kick_url'] ?? null;
+                    $user->creatorProfile()->create([
+                        'creator_type' => $data['creator_type'], 'public_name' => $user->name,
+                        'country' => $data['audience_geos'][0], 'language' => '',
+                        'platform' => $streamer ? ($twitch ? 'Twitch' : 'Kick') : 'Instagram',
+                        'channel_url' => $streamer ? ($twitch ?: $kick) : $data['instagram_url'],
+                        'twitch_url' => $twitch, 'kick_url' => $kick,
+                        'instagram_url' => $data['instagram_url'] ?? null,
+                        'followers' => 0, 'average_viewers' => 0, 'audience_geos' => $data['audience_geos'],
+                        'vertical' => 'Gaming', 'rate' => 0, 'commercial_model' => 'Open',
+                        'availability' => 'Open', 'status' => 'pending',
+                    ] + $video);
+                } elseif ($role === 'agency') {
+                    $user->agencyProfile()->create([
+                        'services' => ['request'], 'country' => $data['audience_geos'][0],
+                        'website' => Str::limit($data['website'], 255, ''), 'languages' => [],
+                        'audience_geos' => $data['audience_geos'], 'platforms' => [], 'status' => 'pending',
+                    ]);
+                }
+
+                $enquiry = Arr::except($data, ['password', 'password_confirmation', 'verification_video', 'age_confirmed']);
+                PartnerEnquiry::create($enquiry + ['user_id' => $user->id, 'age_confirmed_at' => now()]);
+                return $user;
+            });
+        } catch (UniqueConstraintViolationException $exception) {
+            $media->deletePath($video['verification_video_path'] ?? null);
+            if (PartnerEnquiry::where('submission_key', $data['submission_key'])->exists()) return $this->alreadyReceived();
+            throw ValidationException::withMessages(['email' => 'This email address is already registered. Sign in or use a different email address.']);
+        } catch (Throwable $exception) {
+            $media->deletePath($video['verification_video_path'] ?? null);
+            throw $exception;
+        }
+        if (!$user) {
+            $media->deletePath($video['verification_video_path'] ?? null);
+            return $this->alreadyReceived();
+        }
+        Auth::login($user);
+        $request->session()->regenerate();
+        return redirect('/account/pending');
+    }
+
+    private function alreadyReceived(): RedirectResponse
+    {
+        return redirect('/login')->with('status', 'This submission has already been received. Sign in to check your account.');
     }
 }

@@ -2,7 +2,7 @@
 @php
     $creator = auth()->user()->role === 'creator';
     $agency = auth()->user()->role === 'agency';
-    $creatorLabel = auth()->user()->creatorProfile?->creator_type === 'influencer' ? 'Influencer' : 'Streamer';
+    $creatorLabel = auth()->user()->account_type_label;
     $links = $creator
         ? [['creator/opportunities','star','Opportunities'],['creator/apply','user',$creatorLabel.' profile'],['provider/deliveries','file','Delivery evidence'],['provider/payments','wallet','Payments'],['documents','shield','Documents']]
         : ($agency

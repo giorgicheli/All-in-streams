@@ -123,6 +123,7 @@ class BriefWizard extends Component
     {
         $actor = Auth::user();
         abort_unless($actor && in_array($actor->role, ['business', 'agency'], true), 403);
+        abort_unless($actor->fresh()?->hasVerifiedPartnerAccount(), 403);
         abort_if($actor->role === 'agency' && !in_array('request', $actor->agencyProfile?->services ?? [], true), 403);
     }
 

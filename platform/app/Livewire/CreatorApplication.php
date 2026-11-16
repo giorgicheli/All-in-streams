@@ -51,6 +51,7 @@ class CreatorApplication extends Component
 
     public function mount(): void
     {
+        abort_unless(Auth::user()?->fresh()?->hasVerifiedPartnerAccount(), 403);
         abort_unless(Auth::user()?->role === 'creator', 403);
         $this->telegram = Auth::user()->telegram ?? '';
         if ($profile = Auth::user()->creatorProfile) {
@@ -82,15 +83,15 @@ class CreatorApplication extends Component
     protected function rules(): array
     {
         return [
-            'creator_type' => ['required', 'in:streamer,influencer'],
+            'creator_type' => ['required', 'in:streamer,influencer,both'],
             'telegram' => ['required', 'string', 'max:100', new TelegramHandle],
             'public_name' => ['required', 'string', 'min:2', 'max:120'],
             'country' => ['required', 'string', 'max:80'],
             'language' => ['required', 'string', 'max:80'],
             'platform' => ['required', $this->creator_type === 'influencer' ? 'in:Facebook,Instagram,YouTube,TikTok' : 'in:Twitch,Kick'],
             'channel_url' => ['required', 'url:https', 'max:255', $this->creator_type === 'influencer' ? new SocialProfileUrl($this->platform) : new StreamingChannelUrl($this->platform)],
-            'twitch_url' => $this->creator_type === 'streamer' ? ['nullable', 'required_without:kick_url', 'string', 'max:255', new StreamingChannelUrl('Twitch')] : ['exclude'],
-            'kick_url' => $this->creator_type === 'streamer' ? ['nullable', 'required_without:twitch_url', 'string', 'max:255', new StreamingChannelUrl('Kick')] : ['exclude'],
+            'twitch_url' => in_array($this->creator_type, ['streamer', 'both'], true) ? ['nullable', 'required_without:kick_url', 'string', 'max:255', new StreamingChannelUrl('Twitch')] : ['exclude'],
+            'kick_url' => in_array($this->creator_type, ['streamer', 'both'], true) ? ['nullable', 'required_without:twitch_url', 'string', 'max:255', new StreamingChannelUrl('Kick')] : ['exclude'],
             'facebook_url' => $this->socialRules('facebook_url', 'Facebook'),
             'instagram_url' => $this->socialRules('instagram_url', 'Instagram'),
             'youtube_url' => $this->socialRules('youtube_url', 'YouTube'),
@@ -131,6 +132,7 @@ class CreatorApplication extends Component
 
     public function submit()
     {
+        abort_unless(Auth::user()?->fresh()?->hasVerifiedPartnerAccount(), 403);
         abort_unless(Auth::user()?->role === 'creator', 403);
         abort_if(Auth::user()->creatorProfile?->trashed(), 403);
         if (Auth::user()->creatorProfile?->invitations()->where('selection_status', 'selected')->whereHas('brief', fn ($query) => $query->whereIn('status', ['contracts', 'live']))->exists()) {
@@ -204,6 +206,9 @@ class CreatorApplication extends Component
 
     private function socialRules(string $field, string $platform): array
     {
+        if ($this->creator_type === 'both') return $field === 'instagram_url'
+            ? ['required', 'string', 'max:255', new SocialProfileUrl('Instagram')]
+            : ['nullable', 'string', 'max:255', new SocialProfileUrl($platform)];
         return $this->creator_type === 'influencer'
             ? ['nullable', 'required_without_all:'.implode(',', array_diff(array_keys(SocialProfileUrl::FIELDS), [$field])), 'string', 'max:255', new SocialProfileUrl($platform)]
             : ['exclude'];

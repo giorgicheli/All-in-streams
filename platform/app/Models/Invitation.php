@@ -44,9 +44,9 @@ class Invitation extends Model
 
     public function recipientApproved(): bool
     {
-        if (! $this->agency_user_id) return $this->creatorProfile && ! $this->creatorProfile->trashed() && $this->creatorProfile->status === 'approved';
+        if (! $this->agency_user_id) return $this->creatorProfile?->user?->hasVerifiedPartnerAccount() && $this->creatorProfile && ! $this->creatorProfile->trashed() && $this->creatorProfile->status === 'approved';
         $profile = $this->agency?->agencyProfile;
-        if ($this->agency?->role !== 'agency' || ! $profile || $profile->status !== 'approved' || ! in_array('supply', $profile->services ?? [], true)) return false;
+        if (!$this->agency?->hasVerifiedPartnerAccount() || $this->agency?->role !== 'agency' || ! $profile || $profile->status !== 'approved' || ! in_array('supply', $profile->services ?? [], true)) return false;
         $roster = $this->agency->relationLoaded('agencyTalent')
             ? $this->agency->getRelation('agencyTalent')->where('status', 'approved')
             : AgencyTalent::where('agency_user_id', $this->agency_user_id)->where('status', 'approved')->get();

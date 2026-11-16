@@ -23,6 +23,7 @@ class CampaignWorkflow
         return DB::transaction(function () use ($brief, $status, $actor) {
             $brief = Brief::query()->lockForUpdate()->findOrFail($brief->id);
             $allowed = ['submitted' => ['review', 'matching', 'changes_requested', 'declined'], 'review' => ['matching', 'changes_requested', 'declined'], 'changes_requested' => ['review', 'matching', 'declined'], 'matching' => ['proposal', 'changes_requested', 'declined'], 'proposal' => ['contracts', 'matching', 'declined'], 'contracts' => ['live', 'proposal'], 'live' => ['completed']];
+            $this->check($brief->user?->hasVerifiedPartnerAccount() || in_array($status, ['review', 'changes_requested', 'declined'], true), 'status', 'Verify the client account before progressing the campaign.');
             $this->check(in_array($status, $allowed[$brief->status] ?? [], true), 'status', 'This campaign cannot move from '.$brief->status.' to '.$status.'.');
             $interested = $brief->invitations()->where('status', 'interested')->where('selection_status', '!=', 'not_selected')->get();
             if ($status === 'proposal') {
@@ -75,7 +76,7 @@ class CampaignWorkflow
             $brief = Brief::lockForUpdate()->findOrFail($brief->id);
             $creator = CreatorProfile::withTrashed()->lockForUpdate()->findOrFail($creator->id);
             $this->canInvite($brief, $creator->creator_type ?: 'streamer');
-            $this->check(! $creator->trashed() && $creator->status === 'approved', 'creator_profile_id', 'Review and approve this creator before sending an invitation.');
+            $this->check($creator->user?->hasVerifiedPartnerAccount() && ! $creator->trashed() && $creator->status === 'approved', 'creator_profile_id', 'Review and approve this creator before sending an invitation.');
             $this->check(! $brief->invitations()->where('creator_profile_id', $creator->id)->exists(), 'creator_profile_id', 'This creator already has an offer for this campaign. Revise that offer instead.');
             $data = $this->offerTerms($brief, $terms, ['compensation' => $creator->rate]);
             $invitation = $brief->invitations()->create($data + ['creator_profile_id' => $creator->id, 'status' => 'pending', 'selection_status' => 'unselected', 'offer_version' => 1]);
@@ -94,7 +95,7 @@ class CampaignWorkflow
             $this->canInvite($brief, 'agency');
             $this->check($brief->user_id !== $agency->id, 'agency_user_id', 'An agency cannot be proposed as the provider for its own client request.');
             $profile = AgencyProfile::where('user_id', $agency->id)->lockForUpdate()->first();
-            $this->check($agency->role === 'agency' && $profile?->status === 'approved' && in_array('supply', $profile->services ?? [], true), 'agency_user_id', 'Approve this agency for supplying roster talent before inviting it.');
+            $this->check($agency->hasVerifiedPartnerAccount() && $agency->role === 'agency' && $profile?->status === 'approved' && in_array('supply', $profile->services ?? [], true), 'agency_user_id', 'Approve this agency for supplying roster talent before inviting it.');
             $this->check(AgencyTalent::where('agency_user_id', $agency->id)->where('status', 'approved')->exists(), 'agency_user_id', 'The agency needs at least one approved roster member.');
             $this->check(! $brief->invitations()->where('agency_user_id', $agency->id)->exists(), 'agency_user_id', 'This agency already has an offer for this campaign. Revise that offer instead.');
             $data = $this->offerTerms($brief, $terms, ['compensation' => 0]);
@@ -216,10 +217,12 @@ class CampaignWorkflow
 
     private function canInvite(Brief $brief, string $type): void
     {
+        $this->check($brief->user?->hasVerifiedPartnerAccount(), 'brief_id', 'Verify the client account before sending provider invitations.');
         $this->check($brief->status === 'matching', 'brief_id', 'Review and approve the brief for matching before inviting providers.');
         $this->check(! $brief->invitations()->where('selection_status', 'selected')->exists(), 'brief_id', 'A final provider is already selected for this campaign.');
         $allowed = ['either', $type];
-        if (in_array($type, ['streamer', 'influencer'], true)) $allowed[] = 'creator';
+        if (in_array($type, ['streamer', 'influencer', 'both'], true)) $allowed[] = 'creator';
+        if ($type === 'both') $allowed = array_merge($allowed, ['streamer', 'influencer']);
         $this->check(in_array($brief->provider_type ?: 'either', $allowed, true), 'brief_id', 'This brief requests a different provider type.');
     }
 

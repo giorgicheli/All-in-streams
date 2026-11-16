@@ -6,8 +6,10 @@ use App\Models\PartnerEnquiry;
 use App\Rules\SocialProfileUrl;
 use App\Rules\StreamingChannelUrl;
 use App\Rules\TelegramHandle;
+use App\Services\CreatorProofVideo;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class StorePartnerEnquiryRequest extends FormRequest
 {
@@ -43,7 +45,8 @@ class StorePartnerEnquiryRequest extends FormRequest
             'kind' => ['required', 'string', Rule::in(array_keys(PartnerEnquiry::KINDS))],
             'creator_type' => $creator ? ['required', 'string', Rule::in(array_keys(PartnerEnquiry::CREATOR_TYPES))] : ['exclude'],
             'name' => ['required', 'string', 'max:120'],
-            'email' => $creator ? ['nullable', 'email', 'max:255'] : ['required', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::min(10)->letters()->numbers()],
             'telegram' => ['required', 'string', 'max:100', new TelegramHandle],
             'website' => $creator ? ['exclude'] : ['required', 'string', 'max:2048', 'url:http,https', function (string $attribute, mixed $value, \Closure $fail): void {
                 $url = is_string($value) ? parse_url($value) : false;
@@ -64,6 +67,7 @@ class StorePartnerEnquiryRequest extends FormRequest
             'stream_rate' => $streamer ? ['required', ...$money] : ['exclude'],
             'story_rate' => $influencer ? ['required', ...$money] : ['exclude'],
             'reel_rate' => $influencer ? ['required', ...$money] : ['exclude'],
+            'verification_video' => $creator ? ['required', ...app(CreatorProofVideo::class)->rules()] : ['exclude'],
             'age_confirmed' => ['required', 'accepted'],
         ];
     }

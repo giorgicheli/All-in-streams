@@ -43,6 +43,20 @@ class ShowcaseSeederTest extends TestCase
         parent::tearDown();
     }
 
+    public function test_local_fixture_seed_verifies_only_its_new_accounts_and_preserves_later_pending_reviews(): void
+    {
+        $this->seed();
+        $this->assertSame(6, User::where('partner_verification_status', 'verified')->count());
+        $user = User::where('email', 'brand@allinstreams.test')->sole();
+        $user->forceFill(['partner_verification_status' => 'pending', 'partner_verified_at' => null])->save();
+
+        $this->seed();
+
+        $this->assertSame('pending', $user->fresh()->partner_verification_status);
+        $this->assertNull($user->fresh()->partner_verified_at);
+        $this->assertDatabaseCount('users', 6);
+    }
+
     public function test_authorized_production_showcase_is_fictional_complete_and_keeps_existing_admins(): void
     {
         $admin = User::factory()->create(['role' => 'admin', 'email' => 'actual-admin@example.com']);
@@ -66,6 +80,7 @@ class ShowcaseSeederTest extends TestCase
         $this->assertSame(2, AgencyProfile::where('status', 'approved')->count());
         $this->assertSame(4, AgencyTalent::where('status', 'approved')->count());
         $this->assertSame(10, User::where('is_demo', true)->where('role', 'creator')->count());
+        $this->assertSame(16, User::where('is_demo', true)->where('partner_verification_status', 'verified')->count());
         $this->assertDatabaseCount('briefs', 12);
         $this->assertDatabaseCount('creator_profiles', 10);
         $this->assertEqualsCanonicalizing(['submitted', 'review', 'changes_requested', 'matching', 'proposal', 'contracts', 'live', 'completed', 'declined'], Brief::distinct()->pluck('status')->all());
@@ -91,6 +106,7 @@ class ShowcaseSeederTest extends TestCase
         $this->artisan('showcase:seed', ['--credentials-file' => $file])->assertSuccessful();
         $user = User::where('email', 'heliogear@workspace.allinstreams.example')->firstOrFail();
         $user->update(['name' => 'Edited sample user', 'password' => 'ChangedLater!2026']);
+        $user->forceFill(['partner_verification_status' => 'pending', 'partner_verified_at' => null])->save();
         $password = $user->fresh()->password;
         $brief = Brief::where('demo_key', ShowcaseSeeder::PREFIX.'gear-launch')->firstOrFail();
         $brief->update(['title' => 'Edited campaign title', 'status' => 'review']);
@@ -102,6 +118,8 @@ class ShowcaseSeederTest extends TestCase
         $this->assertSame($counts, [User::count(), Brief::count(), CreatorProfile::count(), Invitation::count(), CampaignDocument::count(), CampaignMetric::count(), AgencyProfile::count(), AgencyTalent::count(), DeliverySubmission::count(), PaymentMilestone::count()]);
         $this->assertSame($password, $user->fresh()->password);
         $this->assertSame('Edited sample user', $user->fresh()->name);
+        $this->assertSame('pending', $user->fresh()->partner_verification_status);
+        $this->assertNull($user->fresh()->partner_verified_at);
         $this->assertSame('Edited campaign title', $brief->fresh()->title);
         $this->assertSame('review', $brief->fresh()->status);
         $this->assertSame($credentials, file_get_contents($file));

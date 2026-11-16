@@ -28,19 +28,24 @@ class AgencyRolesTest extends TestCase
         $this->withoutVite();
     }
 
-    public function test_agency_registration_opens_a_separate_workspace_and_draft_profile(): void
+    public function test_agency_registration_waits_for_review_before_opening_its_separate_workspace(): void
     {
         $this->post('/register', [
             'name' => 'Agency Owner', 'company' => 'Orbit Talent', 'email' => 'agency@example.test',
             'role' => 'agency', 'password' => 'StrongAgency123!', 'password_confirmation' => 'StrongAgency123!',
             'telegram' => '@orbit_agency',
-        ])->assertSessionHasNoErrors()->assertRedirect('/agency/dashboard');
+        ])->assertSessionHasNoErrors()->assertRedirect('/account/pending');
 
         $agency = User::where('email', 'agency@example.test')->sole();
         $this->assertSame('agency', $agency->role);
+        $this->assertSame('pending', $agency->partner_verification_status);
         $this->assertSame(['supply', 'request'], $agency->agencyProfile->services);
         $this->assertDatabaseHas('agency_profiles', ['user_id' => $agency->id, 'status' => 'draft']);
         $this->assertDatabaseCount('creator_profiles', 0);
+        $this->get('/agency/dashboard')->assertRedirect('/account/pending');
+        $this->get('/account')->assertRedirect('/account/pending');
+        $agency->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        $this->actingAs($agency->fresh());
         $this->get('/agency/dashboard')->assertOk()->assertSee('AGENCY PORTAL')->assertSee('Supply roster talent');
         $this->get('/account')->assertRedirect('/agency/dashboard');
         $this->get('/dashboard')->assertForbidden();

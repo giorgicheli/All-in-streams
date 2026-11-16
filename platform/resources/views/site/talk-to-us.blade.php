@@ -14,7 +14,7 @@
     $currencyOptions = $currencies ?? ['EUR', 'USD', 'GBP', 'CAD', 'AUD', 'CHF', 'BRL'];
     $enquiryKey = $submissionKey ?? $submission_key ?? (string) \Illuminate\Support\Str::uuid();
 @endphp
-<x-layout title="Talk to us" description="Tell All In Streams about your brand, agency or creator profile. Find the right people for your next partnership.">
+<x-layout title="Talk to us" description="Create your All In Streams partner account and tell us about your brand, agency or creator profile.">
     <main class="partner-enquiry" data-partner-enquiry data-enquiry-kind="{{ $selectedKind }}" data-enquiry-creator-type="{{ $selectedCreatorType }}">
         <a href="/" class="enquiry-close" aria-label="Close and return to All In Streams"><x-ui-icon name="close" size="23"/></a>
         <div class="enquiry-shell">
@@ -37,6 +37,7 @@
                         <a href="/talk-to-us?type={{ $category }}" class="enquiry-choice {{ $selectedKind === $category ? 'is-selected' : '' }}" data-enquiry-category="{{ $category }}" @if($selectedKind === $category) aria-current="page" @endif>{{ $label }}</a>
                     @endforeach
                 </nav>
+                <p class="enquiry-review-note"><x-ui-icon name="shield" size="15"/>Create your partner account. The All In Streams team will review your details before approving access.</p>
 
                 @if($errors->any())
                     <div class="enquiry-errors" role="alert" tabindex="-1" data-enquiry-errors>
@@ -45,7 +46,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="/talk-to-us" class="enquiry-form" data-enquiry-form>
+                <form method="POST" action="/talk-to-us" enctype="multipart/form-data" class="enquiry-form" data-enquiry-form>
                     @csrf
                     <input type="hidden" name="kind" value="{{ $selectedKind }}" data-enquiry-kind-input>
                     <input type="hidden" name="submission_key" value="{{ $enquiryKey }}">
@@ -66,9 +67,9 @@
                             <input id="enquiry-name" name="name" value="{{ $oldText('name') }}" autocomplete="name" placeholder="Full name" required maxlength="120" @error('name') aria-invalid="true" aria-describedby="enquiry-name-error" @enderror>
                             @error('name')<p class="enquiry-error" id="enquiry-name-error">{{ $message }}</p>@enderror
                         </div>
-                        <div class="enquiry-field" data-enquiry-for="brand agency" @if($isCreator) hidden @endif>
-                            <label for="enquiry-email">Business email <span aria-hidden="true">*</span></label>
-                            <input id="enquiry-email" name="email" type="email" value="{{ $oldText('email') }}" autocomplete="email" placeholder="{{ $isAgency ? 'you@agency.com' : 'you@yourbrand.com' }}" data-enquiry-required="brand agency" @if($isCreator) disabled @else required @endif maxlength="255" @error('email') aria-invalid="true" aria-describedby="enquiry-email-error" @enderror>
+                        <div class="enquiry-field">
+                            <label for="enquiry-email"><span data-enquiry-email-label>{{ $isCreator ? 'Email address' : 'Business email' }}</span> <span aria-hidden="true">*</span></label>
+                            <input id="enquiry-email" name="email" type="email" value="{{ $oldText('email') }}" autocomplete="email" placeholder="{{ $isCreator ? 'you@example.com' : ($isAgency ? 'you@agency.com' : 'you@yourbrand.com') }}" data-enquiry-required="brand agency creator" required maxlength="255" @error('email') aria-invalid="true" aria-describedby="enquiry-email-error" @enderror>
                             @error('email')<p class="enquiry-error" id="enquiry-email-error">{{ $message }}</p>@enderror
                         </div>
                         <div class="enquiry-field">
@@ -80,6 +81,19 @@
                             <label for="enquiry-website"><span data-enquiry-website-label>{{ $isAgency ? 'Agency website' : 'Company / brand website' }}</span> <span aria-hidden="true">*</span></label>
                             <input id="enquiry-website" name="website" type="url" value="{{ $oldText('website') }}" placeholder="{{ $isAgency ? 'https://youragency.com' : 'https://yourbrand.com' }}" autocomplete="url" data-enquiry-required="brand agency" @if($isCreator) disabled @else required @endif maxlength="2048" @error('website') aria-invalid="true" aria-describedby="enquiry-website-error" @enderror>
                             @error('website')<p class="enquiry-error" id="enquiry-website-error">{{ $message }}</p>@enderror
+                        </div>
+                    </div>
+                    <div class="enquiry-grid enquiry-password-grid">
+                        <div class="enquiry-field">
+                            <label for="enquiry-password">Password <span aria-hidden="true">*</span></label>
+                            <input id="enquiry-password" name="password" type="password" autocomplete="new-password" placeholder="Create a password" required minlength="10" pattern="(?=.*[A-Za-z])(?=.*[0-9]).{10,}" title="Use at least 10 characters, including letters and a number." aria-describedby="enquiry-password-help @error('password') enquiry-password-error @enderror" @error('password') aria-invalid="true" @enderror>
+                            <p class="enquiry-help" id="enquiry-password-help">At least 10 characters, including letters and a number.</p>
+                            @error('password')<p class="enquiry-error" id="enquiry-password-error">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="enquiry-field">
+                            <label for="enquiry-password-confirmation">Confirm password <span aria-hidden="true">*</span></label>
+                            <input id="enquiry-password-confirmation" name="password_confirmation" type="password" autocomplete="new-password" placeholder="Repeat your password" required minlength="10" data-enquiry-password-confirmation @error('password_confirmation') aria-invalid="true" aria-describedby="enquiry-password-confirmation-error" @enderror>
+                            @error('password_confirmation')<p class="enquiry-error" id="enquiry-password-confirmation-error">{{ $message }}</p>@enderror
                         </div>
                     </div>
 
@@ -183,6 +197,15 @@
                                 </div>
                             </div>
                         </section>
+                        <section class="enquiry-form-section" aria-labelledby="enquiry-video-title">
+                            <h2 id="enquiry-video-title">Verify your profile</h2>
+                            <div class="enquiry-field">
+                                <label for="enquiry-video">Profile and audience verification video <span aria-hidden="true">*</span></label>
+                                <input id="enquiry-video" name="verification_video" type="file" accept="video/mp4,video/webm,video/quicktime" data-enquiry-required="creator" @if($isCreator) required @endif aria-describedby="enquiry-video-help @error('verification_video') enquiry-video-error @enderror">
+                                <p class="enquiry-help" id="enquiry-video-help">Upload a short screen recording showing your own platform profile and audience countries. MP4, WebM or MOV; up to {{ app(\App\Services\CreatorProofVideo::class)->maxUploadMb() }} MB and {{ app(\App\Services\CreatorProofVideo::class)->maxDurationSeconds() }} seconds. Only administrators can watch it.</p>
+                                @error('verification_video')<p class="enquiry-error" id="enquiry-video-error">{{ $message }}</p>@enderror
+                            </div>
+                        </section>
                     </fieldset>
 
                     <div class="enquiry-field enquiry-currency">
@@ -197,7 +220,7 @@
                         <span>I confirm I am 18+ and agree to share these details with All In Streams for review.</span>
                     </label>
                     @error('age_confirmed')<p class="enquiry-error">{{ $message }}</p>@enderror
-                    <button type="submit" class="enquiry-submit" data-enquiry-submit><span data-enquiry-submit-label>{{ $isCreator ? 'Submit my profile' : 'Prepare my brief' }}</span><x-ui-icon name="arrow" size="20"/></button>
+                    <button type="submit" class="enquiry-submit" data-enquiry-submit><span data-enquiry-submit-label>{{ $isCreator ? 'Submit my profile' : 'Create account' }}</span><x-ui-icon name="arrow" size="20"/></button>
                     <p class="enquiry-existing">Already a partner? <a href="/login">Sign in <span aria-hidden="true">↗</span></a></p>
                 </form>
             @endif

@@ -7,6 +7,7 @@ use App\Models\PartnerEnquiry;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -75,6 +76,9 @@ class PartnerEnquiryResource extends ManagedResource
             SelectFilter::make('creator_type')->options(PartnerEnquiry::CREATOR_TYPES),
             SelectFilter::make('status')->options(PartnerEnquiry::STATUSES),
         ])->recordActions([
+            Action::make('account')->label('Account review')->icon('heroicon-o-user-circle')
+                ->visible(fn (PartnerEnquiry $record) => $record->user_id !== null)
+                ->url(fn (PartnerEnquiry $record) => UserAccountResource::getUrl('index', ['tableSearch' => $record->email])),
             EditAction::make()->label('Review')->mutateDataUsing(fn (array $data) => Arr::only($data, ['status', 'staff_notes'])),
             DeleteAction::make()->modalDescription('Permanently delete this initial enquiry. Existing user accounts and campaigns are retained.'),
         ])->emptyStateHeading('New partner enquiries arrive here')->emptyStateDescription('Brand, agency and creator contact forms are private to administrators.');

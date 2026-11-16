@@ -38,9 +38,11 @@ class CreatorIdentityRegistrationTest extends TestCase
 
     public function test_influencer_registers_with_social_profile_countries_private_video_and_telegram(): void
     {
-        $this->post('/register', $this->registration(['facebook_url' => 'https://facebook.com/social.creator', 'twitch_url' => 'https://evil.test/not-used']))->assertSessionHasNoErrors()->assertRedirect('/creator/apply');
+        $this->post('/register', $this->registration(['facebook_url' => 'https://facebook.com/social.creator', 'twitch_url' => 'https://evil.test/not-used']))->assertSessionHasNoErrors()->assertRedirect('/account/pending');
         $user = User::where('email', 'social@example.test')->sole();
         $profile = $user->creatorProfile;
+        $this->assertSame('pending', $user->partner_verification_status);
+        $this->assertNull($user->partner_verified_at);
         $this->assertSame('@social_creator', $user->telegram);
         $this->assertSame('influencer', $profile->creator_type);
         $this->assertSame('https://www.instagram.com/social.creator', $profile->instagram_url);
@@ -136,6 +138,7 @@ class CreatorIdentityRegistrationTest extends TestCase
         $profile = $user->creatorProfile;
         Storage::disk('local')->delete($profile->verification_video_path);
         $profile->update(['verification_video_path' => null, 'verification_video_original_name' => null]);
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
         Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('country', 'Canada')->set('language', 'English')->set('followers', '20000')->set('average_viewers', '500')->set('rate', '600')
             ->call('submit')->assertHasErrors('verification_video');
@@ -146,7 +149,8 @@ class CreatorIdentityRegistrationTest extends TestCase
     {
         $this->post('/register', $this->registration())->assertSessionHasNoErrors();
         $user = User::where('email', 'social@example.test')->sole();
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('creator_type', 'streamer')->set('twitch_url', 'https://twitch.tv/social_creator')
             ->set('country', 'Canada')->set('language', 'English')->set('followers', '20000')->set('average_viewers', '500')->set('rate', '600')
             ->call('submit')->assertHasErrors('verification_video');

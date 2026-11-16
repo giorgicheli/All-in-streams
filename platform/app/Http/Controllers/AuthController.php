@@ -31,6 +31,7 @@ class AuthController extends Controller
         }
         RateLimiter::clear($key);
         $request->session()->regenerate();
+        if (!$request->user()->hasVerifiedPartnerAccount()) return redirect('/account/pending');
         return redirect()->intended($this->home($request->user()));
     }
 
@@ -102,7 +103,7 @@ class AuthController extends Controller
         }
         Auth::login($user);
         $request->session()->regenerate();
-        return redirect(match ($user->role) { 'creator' => '/creator/apply', 'agency' => '/agency/dashboard', default => '/dashboard' });
+        return redirect('/account/pending');
     }
 
     public function logout(Request $request): RedirectResponse
@@ -115,6 +116,7 @@ class AuthController extends Controller
 
     public function home(User $user): string
     {
+        if (!$user->hasVerifiedPartnerAccount()) return '/account/pending';
         return match ($user->role) { 'admin' => '/admin', 'creator' => '/creator/opportunities', 'agency' => '/agency/dashboard', default => '/dashboard' };
     }
 }

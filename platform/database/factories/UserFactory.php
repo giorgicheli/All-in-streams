@@ -30,6 +30,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'partner_verification_status' => 'verified',
+            'partner_verified_at' => now(),
         ];
     }
 
@@ -40,6 +42,15 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function pendingPartner(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'partner_verification_status' => 'pending',
+            'partner_verified_at' => null,
+            'partner_verified_by' => null,
         ]);
     }
 }

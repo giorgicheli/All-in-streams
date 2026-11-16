@@ -39,6 +39,9 @@ class DatabaseSeeder extends Seeder
         $french = User::updateOrCreate(['email' => 'france@allinstreams.test'], ['name' => 'Lucas Martin', 'role' => 'creator', 'password' => $password]);
         $portuguese = User::updateOrCreate(['email' => 'portugal@allinstreams.test'], ['name' => 'Rafael Costa', 'role' => 'creator', 'password' => $password]);
         $agency = User::updateOrCreate(['email' => 'agency@allinstreams.test'], ['name'=>'Morgan Lee','role'=>'agency','account_type'=>'agency','company'=>'Orbit Talent Demo','password'=>$password,'is_demo'=>true]);
+        foreach ([$admin, $business, $creatorUser, $french, $portuguese, $agency] as $account) {
+            if ($account->wasRecentlyCreated) $account->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        }
         AgencyProfile::updateOrCreate(['user_id'=>$agency->id], ['services'=>['supply','request'],'country'=>'Germany','website'=>'https://example.com/orbit-talent-demo','languages'=>['German','English'],'audience_geos'=>['Germany','Austria'],'platforms'=>['Twitch','Kick'],'bio'=>'Fictional sample talent agency.','status'=>'approved']);
         AgencyTalent::updateOrCreate(['agency_user_id'=>$agency->id,'public_name'=>'Orbit Arena Demo'], ['country'=>'Germany','language'=>'German','platform'=>'Twitch','twitch_url'=>'https://www.twitch.tv/ais_demo_orbit_arena','followers'=>32000,'average_viewers'=>850,'audience_geos'=>['Germany','Austria'],'rate'=>700,'availability'=>'Open','status'=>'approved']);
 

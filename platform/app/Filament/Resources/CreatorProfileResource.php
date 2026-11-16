@@ -53,23 +53,23 @@ class CreatorProfileResource extends ManagedResource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class])->where('creator_type', static::creatorType());
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class])->whereIn('creator_type', [static::creatorType(), 'both']);
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Hidden::make('creator_type')->default(static::creatorType())->dehydrateStateUsing(fn () => static::creatorType()),
+            Hidden::make('creator_type')->default(static::creatorType())->dehydrateStateUsing(fn ($state) => $state === 'both' ? 'both' : static::creatorType()),
             Section::make('Creator identity')->description('Internal staff view. Account identities, channel links and contact details are private to administrators.')->schema([
                 Select::make('user_id')->relationship('user', 'email', modifyQueryUsing: fn (Builder $query) => $query->where('role', 'creator'))->label('Creator account')->required()->searchable()->preload()->unique(ignoreRecord: true),
                 TextInput::make('public_name')->required()->maxLength(120),
                 TextInput::make('country')->required()->maxLength(80),
                 TextInput::make('language')->required()->maxLength(80),
-                Select::make('platform')->options(static::platformOptions())->required(),
+                Select::make('platform')->options(fn (?CreatorProfile $record) => $record?->creator_type === 'both' ? ['Twitch' => 'Twitch', 'Kick' => 'Kick', 'Instagram' => 'Instagram', 'Facebook' => 'Facebook', 'YouTube' => 'YouTube', 'TikTok' => 'TikTok'] : static::platformOptions())->required(),
                 TextInput::make('channel_url')->url()->required()->maxLength(255),
-                TextInput::make('twitch_url')->label('Twitch channel')->url()->maxLength(255)->rules([new StreamingChannelUrl('Twitch')])->helperText('Private channel link; visible to administrators only.')->visible(static::creatorType() === 'streamer'),
-                TextInput::make('kick_url')->label('Kick channel')->url()->maxLength(255)->rules([new StreamingChannelUrl('Kick')])->visible(static::creatorType() === 'streamer'),
-                ...array_map(fn (string $field, string $platform) => TextInput::make($field)->label($platform.' profile')->url()->maxLength(255)->rules([new SocialProfileUrl($platform)])->visible(static::creatorType() === 'influencer'), array_keys(SocialProfileUrl::FIELDS), array_values(SocialProfileUrl::FIELDS)),
+                TextInput::make('twitch_url')->label('Twitch channel')->url()->maxLength(255)->rules([new StreamingChannelUrl('Twitch')])->helperText('Private channel link; visible to administrators only.')->visible(fn (?CreatorProfile $record) => static::creatorType() === 'streamer' || $record?->creator_type === 'both'),
+                TextInput::make('kick_url')->label('Kick channel')->url()->maxLength(255)->rules([new StreamingChannelUrl('Kick')])->visible(fn (?CreatorProfile $record) => static::creatorType() === 'streamer' || $record?->creator_type === 'both'),
+                ...array_map(fn (string $field, string $platform) => TextInput::make($field)->label($platform.' profile')->url()->maxLength(255)->rules([new SocialProfileUrl($platform)])->visible(fn (?CreatorProfile $record) => static::creatorType() === 'influencer' || $record?->creator_type === 'both'), array_keys(SocialProfileUrl::FIELDS), array_values(SocialProfileUrl::FIELDS)),
             ])->columns(2),
             Section::make('Audience and partnerships')->schema([
                 TextInput::make('followers')->numeric()->minValue(0)->required(),
@@ -105,7 +105,7 @@ class CreatorProfileResource extends ManagedResource
                 TrashedFilter::make(),
                 SelectFilter::make('country')->options(fn () => CreatorProfile::query()->distinct()->orderBy('country')->pluck('country', 'country')->all())->searchable(),
                 SelectFilter::make('language')->options(fn () => CreatorProfile::query()->distinct()->orderBy('language')->pluck('language', 'language')->all())->searchable(),
-                SelectFilter::make('audience_country')->label('Audience country')->options(fn () => CreatorProfile::query()->where('creator_type', static::creatorType())->pluck('audience_geos')->flatten()->filter()->unique()->sort()->mapWithKeys(fn ($country) => [$country => $country])->all())
+                SelectFilter::make('audience_country')->label('Audience country')->options(fn () => CreatorProfile::query()->whereIn('creator_type', [static::creatorType(), 'both'])->pluck('audience_geos')->flatten()->filter()->unique()->sort()->mapWithKeys(fn ($country) => [$country => $country])->all())
                     ->query(fn (Builder $query, array $data) => $query->when($data['value'] ?? null, fn (Builder $q, string $country) => $q->whereJsonContains('audience_geos', $country)))->searchable(),
                 Filter::make('budget')->schema([TextInput::make('maximum_rate')->label('Maximum creator rate (EUR)')->numeric()->minValue(0)->maxValue(999999999.99)])
                     ->query(fn (Builder $query, array $data) => $query->when(isset($data['maximum_rate']) && $data['maximum_rate'] !== '' && is_numeric($data['maximum_rate']) && (float) $data['maximum_rate'] >= 0, fn (Builder $q) => $q->where('rate', '<=', (float) $data['maximum_rate'])))

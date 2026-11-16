@@ -38,9 +38,10 @@ class CreatorChannelsTest extends TestCase
     public function test_creator_signup_saves_both_canonical_channel_links_in_a_draft_profile(): void
     {
         $this->post('/register', $this->registration(['kick_url' => 'https://www.kick.com/Stream_Person/']))
-            ->assertSessionHasNoErrors()->assertRedirect('/creator/apply');
+            ->assertSessionHasNoErrors()->assertRedirect('/account/pending');
 
         $user = User::where('email', 'streamer@example.test')->firstOrFail();
+        $this->assertSame('pending', $user->partner_verification_status);
         $this->assertAuthenticatedAs($user);
         $this->assertNull($user->account_type);
         $this->assertDatabaseHas('creator_profiles', [
@@ -55,7 +56,7 @@ class CreatorChannelsTest extends TestCase
     public function test_a_kick_only_creator_can_register(): void
     {
         $this->post('/register', $this->registration(['twitch_url' => '', 'kick_url' => 'https://kick.com/kick_person']))
-            ->assertSessionHasNoErrors()->assertRedirect('/creator/apply');
+            ->assertSessionHasNoErrors()->assertRedirect('/account/pending');
 
         $this->assertDatabaseHas('creator_profiles', [
             'platform' => 'Kick', 'channel_url' => 'https://kick.com/kick_person',
@@ -105,7 +106,7 @@ class CreatorChannelsTest extends TestCase
         $this->post('/register', $this->registration([
             'role' => 'business', 'account_type' => 'agency', 'company' => 'Northstar Talent',
             'twitch_url' => 'https://unrelated.example/channel',
-        ]))->assertSessionHasNoErrors()->assertRedirect('/agency/dashboard');
+        ]))->assertSessionHasNoErrors()->assertRedirect('/account/pending');
 
         $this->assertDatabaseHas('users', ['email' => 'streamer@example.test', 'role' => 'agency', 'account_type' => 'agency', 'company' => 'Northstar Talent']);
         $this->assertDatabaseHas('agency_profiles', ['user_id' => User::where('email', 'streamer@example.test')->value('id'), 'status' => 'draft']);
@@ -115,7 +116,7 @@ class CreatorChannelsTest extends TestCase
     public function test_company_registration_defaults_to_business_and_ignores_creator_links(): void
     {
         $this->post('/register', $this->registration(['role' => 'business']))
-            ->assertSessionHasNoErrors()->assertRedirect('/dashboard');
+            ->assertSessionHasNoErrors()->assertRedirect('/account/pending');
 
         $this->assertDatabaseHas('users', ['email' => 'streamer@example.test', 'role' => 'business', 'account_type' => 'business']);
         $this->assertDatabaseCount('creator_profiles', 0);
@@ -125,8 +126,10 @@ class CreatorChannelsTest extends TestCase
     {
         $this->post('/register', $this->registration(['kick_url' => 'https://kick.com/stream_person']))->assertSessionHasNoErrors();
         $user = User::where('email', 'streamer@example.test')->firstOrFail();
+        $this->assertSame('pending', $user->partner_verification_status);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->assertSet('twitch_url', 'https://www.twitch.tv/stream_person')
             ->assertSet('kick_url', 'https://kick.com/stream_person')
             ->set('country', 'Georgia')->set('language', 'Georgian')
@@ -144,7 +147,8 @@ class CreatorChannelsTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('creator_type', 'influencer')->set('country', 'Georgia')->set('platform', 'YouTube')->set('youtube_url', 'https://www.youtube.com/@creator_channel')
             ->set('verification_video', $this->creatorProofVideo())
             ->set('followers', '12000')->set('average_viewers', '420')->set('audience_geos', ['Georgia'])->set('rate', '350')
@@ -158,7 +162,8 @@ class CreatorChannelsTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('country', 'Georgia')->call('next')->assertSet('step', 2)
             ->set('twitch_url', 'https://www.twitch.tv/stream_person')
             ->set('kick_url', 'https://example.com/fake_kick')->call('next')
@@ -169,7 +174,8 @@ class CreatorChannelsTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('country', 'Georgia')->call('next')->assertSet('step', 2)
             ->set('channel_url', 'https://example.com/creator')->call('next')
             ->assertHasErrors('channel_url')->assertSet('step', 2);
@@ -179,7 +185,8 @@ class CreatorChannelsTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('country', 'Georgia')->set('channel_url', 'https://twitch.tv/Legacy_Person/')
             ->set('verification_video', $this->creatorProofVideo())
             ->set('followers', '10000')->set('average_viewers', '300')->set('audience_geos', ['Georgia'])->set('rate', '250')
@@ -192,8 +199,10 @@ class CreatorChannelsTest extends TestCase
     {
         $this->post('/register', $this->registration())->assertSessionHasNoErrors();
         $user = User::where('email', 'streamer@example.test')->firstOrFail();
+        $this->assertSame('pending', $user->partner_verification_status);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('country', 'Georgia')->set('language', 'Georgian')->call('next')->assertSet('step', 2)
             ->set('twitch_url', '')->set('kick_url', '')->call('next')
             ->assertHasErrors('channel_url')->assertSet('step', 2)->assertSet('channel_url', '');
@@ -203,7 +212,8 @@ class CreatorChannelsTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'creator', 'telegram' => '@creator_person']);
 
-        Livewire::actingAs($user)->test(CreatorApplication::class)
+        $user->forceFill(['partner_verification_status' => 'verified', 'partner_verified_at' => now()])->save();
+        Livewire::actingAs($user->fresh())->test(CreatorApplication::class)
             ->set('country', 'Georgia')->call('next')->assertSet('step', 2)
             ->set('kick_url', 'https://kick.com/new_person')->call('next')
             ->assertHasNoErrors()->assertSet('step', 3)->assertSet('platform', 'Kick')->assertSet('channel_url', 'https://kick.com/new_person');

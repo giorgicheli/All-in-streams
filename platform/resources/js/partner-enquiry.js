@@ -18,6 +18,8 @@ export function initializePartnerEnquiry(root = document) {
     const twitch = form.querySelector('[name="twitch_url"]');
     const firstGeo = form.querySelector('#enquiry-creator-geo-0');
     const secondGeo = form.querySelector('#enquiry-creator-geo-1');
+    const password = form.querySelector('[name="password"]');
+    const confirmation = form.querySelector('[name="password_confirmation"]');
     let kind = page.dataset.enquiryKind || 'brand';
     let creatorType = page.dataset.enquiryCreatorType || 'streamer';
     let motion;
@@ -63,6 +65,11 @@ export function initializePartnerEnquiry(root = document) {
             ? 'Choose a different second audience country.' : '');
     }
 
+    function validatePasswordConfirmation() {
+        confirmation?.setCustomValidity(confirmation.value && password?.value !== confirmation.value
+            ? 'Repeat the same password.' : '');
+    }
+
     function refresh({ animate = false, updateUrl = false } = {}) {
         if (!copy[kind]) kind = 'brand';
         if (!['streamer', 'influencer', 'both'].includes(creatorType)) creatorType = 'streamer';
@@ -101,7 +108,9 @@ export function initializePartnerEnquiry(root = document) {
         if (title) title.textContent = current.title;
         if (description) description.textContent = current.description;
         if (eyebrow) eyebrow.textContent = current.eyebrow;
-        submitLabel.textContent = kind === 'creator' ? 'Submit my profile' : 'Prepare my brief';
+        submitLabel.textContent = kind === 'creator' ? 'Submit my profile' : 'Create account';
+        page.querySelector('[data-enquiry-email-label]').textContent = kind === 'creator' ? 'Email address' : 'Business email';
+        form.querySelector('[name="email"]').placeholder = kind === 'creator' ? 'you@example.com' : current.email;
         if (kind !== 'creator') {
             page.querySelector('[data-enquiry-website-label]').textContent = current.website;
             form.querySelector('[name="website"]').placeholder = current.websitePlaceholder;
@@ -111,6 +120,7 @@ export function initializePartnerEnquiry(root = document) {
         }
         validateChannels();
         validateCountries();
+        validatePasswordConfirmation();
         if (updateUrl) {
             const url = new URL(location.href);
             url.searchParams.set('type', kind);
@@ -145,6 +155,7 @@ export function initializePartnerEnquiry(root = document) {
     }, { signal: events.signal }));
     [kick, twitch].forEach(input => input?.addEventListener('input', validateChannels, { signal: events.signal }));
     [firstGeo, secondGeo].forEach(select => select?.addEventListener('change', validateCountries, { signal: events.signal }));
+    [password, confirmation].forEach(input => input?.addEventListener('input', validatePasswordConfirmation, { signal: events.signal }));
     form.addEventListener('submit', event => {
         if (submitting) { event.preventDefault(); return; }
         submitting = true;
