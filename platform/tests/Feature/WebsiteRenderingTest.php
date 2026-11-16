@@ -25,13 +25,13 @@ class WebsiteRenderingTest extends TestCase
         $content = SiteContentDefaults::home();
         $content['blocks'][0]['data']['title_line_1'] = 'A private draft headline';
         app(SiteContent::class)->saveDraft($admin, 'home', $content);
-        $this->get('/')->assertOk()->assertSee('Outplay your')->assertDontSee('A private draft headline');
+        $this->get('/')->assertOk()->assertSee('Trusted')->assertDontSee('A private draft headline');
         $this->actingAs($admin)->get('/admin/website-preview/home')->assertOk()
             ->assertSee('A private draft headline')->assertHeader('X-Robots-Tag', 'noindex, nofollow')
             ->assertHeader('X-Frame-Options', 'SAMEORIGIN');
 
         app(SiteContent::class)->publish($admin, 'home');
-        $this->get('/')->assertOk()->assertSee('A private draft headline')->assertDontSee('Outplay your');
+        $this->get('/')->assertOk()->assertSee('A private draft headline')->assertDontSee('Trusted');
     }
 
     public function test_public_sections_follow_authored_order_and_visibility(): void
@@ -40,7 +40,7 @@ class WebsiteRenderingTest extends TestCase
         $content['blocks'][2]['data']['enabled'] = false;
         [$content['blocks'][0], $content['blocks'][3]] = [$content['blocks'][3], $content['blocks'][0]];
         app(SiteContent::class)->publish(User::factory()->create(['role' => 'admin']), 'home', $content);
-        $this->get('/')->assertOk()->assertSeeInOrder(['Native to your world.', 'Outplay your'])
+        $this->get('/')->assertOk()->assertSeeInOrder(['Native to your world.', 'Trusted'])
             ->assertDontSee('Your next move starts here.');
     }
 
@@ -72,7 +72,7 @@ class WebsiteRenderingTest extends TestCase
 
     public function test_footer_has_legal_links_without_removed_slogans_or_replaced_asset_credits(): void
     {
-        $this->get('/')->assertOk()->assertSee('Germany')->assertSee('France')
+        $this->get('/')->assertOk()->assertSee('Germany')->assertSee('Portugal')
             ->assertSee(route('privacy'))->assertSee(route('terms'))
             ->assertSee('Privacy policy')->assertSee('Terms &amp; conditions', false)
             ->assertDontSee('Local voices. Global ambition')->assertDontSee('Flags designed by')
@@ -88,12 +88,12 @@ class WebsiteRenderingTest extends TestCase
         $pagesBefore = \App\Models\SitePage::all()->toArray();
 
         $this->get('/white')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow')
-            ->assertSee('class="theme-white"', false)->assertSee('content="#ffffff"', false)
-            ->assertSee('Outplay your')->assertSee('site-footer')->assertSee('data-network-count', false)
+            ->assertSee('class="theme-white"', false)->assertSee('content="#f7f8f1"', false)
+            ->assertSee('Trusted')->assertSee('site-footer')->assertSee('data-network-count', false)
             ->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE')->assertDontSee('livewire.js')
             ->assertDontSee('network-stat-index')->assertDontSee('card-number')->assertDontSee('step-number');
-        $this->get('/')->assertOk()->assertDontSee('class="theme-white"', false)
-            ->assertSee('content="#090d0c"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
+        $this->get('/')->assertOk()->assertSee('class="theme-white"', false)
+            ->assertSee('content="#f7f8f1"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
         $this->assertSame($pagesBefore, \App\Models\SitePage::all()->toArray());
     }
 
@@ -118,6 +118,6 @@ class WebsiteRenderingTest extends TestCase
                 $lastPosition = $position;
             }
         }
-        $this->get($faq['url'])->assertOk()->assertSee('Company')->assertSee('Agency')->assertSee('Creator');
+        $this->get($faq['url'])->assertOk()->assertSee('Brand')->assertSee('Agency')->assertSee('Creator');
     }
 }

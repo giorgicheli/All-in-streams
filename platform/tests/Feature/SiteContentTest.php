@@ -37,7 +37,7 @@ class SiteContentTest extends TestCase
         foreach ([$service->getPublished('home'), $service->getDraft('home'), $service->validate('home', $legacy)] as $content) {
             $faq = collect($content['blocks'])->firstWhere('type', 'faq')['data'];
             $this->assertSame('Talk to us', $faq['label']);
-            $this->assertSame('/register', $faq['url']);
+            $this->assertSame('/talk-to-us', $faq['url']);
             $this->assertSame('Previously authored FAQ', $faq['title_line_1']);
             $this->assertSame('A saved question?', $faq['items'][0]['question']);
         }

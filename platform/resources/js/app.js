@@ -4,6 +4,8 @@ import { initializeSmoothScroll } from './smooth-scroll';
 import { initializeGeographyCarousels } from './geography';
 import { initializeMobileNavigation } from './navigation';
 import { initializePublicResults, initializeNetworkCounters } from './public-results';
+import { initializePartnerEnquiry } from './partner-enquiry';
+import { initializeHeroHeadlines } from './hero-headlines';
 
 let cleanup = () => {};
 
@@ -16,6 +18,8 @@ function initializePage() {
     const disposeNavigation = initializeMobileNavigation();
     const disposeResults = initializePublicResults();
     const disposeCounters = initializeNetworkCounters();
+    const disposeEnquiry = initializePartnerEnquiry();
+    const disposeHeadlines = initializeHeroHeadlines();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -34,6 +38,8 @@ function initializePage() {
         disposeNavigation();
         disposeResults();
         disposeCounters();
+        disposeEnquiry();
+        disposeHeadlines();
     };
 }
 

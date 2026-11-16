@@ -1,4 +1,4 @@
-<section class="network-section section" id="network" aria-labelledby="network-title">
+<section class="network-section section {{ ($networkPanel ?? false) ? 'network-panel' : '' }}" id="network" aria-labelledby="network-title">
     <div class="container">
         <div class="section-heading"><div><span class="eyebrow">{{ $data['eyebrow'] }}</span><h2 id="network-title">{{ $data['title'] }}</h2></div><p>{{ $data['description'] }}</p></div>
         <div class="network-stat-grid" data-motion-group>

@@ -1,10 +1,10 @@
-@props(['title' => 'Creator partnerships. All in.', 'description' => null, 'lightPreview' => false])
+@props(['title' => 'Creator partnerships. All in.', 'description' => null, 'lightPreview' => false, 'lightTheme' => true])
 <!doctype html>
-<html lang="en" @if($lightPreview) class="light-preview" @endif><head>
+<html lang="en" @if($lightTheme) class="light-preview" @endif><head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $description ?? $site['site_description'] }}">
-    <meta name="theme-color" content="{{ $lightPreview ? '#ffffff' : '#090d0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
+    <meta name="theme-color" content="{{ $lightTheme ? '#f7f8f1' : '#090d0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
     @if($lightPreview)<meta name="robots" content="noindex, nofollow">@endif
     <link rel="icon" href="/favicon.ico?v=2" sizes="any">
     <link rel="icon" href="/favicon-32x32.png?v=2" type="image/png" sizes="32x32">
@@ -14,7 +14,7 @@
     @unless($lightPreview)
         @livewireStyles
     @endunless
-</head><body @if($lightPreview) class="theme-white" @endif>
+</head><body @if($lightTheme) class="theme-white" @endif>
     {{ $slot }}
     @if(request()->attributes->get('website.preview'))
         <span class="site-preview-label">Draft preview · Changes are not public</span>

@@ -5,6 +5,7 @@ use App\Http\Controllers\AgencyPortalController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ProviderDeliveryController;
 use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\PartnerEnquiryController;
 use App\Http\Controllers\AccountSettingsController;
 use App\Http\Controllers\CreatorProofVideoController;
 use App\Http\Controllers\UserFileController;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
 Route::get('/white', [WebsiteController::class, 'white'])->name('home.white');
+Route::get('/talk-to-us', [PartnerEnquiryController::class, 'create'])->name('enquiries.create');
+Route::post('/talk-to-us', [PartnerEnquiryController::class, 'store'])->middleware('throttle:10,1')->name('enquiries.store');
 Route::get('/privacy-policy', [WebsiteController::class, 'privacy'])->name('privacy');
 Route::get('/terms-and-conditions', [WebsiteController::class, 'terms'])->name('terms');
 Route::get('/admin/website-preview/{page}', [WebsiteController::class, 'preview'])
