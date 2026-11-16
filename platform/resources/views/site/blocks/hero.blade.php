@@ -6,7 +6,7 @@
 @endphp
 <section class="hero hero-reference" id="top">
     <div class="container">
-        <div class="hero-grid">
+        <div class="hero-grid" data-motion-group>
             <div class="hero-copy">
                 <span class="eyebrow"><span class="live-dot"></span>{{ $data['eyebrow'] }}</span>
                 <h1 class="hero-headline" data-hero-headlines>
@@ -27,6 +27,16 @@
                 </div>
                 <span class="hero-footnote"><x-ui-icon name="check" size="14"/>{{ $data['footnote'] }}</span>
             </div>
+            <div class="hero-art" data-motion-reveal>
+                @if($data['image_path'])
+                    <img class="hero-art-image" src="{{ Storage::disk('public')->url($data['image_path']) }}" alt="{{ $data['image_alt'] }}" width="660" height="660" fetchpriority="high">
+                @else
+                    <x-hero-signal/>
+                @endif
+                <span class="hero-art-label"><span class="live-dot"></span>{{ $data['float_top'] }}</span>
+                <span class="hero-art-caption"><x-ui-icon name="spark" size="17"/>{{ $data['preview_pill'] }}</span>
+            </div>
         </div>
+        <div class="hero-signoff"><span>{{ $data['bottom_statement'] }}</span><a href="#platform">{{ $data['scroll_label'] }}<x-ui-icon name="chevron" size="14"/></a></div>
     </div>
 </section>

@@ -21,7 +21,7 @@
             <div class="creator-region-panel" id="creator-region-{{ $loop->index }}" role="tabpanel" aria-labelledby="creator-tab-{{ $loop->index }}" data-creator-panel="{{ $region }}" @unless($loop->first) hidden @endunless>
                 <div class="creator-network-grid" data-motion-group>
                     @forelse($networkGroups->get($region, collect()) as $profile)
-                        <article class="creator-public-card" data-public-profile="{{ $profile['public_id'] }}" data-profile-caption="{{ $profile['caption'] }}" data-profile-market="{{ $profile['country'] }}" data-profile-type="{{ $profile['type_label'] }}">
+                        <article class="creator-public-card" @if($loop->parent->first) data-motion-reveal @endif data-public-profile="{{ $profile['public_id'] }}" data-profile-caption="{{ $profile['caption'] }}" data-profile-market="{{ $profile['country'] }}" data-profile-type="{{ $profile['type_label'] }}">
                             <div class="creator-public-image">
                                 <img src="{{ $profile['image_url'] }}" alt="{{ $profile['image_alt'] }}" width="660" height="450" loading="lazy">
                                 <span class="creator-market-label">{{ $profile['country'] }} &middot; {{ $profile['type_label'] }}</span>

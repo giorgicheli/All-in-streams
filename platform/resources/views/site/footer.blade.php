@@ -1,4 +1,4 @@
-<footer class="site-footer{{ ($site['about']['enabled'] ?? false) ? ' site-footer-has-intro' : '' }}" id="about"><div class="container">
+<footer class="site-footer{{ ($site['about']['enabled'] ?? false) ? ' site-footer-has-intro' : '' }}" id="about"><div class="footer-ambient" aria-hidden="true"></div><div class="container">
     @if($site['about']['enabled'] ?? false)
         <section class="footer-intro" aria-labelledby="footer-about-title">
             <div><span class="eyebrow">{{ $site['about']['eyebrow'] }}</span><h2 id="footer-about-title">{{ $site['about']['title'] }}</h2></div>

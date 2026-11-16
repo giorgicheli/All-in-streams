@@ -29,6 +29,7 @@
         </div>
     </div>
 </header>
+<div class="site-reading-progress" aria-hidden="true"></div>
 <div id="site-mobile-menu" class="mobile-nav site-mobile-menu" data-mobile-menu role="dialog" aria-modal="true" aria-label="Main navigation" tabindex="-1" data-lenis-prevent hidden inert>
     <div class="site-mobile-menu-shell">
         <div class="site-mobile-menu-top"><x-brand :home-url="($lightPreview ?? false) ? route('home.white') : '/'"/><button type="button" class="icon-button site-menu-close" data-mobile-menu-close aria-label="Close navigation"><span aria-hidden="true"><i></i><i></i></span></button></div>

@@ -6,13 +6,13 @@
 @endphp
 <x-layout :title="$home['seo']['title']" :description="$home['seo']['description']" :light-preview="$lightPreview ?? false">
     @include('site.navigation')
-    <main>
+    <main class="home-redesign">
         @if($hasHeroStage)
             <div class="hero-stage">
                 @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data']])
-                @include('site.blocks.network-stats', ['data' => $site['network_stats'], 'networkPanel' => true])
                 @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
             </div>
+            @include('site.blocks.network-stats', ['data' => $site['network_stats']])
         @endif
         @foreach($visibleBlocks as $block)
             @continue($hasHeroStage && $loop->index < 2)

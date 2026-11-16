@@ -32,7 +32,11 @@ class PartnerEnquiryController extends Controller
         $creatorType = in_array($request->query('creator_type'), array_keys(PartnerEnquiry::CREATOR_TYPES), true) ? $request->query('creator_type') : 'streamer';
         $profileIds = $request->old('profiles', $request->query('profiles', []));
         $profileIds = is_array($profileIds) ? array_slice(array_filter($profileIds, fn ($id) => is_string($id) && Str::isUuid($id)), 0, 24) : [];
-        $selectedProfiles = CreatorShowcase::published()->whereIn('public_id', $profileIds)->get()->map->publicData();
+        // SQL may use the UUID index rather than the visitor's shortlist order.
+        // Retain that order when rebuilding the form and its role-switch links.
+        $selectedProfiles = CreatorShowcase::published()->whereIn('public_id', $profileIds)->get()
+            ->sortBy(fn (CreatorShowcase $profile) => array_search($profile->public_id, $profileIds, true))
+            ->values()->map->publicData();
         $region = $request->old('requested_region', $request->query('region'));
         return response()->view('site.talk-to-us', [
             'kind' => $kind,
