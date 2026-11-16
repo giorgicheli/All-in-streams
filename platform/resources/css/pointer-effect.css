@@ -1,0 +1,17 @@
+.site-redesign .pointer-effect {
+    position: fixed;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    z-index: 101;
+    pointer-events: none;
+    mix-blend-mode: difference;
+    opacity: 0;
+    transition: opacity 180ms ease;
+    contain: strict;
+}
+.site-redesign .pointer-effect.is-active { opacity: 1; }
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .site-redesign .pointer-effect { display: none; }
+}

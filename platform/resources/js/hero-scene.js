@@ -92,23 +92,27 @@ function createStudioEnvironment(THREE, renderer, compact) {
     const width = canvas.width;
     const height = canvas.height;
     const background = context.createLinearGradient(0, 0, 0, height);
-    background.addColorStop(0, '#ffffff');
-    background.addColorStop(0.48, '#e6ecdf');
-    background.addColorStop(0.72, '#899b88');
-    background.addColorStop(1, '#d6ddcf');
+    background.addColorStop(0, '#27353f');
+    background.addColorStop(0.48, '#111a23');
+    background.addColorStop(0.72, '#060a10');
+    background.addColorStop(1, '#202b38');
     context.fillStyle = background;
     context.fillRect(0, 0, width, height);
 
-    for (const [left, breadth] of [[0.12, 0.12], [0.52, 0.17], [0.84, 0.06]]) {
+    for (const [left, breadth, color] of [
+        [0.12, 0.12, 'rgba(126,243,243,0.95)'],
+        [0.52, 0.17, 'rgba(231,242,255,0.98)'],
+        [0.84, 0.06, 'rgba(179,184,255,0.82)'],
+    ]) {
         const light = context.createLinearGradient(width * left, 0, width * (left + breadth), 0);
         light.addColorStop(0, 'rgba(255,255,255,0)');
-        light.addColorStop(0.22, 'rgba(255,255,255,0.96)');
-        light.addColorStop(0.78, 'rgba(255,255,255,0.96)');
+        light.addColorStop(0.22, color);
+        light.addColorStop(0.78, color);
         light.addColorStop(1, 'rgba(255,255,255,0)');
         context.fillStyle = light;
         context.fillRect(width * left, height * 0.08, width * breadth, height * 0.7);
     }
-    context.fillStyle = '#31453c';
+    context.fillStyle = '#070e16';
     context.fillRect(width * 0.36, height * 0.25, width * 0.045, height * 0.5);
 
     const source = new THREE.CanvasTexture(canvas);
@@ -127,9 +131,9 @@ function createShadowTexture(THREE) {
     const context = canvas.getContext('2d');
     if (!context) return null;
     const gradient = context.createRadialGradient(64, 64, 8, 64, 64, 64);
-    gradient.addColorStop(0, 'rgba(8,35,23,0.22)');
-    gradient.addColorStop(0.45, 'rgba(8,35,23,0.10)');
-    gradient.addColorStop(1, 'rgba(8,35,23,0)');
+    gradient.addColorStop(0, 'rgba(36,203,216,0.10)');
+    gradient.addColorStop(0.45, 'rgba(20,150,166,0.04)');
+    gradient.addColorStop(1, 'rgba(20,150,166,0)');
     context.fillStyle = gradient;
     context.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(canvas);
@@ -202,11 +206,11 @@ function createHeroScene(THREE, element) {
         const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 40);
         environment = createStudioEnvironment(THREE, renderer, compact);
         if (environment) scene.environment = environment.texture;
-        scene.add(new THREE.HemisphereLight(0xffffff, 0xb9c5b3, 1.6));
-        const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+        scene.add(new THREE.HemisphereLight(0xd9eef7, 0x101923, 1.1));
+        const keyLight = new THREE.DirectionalLight(0xedfaff, 3);
         keyLight.position.set(-3, 5, 6);
         scene.add(keyLight);
-        const rimLight = new THREE.DirectionalLight(0xe1f9be, 1.4);
+        const rimLight = new THREE.DirectionalLight(0xb9abff, 2);
         rimLight.position.set(4, 1, -2);
         scene.add(rimLight);
 
@@ -236,8 +240,8 @@ function createHeroScene(THREE, element) {
         const emeraldGeometry = createRibbonGeometry(THREE, knotPoints, 0.5, 0.15,
             compact ? 108 : 180, compact ? 12 : 16, 1);
         const emeraldMaterial = new THREE.MeshPhysicalMaterial({
-            color: 0x0b4b3a, metalness: 0.46, roughness: 0.23,
-            clearcoat: 1, clearcoatRoughness: 0.13, envMapIntensity: 1.15,
+            color: 0x148f9e, metalness: 0.64, roughness: 0.25,
+            clearcoat: 1, clearcoatRoughness: 0.13, envMapIntensity: 1.25,
         });
         geometries.push(emeraldGeometry);
         materials.push(emeraldMaterial);
@@ -246,8 +250,8 @@ function createHeroScene(THREE, element) {
         const limeGeometry = createRibbonGeometry(THREE, linkPoints, 0.28, 0.11,
             compact ? 80 : 128, 12);
         const limeMaterial = new THREE.MeshPhysicalMaterial({
-            color: 0xb9e85b, metalness: 0.18, roughness: 0.25,
-            clearcoat: 1, clearcoatRoughness: 0.1, envMapIntensity: 1.1,
+            color: 0xa9b5ff, metalness: 0.38, roughness: 0.28,
+            clearcoat: 1, clearcoatRoughness: 0.1, envMapIntensity: 0.9,
         });
         geometries.push(limeGeometry);
         materials.push(limeMaterial);

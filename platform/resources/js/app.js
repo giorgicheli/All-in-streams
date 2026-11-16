@@ -10,6 +10,7 @@ import { initializeAudiencePickers } from './audience-picker';
 import { initializePublicRefinements } from './public-refinement';
 import { initializeCreatorNetwork } from './creator-network';
 import { initializeHeroScene } from './hero-scene';
+import { initializePointerEffect } from './pointer-effect';
 
 let cleanup = () => {};
 
@@ -28,6 +29,7 @@ function initializePage() {
     const disposeRefinements = initializePublicRefinements();
     const disposeCreatorNetwork = initializeCreatorNetwork();
     const disposeHeroScene = initializeHeroScene();
+    const disposePointerEffect = initializePointerEffect();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -52,6 +54,7 @@ function initializePage() {
         disposeRefinements();
         disposeCreatorNetwork();
         disposeHeroScene();
+        disposePointerEffect();
     };
 }
 

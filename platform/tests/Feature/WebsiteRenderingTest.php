@@ -88,12 +88,12 @@ class WebsiteRenderingTest extends TestCase
         $pagesBefore = \App\Models\SitePage::all()->toArray();
 
         $this->get('/white')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow')
-            ->assertSee('class="theme-white"', false)->assertSee('content="#F6F7F0"', false)
+            ->assertSee('class="theme-white"', false)->assertSee('content="#050707"', false)
             ->assertSee('Trusted')->assertSee('site-footer')->assertSee('data-network-count', false)
             ->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE')->assertDontSee('livewire.js')
             ->assertDontSee('network-stat-index')->assertDontSee('card-number')->assertDontSee('step-number');
         $this->get('/')->assertOk()->assertSee('class="theme-white"', false)
-            ->assertSee('content="#F6F7F0"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
+            ->assertSee('content="#050707"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
         $this->assertSame($pagesBefore, \App\Models\SitePage::all()->toArray());
     }
 

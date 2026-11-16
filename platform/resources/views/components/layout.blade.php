@@ -4,7 +4,7 @@
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $description ?? $site['site_description'] }}">
-    <meta name="theme-color" content="{{ $lightTheme ? '#F6F7F0' : '#090d0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
+    <meta name="theme-color" content="{{ $lightTheme ? '#050707' : '#090d0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
     @if($lightPreview)<meta name="robots" content="noindex, nofollow">@endif
     @if($sensitive)<meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer">@endif
     <link rel="icon" href="/favicon.ico?v=2" sizes="any">
