@@ -21,7 +21,7 @@ class SiteContent
         $defaults = SiteContentDefaults::for($slug);
         if (! Schema::hasTable('site_pages')) return $defaults;
         $content = SitePage::where('slug', $slug)->value('published_content') ?? $defaults;
-        return $slug === 'settings' ? $this->normalizeSettings($content) : $content;
+        return $this->normalizeContent($slug, $content);
     }
 
     public function getDraft(string $slug = 'home'): array
@@ -29,7 +29,7 @@ class SiteContent
         $defaults = SiteContentDefaults::for($slug);
         if (! Schema::hasTable('site_pages')) return $defaults;
         $content = SitePage::where('slug', $slug)->value('draft_content') ?? $defaults;
-        return $slug === 'settings' ? $this->normalizeSettings($content) : $content;
+        return $this->normalizeContent($slug, $content);
     }
 
     public function saveDraft(User $actor, string $slug, array $content): SitePage
@@ -75,7 +75,7 @@ class SiteContent
     {
         $defaults = SiteContentDefaults::for($slug);
         $rules = [];
-        if ($slug === 'settings') $content = $this->normalizeSettings($content);
+        $content = $this->normalizeContent($slug, $content);
         if ($slug === 'settings') {
             $this->objectRules($defaults, '', $rules);
         } elseif (in_array($slug, ['privacy', 'terms'], true)) {
@@ -169,6 +169,20 @@ class SiteContent
     private function authorize(User $actor): void
     {
         abort_unless($actor->role === 'admin', 403);
+    }
+
+    private function normalizeContent(string $slug, array $content): array
+    {
+        if ($slug === 'settings') return $this->normalizeSettings($content);
+        if ($slug === 'home' && is_array($content['blocks'] ?? null)) {
+            foreach ($content['blocks'] as &$block) {
+                if (($block['type'] ?? null) === 'faq' && is_array($block['data'] ?? null)) {
+                    $block['data'] += ['label' => 'Talk to us', 'url' => '/register'];
+                }
+            }
+            unset($block);
+        }
+        return $content;
     }
 
     /** Keep authored lists intact while adding new settings to older saved versions. */

@@ -7,8 +7,12 @@ class Countries
     private const FLAG_ASSET_VERSION = 'public-domain-20261104';
 
     private const COUNTRIES = [
-        'DE' => 'Germany', 'FR' => 'France', 'PL' => 'Poland',
-        'BR' => 'Brazil', 'CA' => 'Canada', 'MX' => 'Mexico',
+        'DE' => 'Germany', 'PT' => 'Portugal', 'CA' => 'Canada',
+        'PL' => 'Poland', 'CH' => 'Switzerland', 'BR' => 'Brazil',
+        'AR' => 'Argentina', 'NZ' => 'New Zealand', 'HU' => 'Hungary',
+        'US' => 'United States', 'AT' => 'Austria', 'SE' => 'Sweden',
+        'NO' => 'Norway', 'FI' => 'Finland', 'KG' => 'Kyrgyzstan',
+        'FR' => 'France', 'MX' => 'Mexico',
     ];
 
     public static function options(): array

@@ -48,7 +48,16 @@ class SiteContentDefaults
                 ]],
                 ['type' => 'geo_strip', 'data' => [
                     'enabled' => true, 'label' => 'MATCH BY AUDIENCE GEO',
-                    'countries' => [['code' => 'DE', 'name' => 'Germany'], ['code' => 'FR', 'name' => 'France'], ['code' => 'PL', 'name' => 'Poland'], ['code' => 'BR', 'name' => 'Brazil'], ['code' => 'CA', 'name' => 'Canada'], ['code' => 'MX', 'name' => 'Mexico']],
+                    'countries' => [
+                        ['code' => 'DE', 'name' => 'Germany'], ['code' => 'PT', 'name' => 'Portugal'],
+                        ['code' => 'CA', 'name' => 'Canada'], ['code' => 'PL', 'name' => 'Poland'],
+                        ['code' => 'CH', 'name' => 'Switzerland'], ['code' => 'BR', 'name' => 'Brazil'],
+                        ['code' => 'AR', 'name' => 'Argentina'], ['code' => 'NZ', 'name' => 'New Zealand'],
+                        ['code' => 'HU', 'name' => 'Hungary'], ['code' => 'US', 'name' => 'United States'],
+                        ['code' => 'AT', 'name' => 'Austria'], ['code' => 'SE', 'name' => 'Sweden'],
+                        ['code' => 'NO', 'name' => 'Norway'], ['code' => 'FI', 'name' => 'Finland'],
+                        ['code' => 'KG', 'name' => 'Kyrgyzstan'],
+                    ],
                     'end_label' => 'YOUR NEXT AUDIENCE',
                 ]],
                 ['type' => 'audiences', 'data' => [
@@ -88,12 +97,14 @@ class SiteContentDefaults
                     'privacy_note' => 'Creator applications and private performance data are never added to this public gallery.',
                 ]],
                 ['type' => 'faq', 'data' => [
-                    'enabled' => true, 'eyebrow' => 'A little more clarity', 'title_line_1' => 'Good questions.', 'title_line_2' => 'Clear answers.',
+                    'enabled' => true, 'eyebrow' => 'A little more clarity', 'title_line_1' => 'Frequently Asked', 'title_line_2' => 'Questions',
+                    'label' => 'Talk to us', 'url' => '/register',
                     'items' => [
-                        ['question' => 'How does a partnership start?', 'answer' => 'Create a business account and send us your campaign brief. Our team reviews your objectives, then identifies suitable creators and prepares a shortlist for your review.'],
-                        ['question' => 'Can I contact creators directly?', 'answer' => 'All introductions and campaign requests go through All In Streams. We share creator identities when an introduction has been approved by our team.'],
-                        ['question' => 'Does submitting a brief commit me to a campaign?', 'answer' => 'No. Your brief starts a conversation. Your campaign launches only after the scope, agreements, and payment readiness have been confirmed.'],
-                        ['question' => 'How do creators join?', 'answer' => 'Create a creator account and complete the five-step application. Tell us about your channels, audience, commercial preferences, and availability. Our team reviews your profile before matching you to opportunities.'],
+                        ['question' => 'Which markets do you work with?', 'answer' => 'We work globally, matching brands and agencies with creators based on audience GEO, language, and campaign goals. Share your target markets so we can find the right fit.'],
+                        ['question' => 'How are campaign terms agreed?', 'answer' => 'Each proposal sets out the stream package, deliverables, pricing, payment schedule, tracking, and any performance commitments. Fixed-fee, CPA, revenue share, or hybrid terms depend on the creator and the campaign.'],
+                        ['question' => 'Can I choose creators myself?', 'answer' => 'You can explore anonymous profiles and build a shortlist. Send your brief and we will confirm the fit, availability, and verified audience information before an introduction.'],
+                        ['question' => 'How do you measure performance?', 'answer' => 'We agree on tracking and reporting before launch. Depending on the campaign, this can include clicks, registrations, qualified first-time depositors, and total deposits. Measurement windows and any make-up arrangements are agreed in the contract.'],
+                        ['question' => 'How can I join?', 'answer' => 'Whether you’re a brand, agency, or creator, click Talk to us, select your category, and complete the relevant form. Our team will review your details and get in touch about the next steps.'],
                     ],
                 ]],
                 ['type' => 'cta', 'data' => [

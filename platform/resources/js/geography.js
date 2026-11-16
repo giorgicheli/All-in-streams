@@ -9,7 +9,6 @@ function initializeCarousel(element) {
     const original = track?.querySelector('.geo-items');
     if (!viewport || !original) return () => {};
 
-    const mobile = matchMedia('(max-width: 700px)');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const events = new AbortController();
     const clones = [];
@@ -31,7 +30,7 @@ function initializeCarousel(element) {
     }
 
     function canMove() {
-        return !disposed && mobile.matches && !reduced.matches && !document.hidden && inView && cycle > 0
+        return !disposed && !reduced.matches && !document.hidden && inView && cycle > 0
             && !interacting && !hovered && !viewport.matches(':focus-visible');
     }
 
@@ -77,7 +76,7 @@ function initializeCarousel(element) {
         clones.length = 0;
         cycle = 0;
         viewport.scrollLeft = 0;
-        if (mobile.matches && original.children.length > 1 && original.scrollWidth > viewport.clientWidth) {
+        if (original.children.length > 1 && original.scrollWidth > viewport.clientWidth) {
             for (let index = 0; index < 2; index++) {
                 const clone = original.cloneNode(true);
                 clone.setAttribute('aria-hidden', 'true');
@@ -111,7 +110,6 @@ function initializeCarousel(element) {
     viewport.addEventListener('focusout', () => queueMicrotask(start), { signal: events.signal });
     window.addEventListener('pointerup', () => { if (interacting) release(); }, options);
     document.addEventListener('visibilitychange', () => { stop(); start(); }, { signal: events.signal });
-    mobile.addEventListener('change', configure, { signal: events.signal });
     reduced.addEventListener('change', () => { stop(); start(); }, { signal: events.signal });
 
     const observer = new IntersectionObserver(entries => {

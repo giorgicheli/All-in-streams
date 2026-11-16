@@ -22,6 +22,28 @@ class SiteContentTest extends TestCase
         return User::factory()->create(['role' => 'admin']);
     }
 
+    public function test_older_home_revisions_receive_the_faq_link_without_replacing_authored_content(): void
+    {
+        $legacy = SiteContentDefaults::home();
+        foreach ($legacy['blocks'] as &$block) {
+            if ($block['type'] !== 'faq') continue;
+            unset($block['data']['label'], $block['data']['url']);
+            $block['data']['title_line_1'] = 'Previously authored FAQ';
+            $block['data']['items'] = [['question' => 'A saved question?', 'answer' => 'A saved answer.']];
+        }
+        unset($block);
+        SitePage::create(['slug' => 'home', 'title' => 'Home page', 'draft_content' => $legacy, 'published_content' => $legacy]);
+        $service = app(SiteContent::class);
+        foreach ([$service->getPublished('home'), $service->getDraft('home'), $service->validate('home', $legacy)] as $content) {
+            $faq = collect($content['blocks'])->firstWhere('type', 'faq')['data'];
+            $this->assertSame('Talk to us', $faq['label']);
+            $this->assertSame('/register', $faq['url']);
+            $this->assertSame('Previously authored FAQ', $faq['title_line_1']);
+            $this->assertSame('A saved question?', $faq['items'][0]['question']);
+        }
+        $this->assertSame($legacy, SitePage::where('slug', 'home')->value('draft_content'));
+    }
+
     public function test_default_reads_preserve_existing_design_without_writing_records(): void
     {
         $content = app(SiteContent::class);

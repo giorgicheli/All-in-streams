@@ -68,7 +68,7 @@ Administrators manage the public website at `/admin/website-editor`. Home-page s
 
 `Save draft & preview` updates the private preview. `Publish changes` updates the public content. Published versions can be restored to a draft and reviewed before publishing again. Preview URLs require an administrator session and are never cacheable public pages. The renderer uses typed blocks and escaped text rather than user-supplied HTML or scripts.
 
-Country flags use locally served public-domain Flagpedia/Flagcdn PNGs. The source/checksum manifest and [asset provenance](platform/docs/ASSET-CREDITS.md) are committed; the six images are deployed separately. Public-domain replacements removed the former Flaticon attribution requirement. Preserve their native national ratios within the shared flag slots.
+Country flags use locally served public-domain Flagpedia/Flagcdn PNGs. The source/checksum manifest and [asset provenance](platform/docs/ASSET-CREDITS.md) are committed; the seventeen supported flag images are deployed separately. Public-domain replacements removed the former Flaticon attribution requirement. Preserve their native national ratios within the shared flag slots.
 
 ## Creator types, private media and staff files
 
@@ -97,7 +97,7 @@ The private fixture directory contains `sample-agreement.pdf`, `internal-notes.d
 
 ## Footer and policy pages
 
-The footer links to `/privacy-policy` and `/terms-and-conditions`. Both pages start with empty content, as requested by the owner. The obsolete footer slogan and attribution row are removed. The replaced public-domain flags are hosted locally and use a new cache version; deploy all six `public/images/flags/*.png` files alongside their committed source manifest.
+The footer links to `/privacy-policy` and `/terms-and-conditions`. Both pages start with empty content, as requested by the owner. The obsolete footer slogan and attribution row are removed. The replaced public-domain flags are hosted locally and use a new cache version; deploy all supported `public/images/flags/*.png` files alongside their committed source manifest.
 
 Administrators edit each page under Website editor > Privacy policy or Terms & conditions. The visual text editor supports headings, emphasis, lists and links. Save draft & preview keeps changes private; Publish changes updates the public page. Published versions can be restored to draft. Formatting is stored as a bounded document tree and rendered through the sanitized rich-content renderer. Embedded files, images, scripts and arbitrary HTML are not accepted in policy content. Existing home/settings drafts, published content and revisions are preserved. New legal pages require no migration or initial database write.
 
@@ -112,3 +112,5 @@ Website editor > Site settings > Network statistics controls the four public cou
 The owner does not want decorative zero-padded ordinal labels. Public statistics pair their actual count on the left with an icon on the right; audience cards omit ordinals and the process uses icons.
 
 `/white` is a presentation-only light version of the published homepage, including the header, footer and mobile menu. It serves rendered HTML with the shared animation bundle, omits Livewire assets, and is marked noindex. It reads the existing published content/results without creating content records or changing the main theme. Light styles are scoped to this preview; account and administration screens keep their existing appearance.
+
+The homepage FAQ contains the owner's five market, terms, creator selection, reporting and signup answers, with an editable Talk to us link to /register. Saved home revisions missing the newer FAQ link fields receive defaults without replacing their authored answers. The audience carousel lists Germany, Portugal, Canada, Poland, Switzerland, Brazil, Argentina, New Zealand, Hungary, United States, Austria, Sweden, Norway, Finland and Kyrgyzstan in that order. It loops on overflowing desktop and mobile layouts, pauses during interaction and respects reduced motion. Home content publication updates only the FAQ copy and carousel countries, retaining unrelated published content and unpublished edits; older published versions remain in revision history.

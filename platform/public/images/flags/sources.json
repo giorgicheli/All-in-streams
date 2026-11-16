@@ -7,7 +7,7 @@
   "style": "Original flat country flags",
   "format": "PNG",
   "asset_version": "public-domain-20261104",
-  "verified_on": "2026-11-04",
+  "verified_on": "2026-11-16",
   "assets": {
     "de": {
       "name": "Germany",
@@ -68,6 +68,116 @@
         91
       ],
       "sha256": "2ed5ac817849b95fe11ffab4d61afdf9f7236f80429dec55299f4da38bd73ccb"
+    },
+    "pt": {
+      "name": "Portugal",
+      "source": "https://flagpedia.net/portugal",
+      "download": "https://flagcdn.com/w160/pt.png",
+      "dimensions": [
+        160,
+        107
+      ],
+      "sha256": "f181c45a041070b632635b884f19f29e02bbc94eacc5bf8020269ce5e62fdbd2"
+    },
+    "ch": {
+      "name": "Switzerland",
+      "source": "https://flagpedia.net/switzerland",
+      "download": "https://flagcdn.com/w160/ch.png",
+      "dimensions": [
+        160,
+        160
+      ],
+      "sha256": "533280fe33c0abeafc3ff0a108e846d7454e66fbe955dbef3a27926e549efb1d"
+    },
+    "ar": {
+      "name": "Argentina",
+      "source": "https://flagpedia.net/argentina",
+      "download": "https://flagcdn.com/w160/ar.png",
+      "dimensions": [
+        160,
+        100
+      ],
+      "sha256": "6bdb24b5268d83b9b36717928198671ebee03d67b6352694f11c64509bb7f86c"
+    },
+    "nz": {
+      "name": "New Zealand",
+      "source": "https://flagpedia.net/new-zealand",
+      "download": "https://flagcdn.com/w160/nz.png",
+      "dimensions": [
+        160,
+        80
+      ],
+      "sha256": "d4d557d5e3d8e1c6fa60fe61aea44526c5431e6412a752b6a7570c72b399ad61"
+    },
+    "hu": {
+      "name": "Hungary",
+      "source": "https://flagpedia.net/hungary",
+      "download": "https://flagcdn.com/w160/hu.png",
+      "dimensions": [
+        160,
+        80
+      ],
+      "sha256": "130fd374ad656cd22db3bf0bd05ceeb480525fb589680fa5baf9c74645430ce0"
+    },
+    "us": {
+      "name": "United States",
+      "source": "https://flagpedia.net/the-united-states",
+      "download": "https://flagcdn.com/w160/us.png",
+      "dimensions": [
+        160,
+        84
+      ],
+      "sha256": "bb1d77351f006b1ca0fc414314388da9f8cb7bd940a4d59770328e8ca03e8439"
+    },
+    "at": {
+      "name": "Austria",
+      "source": "https://flagpedia.net/austria",
+      "download": "https://flagcdn.com/w160/at.png",
+      "dimensions": [
+        160,
+        107
+      ],
+      "sha256": "a67bfd679cfd4d72a865393712d41b9f3f3fd53024c6694001f68ed62e9d8ca5"
+    },
+    "se": {
+      "name": "Sweden",
+      "source": "https://flagpedia.net/sweden",
+      "download": "https://flagcdn.com/w160/se.png",
+      "dimensions": [
+        160,
+        100
+      ],
+      "sha256": "8533bb419076105224955a54881e5714d28c1f867be3d06d6e77d260927f892c"
+    },
+    "no": {
+      "name": "Norway",
+      "source": "https://flagpedia.net/norway",
+      "download": "https://flagcdn.com/w160/no.png",
+      "dimensions": [
+        160,
+        116
+      ],
+      "sha256": "299f79c45c58df9c1ee680b77ddca9830a360428b46347ace4fdbade78760245"
+    },
+    "fi": {
+      "name": "Finland",
+      "source": "https://flagpedia.net/finland",
+      "download": "https://flagcdn.com/w160/fi.png",
+      "dimensions": [
+        160,
+        98
+      ],
+      "sha256": "f991a44ca68053d90d6e5c15207012c0b2303f9c5ad67701a7261e8ea2b80a30"
+    },
+    "kg": {
+      "name": "Kyrgyzstan",
+      "source": "https://flagpedia.net/kyrgyzstan",
+      "download": "https://flagcdn.com/w160/kg.png",
+      "dimensions": [
+        160,
+        96
+      ],
+      "sha256": "6a5f1de95031f3f33ce41d2ac19bc60672ff373be1c476a8568367b8b2dc092a"
     }
   }
 }

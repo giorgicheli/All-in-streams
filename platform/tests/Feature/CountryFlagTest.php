@@ -36,7 +36,19 @@ class CountryFlagTest extends TestCase
         $this->assertSame('DE', Countries::code(' germany '));
         $this->assertSame('FR', Countries::code('fr'));
         $this->assertSame('Mexico', Countries::name('MX'));
-        $this->assertCount(6, Countries::options());
+        $expected = [
+            'DE' => 'Germany', 'PT' => 'Portugal', 'CA' => 'Canada',
+            'PL' => 'Poland', 'CH' => 'Switzerland', 'BR' => 'Brazil',
+            'AR' => 'Argentina', 'NZ' => 'New Zealand', 'HU' => 'Hungary',
+            'US' => 'United States', 'AT' => 'Austria', 'SE' => 'Sweden',
+            'NO' => 'Norway', 'FI' => 'Finland', 'KG' => 'Kyrgyzstan',
+            'FR' => 'France', 'MX' => 'Mexico',
+        ];
+        $this->assertSame($expected, Countries::options());
+        foreach ($expected as $code => $name) {
+            $this->assertSame($code, Countries::code(strtolower($name)));
+            $this->assertSame($name, Countries::name(strtolower($code)));
+        }
         $this->assertNull(Countries::code('../../private'));
         $this->assertNull(Countries::flagUrl('https://untrusted.example/flag.png'));
     }

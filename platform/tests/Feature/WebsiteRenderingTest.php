@@ -96,4 +96,28 @@ class WebsiteRenderingTest extends TestCase
             ->assertSee('content="#090d0c"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
         $this->assertSame($pagesBefore, \App\Models\SitePage::all()->toArray());
     }
+
+    public function test_requested_faq_and_markets_render_in_both_homepage_versions(): void
+    {
+        $home = SiteContentDefaults::home();
+        $faq = collect($home['blocks'])->firstWhere('type', 'faq')['data'];
+        $countries = collect($home['blocks'])->firstWhere('type', 'geo_strip')['data']['countries'];
+        $this->assertCount(15, $countries);
+        foreach (['/', '/white'] as $url) {
+            $response = $this->get($url)->assertOk()->assertSee('Frequently Asked')->assertSee('Questions')
+                ->assertSee('class="text-link faq-contact"', false)->assertSee('Talk to us');
+            foreach ($faq['items'] as $item) $response->assertSee($item['question'])->assertSee($item['answer']);
+            $html = $response->getContent();
+            $strip = substr($html, strpos($html, 'data-geo-carousel'));
+            $strip = substr($strip, 0, strpos($strip, 'id="geo-carousel-help"'));
+            $lastPosition = -1;
+            foreach ($countries as $country) {
+                $position = strpos($strip, 'geo-country-name">'.$country['name']);
+                $this->assertNotFalse($position);
+                $this->assertGreaterThan($lastPosition, $position);
+                $lastPosition = $position;
+            }
+        }
+        $this->get($faq['url'])->assertOk()->assertSee('Company')->assertSee('Agency')->assertSee('Creator');
+    }
 }
