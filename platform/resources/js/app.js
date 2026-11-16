@@ -9,7 +9,7 @@ import { initializeHeroHeadlines } from './hero-headlines';
 import { initializeAudiencePickers } from './audience-picker';
 import { initializePublicRefinements } from './public-refinement';
 import { initializeCreatorNetwork } from './creator-network';
-import { initializeHeroScene } from './hero-scene';
+import { initializeRopeStatistics } from './rope-statistics';
 import { initializePointerEffect } from './pointer-effect';
 
 let cleanup = () => {};
@@ -28,7 +28,7 @@ function initializePage() {
     const disposeAudience = initializeAudiencePickers();
     const disposeRefinements = initializePublicRefinements();
     const disposeCreatorNetwork = initializeCreatorNetwork();
-    const disposeHeroScene = initializeHeroScene();
+    const disposeRopeStatistics = initializeRopeStatistics();
     const disposePointerEffect = initializePointerEffect();
     const header = document.querySelector('.site-header');
     if (header) {
@@ -53,7 +53,7 @@ function initializePage() {
         disposeAudience();
         disposeRefinements();
         disposeCreatorNetwork();
-        disposeHeroScene();
+        disposeRopeStatistics();
         disposePointerEffect();
     };
 }

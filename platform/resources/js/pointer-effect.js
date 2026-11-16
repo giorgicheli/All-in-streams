@@ -63,7 +63,7 @@ const fragmentSources = {
             vec2 gradient = vec2(top - bottom, right - left);
             gradient /= max(length(gradient), 0.0001);
             float rotation = texture(uSource, vUv).r;
-            vec2 force = gradient * rotation * 12.0;
+            vec2 force = gradient * rotation * 10.0;
             force.y = -force.y;
             result = vec4(texture(uVelocity, vUv).xy + force * uDt, 0.0, 1.0);
         }`,
@@ -256,10 +256,10 @@ function createFluid(canvas) {
             gl.useProgram(program.handle);
             gl.uniform2f(program.uPoint, x / innerWidth, 1 - y / innerHeight);
             gl.uniform1f(program.uAspect, aspect);
-            gl.uniform1f(program.uRadius, 0.0018 * Math.max(1, aspect));
+            gl.uniform1f(program.uRadius, 0.00045 * Math.max(1, aspect));
             use(program, velocity.write);
             sample(program, 'uSource', velocity.read, 0);
-            gl.uniform3f(program.uValue, dx / innerWidth * 2600, -dy / innerHeight * 2600, 0);
+            gl.uniform3f(program.uValue, dx / innerWidth * 2200, -dy / innerHeight * 2200, 0);
             draw();
             velocity.swap();
             use(program, dye.write);
@@ -276,7 +276,7 @@ function createFluid(canvas) {
             sample(program, 'uVelocity', velocity.read, 1);
             gl.uniform2f(program.uTexel, 1 / simulationWidth, 1 / simulationHeight);
             gl.uniform1f(program.uDt, dt);
-            gl.uniform1f(program.uDecay, 2.02);
+            gl.uniform1f(program.uDecay, 2.8);
             draw();
             velocity.swap();
 
@@ -325,7 +325,7 @@ function createFluid(canvas) {
             sample(program, 'uVelocity', velocity.read, 1);
             gl.uniform2f(program.uTexel, 1 / simulationWidth, 1 / simulationHeight);
             gl.uniform1f(program.uDt, dt);
-            gl.uniform1f(program.uDecay, 2.02);
+            gl.uniform1f(program.uDecay, 2.7);
             draw();
             dye.swap();
 
@@ -361,12 +361,12 @@ function mountPointerEffect() {
     let lastMotion = 0;
     let lastPoint = null;
     let pending = null;
-    let color = [0.02, 0.16, 0.14];
+    let color = [0.015, 0.12, 0.105];
     let colorChanged = 0;
     let disposed = false;
 
     const isEditable = element => element instanceof Element
-        && Boolean(element.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])'));
+        && Boolean(element.closest('input, textarea, select, [data-rope-node], [contenteditable]:not([contenteditable="false"])'));
 
     function stop() {
         cancelAnimationFrame(frame);
@@ -383,14 +383,14 @@ function mountPointerEffect() {
         const hue = Math.random();
         color = [0, 2 / 3, 1 / 3].map(offset => {
             const angle = ((hue + offset) % 1) * 6;
-            return Math.max(0, Math.min(1, Math.abs(angle - 3) - 1)) * 0.16;
+            return Math.max(0, Math.min(1, Math.abs(angle - 3) - 1)) * 0.12;
         });
         return color;
     }
 
     function draw(now) {
         frame = 0;
-        if (disposed || document.hidden || isEditable(document.activeElement) || now - lastMotion > 3200) {
+        if (disposed || document.hidden || isEditable(document.activeElement) || now - lastMotion > 1800) {
             stop();
             return;
         }
@@ -417,8 +417,11 @@ function mountPointerEffect() {
     }
 
     document.addEventListener('pointermove', event => {
-        if (event.pointerType !== 'mouse' || !event.isPrimary || document.hidden
-            || isEditable(event.target) || isEditable(document.activeElement)) return;
+        if (event.pointerType !== 'mouse' || !event.isPrimary || document.hidden) return;
+        if (isEditable(event.target) || isEditable(document.activeElement)) {
+            stop();
+            return;
+        }
         const now = performance.now();
         if (lastPoint && now - lastMotion < 250) {
             pending = {
@@ -433,11 +436,14 @@ function mountPointerEffect() {
         wake();
     }, options);
     document.addEventListener('pointerdown', event => {
-        if (event.pointerType !== 'mouse' || !event.isPrimary || event.button !== 0
-            || isEditable(event.target) || isEditable(document.activeElement)) return;
+        if (event.pointerType !== 'mouse' || !event.isPrimary || event.button !== 0) return;
+        if (isEditable(event.target) || isEditable(document.activeElement)) {
+            stop();
+            return;
+        }
         const now = performance.now();
-        pending = { x: event.clientX, y: event.clientY, dx: (Math.random() - 0.5) * 20,
-            dy: (Math.random() - 0.5) * 20, color: nextColor(now), strength: 8 };
+        pending = { x: event.clientX, y: event.clientY, dx: (Math.random() - 0.5) * 10,
+            dy: (Math.random() - 0.5) * 10, color: nextColor(now), strength: 2.2 };
         lastPoint = { x: event.clientX, y: event.clientY };
         lastMotion = now;
         wake();

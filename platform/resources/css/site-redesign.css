@@ -23,7 +23,7 @@
 
 /* The navigation floats as one calm, readable surface. */
 .site-redesign .theme-white .site-header { height:96px; padding:14px 0 8px; background:#050707ed; backdrop-filter:blur(18px); }
-.site-redesign .theme-white .site-nav { border-radius:20px; padding-inline:24px; background:#11191ced; gap:24px; transition:box-shadow .35s,background .35s; }
+.site-redesign .theme-white .site-nav { border-radius:28px; padding-inline:24px; background:#11191ced; gap:24px; transition:box-shadow .35s,background .35s; }
 .site-redesign .theme-white .site-header.scrolled .site-nav { background:#11191ced; box-shadow:none; }
 .site-redesign .theme-white .brand { gap:9px; }
 .site-redesign .theme-white .brand > span { font-size:22px; letter-spacing:-.065em; color:var(--stream-ink); }
@@ -45,7 +45,7 @@
 @supports(animation-timeline:scroll()) { .site-reading-progress { animation:stream-reading linear both; animation-timeline:scroll(root); } }
 @keyframes stream-reading { to { transform:scaleX(1); } }
 
-/* A real-time sculpture gives the hero a distinctive focal point. */
+/* Hero copy pairs with the interactive network composition. */
 .site-redesign .theme-white .hero-stage { display:block; width:100%; margin:0; padding:0; }
 .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { padding:36px 0 0; overflow:clip; min-height:0; position:relative; }
 .site-redesign .theme-white .hero-stage > .hero-reference > .container { width:min(1320px,calc(100% - 96px)); }
@@ -233,7 +233,7 @@
     .site-redesign .theme-white .section-heading > p { max-width:450px; margin-top:22px; font-size:14px; line-height:1.85; }
     .site-redesign .theme-white .eyebrow { font-size:9px; letter-spacing:.12em; }
     .site-redesign .theme-white .site-header { height:76px; padding:9px 0 6px; }
-    .site-redesign .theme-white .site-nav { width:calc(100% - 24px); padding-inline:12px; border-radius:15px; gap:10px; }
+    .site-redesign .theme-white .site-nav { width:calc(100% - 24px); padding-inline:12px; border-radius:22px; gap:10px; }
     .site-redesign .theme-white .brand { gap:6px; }
     .site-redesign .theme-white .brand > svg { width:26px; height:29px; }
     .site-redesign .theme-white .brand > span { font-size:18px; }
@@ -459,4 +459,30 @@
  .site-redesign .theme-white .hero-reference .hero-headline-item { color:#eef5f5; -webkit-text-fill-color:currentColor; }
  .site-redesign .theme-white .hero-reference .hero-headline-line { color:#eef5f5; -webkit-text-fill-color:currentColor; }
  .site-redesign .theme-white .hero-reference .hero-headline-line:last-child { color:#72f6e4; -webkit-text-fill-color:#72f6e4; background:none; }
+}
+
+/* The editable network figures now form the interactive hero composition. */
+.site-redesign .theme-white .hero-reference .hero-grid--copy-only { grid-template-columns:1fr; }
+.site-redesign .theme-white .hero-grid--copy-only .hero-copy { max-width:820px; }
+.site-redesign .theme-white .hero-network-art { height:440px; }
+.site-redesign .theme-white .hero-stage > .geo-strip .geo-inner,
+.site-redesign .theme-white .geo-inner { grid-template-columns:max-content minmax(0,1fr); }
+@media(min-width:701px) and (max-height:800px) {
+ .site-redesign .theme-white .hero-network-art { height:390px; }
+}
+@media(min-width:701px) and (max-width:1150px) {
+ .site-redesign .theme-white .hero-network-art { height:390px; }
+}
+@media(max-width:700px) {
+ .site-redesign .theme-white .hero-reference .hero-grid { display:flex; flex-direction:column; gap:0; }
+ .site-redesign .theme-white .hero-copy { width:100%; padding:24px 0 18px; }
+ .site-redesign .theme-white .hero-copy h1 { max-width:100%; margin:18px 0 20px; }
+ .site-redesign .theme-white .hero-copy > p { font-size:14px; line-height:1.7; }
+ .site-redesign .theme-white .hero-buttons { margin-top:22px; }
+ .site-redesign .theme-white .hero-network-art { position:relative; inset:auto; width:100%; height:238px; margin:0 0 14px; pointer-events:auto; }
+ .site-redesign .theme-white .hero-stage > .geo-strip .geo-inner,
+ .site-redesign .theme-white .geo-inner { grid-template-columns:92px minmax(0,1fr); }
+}
+@media(max-width:360px) {
+ .site-redesign .theme-white .hero-copy { padding-top:16px; padding-bottom:10px; }
 }

@@ -50,7 +50,7 @@ export function initializeNetworkCounters(root = document) {
     let observer;
     root.querySelectorAll('[data-network-count]').forEach(element => {
         const value = Number(element.dataset.networkCount);
-        const card = element.closest('.network-stat-card');
+        const card = element.closest('.network-stat-card, [data-rope-node]');
         if (!card || !Number.isSafeInteger(value) || value < 0) return;
         counters.set(card, { element, value, seen: false, frame: 0 });
     });

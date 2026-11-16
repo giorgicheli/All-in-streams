@@ -137,7 +137,7 @@ class SiteContentDefaults
                 'description' => 'Unlock unlimited possibilities. Creators, agencies, and brands. Connected by one dedicated team.',
                 'is_demo' => true, 'sample_note' => 'Illustrative network figures for this demo.',
                 'cards' => [
-                    ['icon'=>'users','count'=>120,'suffix'=>'+','label'=>'Creators','description'=>'Streamers & influencers'],
+                    ['icon'=>'users','count'=>120,'suffix'=>'+','label'=>'Influencers & streamers','description'=>'Streamers & influencers'],
                     ['icon'=>'layers','count'=>18,'suffix'=>'+','label'=>'Agencies','description'=>'Talent & campaign partners'],
                     ['icon'=>'globe','count'=>24,'suffix'=>'','label'=>'Countries','description'=>'Local voices. Global reach.'],
                     ['icon'=>'briefcase','count'=>60,'suffix'=>'+','label'=>'Companies','description'=>'Brands building connections'],
