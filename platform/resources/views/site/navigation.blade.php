@@ -23,7 +23,7 @@
             @endforeach
         </nav>
         <div class="header-actions">
-            @auth<a href="/account" class="sign-in">{{ $site['header']['workspace_label'] }}</a>@else<a href="/login" class="sign-in">{{ $site['header']['sign_in_label'] }}</a>@endauth
+            @auth<a href="/account" class="sign-in">{{ $site['header']['workspace_label'] }}</a>@endauth
             <a href="{{ $site['header']['cta_url'] }}" class="btn btn-primary btn-small">{{ $site['header']['cta_label'] }} <x-ui-icon name="arrow" size="14"/></a>
             <button type="button" class="icon-button mobile-toggle site-menu-toggle" data-mobile-menu-open aria-controls="site-mobile-menu" aria-expanded="false" aria-label="Open navigation"><span class="site-menu-lines" aria-hidden="true"><i></i><i></i><i></i></span></button>
         </div>
@@ -44,8 +44,7 @@
                     <a href="{{ $siteNavUrl($link['url']) }}" class="site-mobile-menu-link" style="--menu-index:{{ $loop->index }}"><span class="site-mobile-menu-icon"><x-ui-icon :name="$menuIcon" size="22"/></span><span>{{ $link['label'] }}</span><x-ui-icon name="arrow" size="19" class="site-mobile-menu-arrow"/></a>
                 @endif
             @endforeach
-            @auth<a href="/account" class="site-mobile-menu-link site-mobile-menu-account" style="--menu-index:{{ count($site['navigation']) }}"><span class="site-mobile-menu-icon"><x-ui-icon name="user" size="22"/></span><span>{{ $site['header']['workspace_label'] }}</span><x-ui-icon name="arrow" size="19" class="site-mobile-menu-arrow"/></a>
-            @else<a href="/login" class="site-mobile-menu-link site-mobile-menu-account" style="--menu-index:{{ count($site['navigation']) }}"><span class="site-mobile-menu-icon"><x-ui-icon name="user" size="22"/></span><span>{{ $site['header']['sign_in_label'] }}</span><x-ui-icon name="arrow" size="19" class="site-mobile-menu-arrow"/></a>@endauth
+            @auth<a href="/account" class="site-mobile-menu-link site-mobile-menu-account" style="--menu-index:{{ count($site['navigation']) }}"><span class="site-mobile-menu-icon"><x-ui-icon name="user" size="22"/></span><span>{{ $site['header']['workspace_label'] }}</span><x-ui-icon name="arrow" size="19" class="site-mobile-menu-arrow"/></a>@endauth
         </nav>
         <div class="site-mobile-menu-bottom"><a href="{{ $site['header']['cta_url'] }}" class="btn btn-primary">{{ $site['header']['cta_label'] }} <x-ui-icon name="arrow" size="18"/></a><span><i class="live-dot"></i>{{ $site['brand_tagline'] }}</span></div>
     </div>
