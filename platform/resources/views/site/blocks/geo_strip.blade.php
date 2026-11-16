@@ -8,5 +8,5 @@
         </div></div>
     </div>
     <strong class="geo-end-label teal">{{ $data['end_label'] }} ↗</strong>
-    <span id="geo-carousel-help" class="sr-only">Swipe or use the arrow keys to explore countries. Automatic movement pauses while you interact.</span>
+    <span id="geo-carousel-help" class="sr-only">Drag with your mouse, swipe or use the arrow keys to explore countries. Automatic movement pauses while you interact.</span>
 </div></div>
