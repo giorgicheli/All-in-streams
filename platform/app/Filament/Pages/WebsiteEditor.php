@@ -211,6 +211,26 @@ class WebsiteEditor extends Page
                 $fields[] = Toggle::make($name)->label($key === 'enabled' ? 'Show this section' : $label)->default($value)->columnSpanFull();
                 continue;
             }
+            if (in_array($key, ['video_path', 'poster_path'], true)) {
+                $upload = FileUpload::make($name)->label($key === 'video_path' ? 'Public preview video' : 'Preview poster')
+                    ->disk('public')->directory('site-content/reels')->visibility('public')->columnSpanFull();
+                if ($key === 'video_path') {
+                    $upload->acceptedFileTypes(['video/mp4', 'video/webm'])->maxSize(12288)
+                        ->helperText('Public MP4 or WebM, up to 12 MB. Use a short, muted clip you have permission to publish. Empty uses the selected sample format.');
+                } else {
+                    $upload->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->image()->maxSize(2048)
+                        ->imagePreviewHeight('130')->helperText('Public JPG, PNG or WebP, up to 2 MB. Empty uses the selected sample poster.');
+                }
+                $fields[] = $upload;
+                continue;
+            }
+            if ($key === 'sample_clip') {
+                $fields[] = Select::make($name)->label('Fallback sample footage')->options([
+                    'studio' => 'Studio', 'gaming' => 'Gaming', 'creator' => 'Creator',
+                    'setup' => 'Setup', 'live' => 'Live moment', 'community' => 'Community',
+                ])->default($value)->required();
+                continue;
+            }
             if ($key === 'image_path' || $key === 'logo_path') {
                 $fields[] = FileUpload::make($name)->label($key === 'logo_path' ? 'Brand logo' : 'Section image')
                     ->disk('public')->directory('site-content')->visibility('public')
@@ -224,6 +244,7 @@ class WebsiteEditor extends Page
                     $sample = $value[0] ?? ['text' => ''];
                     $repeater = Repeater::make($name)->label($label)->default($value)->maxItems(static::listLimit($key))
                         ->collapsible()->collapsed()->reorderableWithButtons()->columnSpanFull();
+                    if ($key === 'clips') $repeater->minItems(2)->helperText('These clips are public website previews. Private creator verification videos are never used here.');
                     if (is_array($sample)) {
                         $repeater->schema(static::fields($sample))->columns(2)
                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? $state['question'] ?? $state['label'] ?? $state['name'] ?? $state['text'] ?? null);
@@ -273,6 +294,7 @@ class WebsiteEditor extends Page
         return [
             'seo' => 'Search & sharing', 'brand_name' => 'Brand name', 'brand_tagline' => 'Brand tagline',
             'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer', 'network_stats' => 'Network statistics', 'count' => 'Displayed count', 'is_demo' => 'Show sample-data label',
+            'creator_reels' => 'Creator video showcase', 'clips' => 'Public preview clips', 'format' => 'Format caption',
             'auth_story' => 'Sign-in & registration story', 'auth' => 'Account page copy', 'labels' => 'Form labels',
             'login' => 'Sign-in page', 'register' => 'Registration page', 'eyebrow' => 'Small heading',
             'title_line_1' => 'Headline · first line', 'title_line_2' => 'Headline · second line',

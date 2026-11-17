@@ -1,17 +1,17 @@
-/* Public account and enquiry pages. Solid black surfaces, readable copy and aqua accents; private portal forms stay outside this scope. */
+/* Public account and enquiry pages. Light surfaces, readable copy and restrained blue accents; private portal forms stay outside this scope. */
 .site-redesign .theme-white :is(.auth-page,.partner-enquiry) {
-    --form-ink:#eef6f5;
-    --form-muted:#97a9aa;
-    --form-line:#26363a;
-    --form-mint:#72f6e4;
-    --form-cyan:#24cbd8;
+    --form-ink:#191c1f;
+    --form-muted:#6b728b;
+    --form-line:#dde2ed;
+    --form-mint:#0a5cff;
+    --form-cyan:#3772dc;
     color:var(--form-ink);
-    background:#050707;
-    color-scheme:dark;
+    background:#f5f6fa;
+    color-scheme:light;
 }
 .site-redesign .theme-white :is(.auth-form h2,.auth-story h1,.enquiry-intro h1,.enquiry-success h1,.enquiry-form-section h2,.enquiry-role-card h2) {
-    font-family:'Space Grotesk Variable', 'Inter Variable', sans-serif;
-    font-weight:500;
+    font-family:'Inter Variable', sans-serif;
+    font-weight:650;
 }
 .site-redesign .theme-white :is(.auth-page,.partner-enquiry) [hidden] { display:none!important; }
 .site-redesign .theme-white :is(.auth-page,.partner-enquiry) :is(input,select,textarea,button) { font-family:inherit; }
@@ -21,175 +21,175 @@
 .site-redesign .theme-white .auth-story {
     position:sticky; top:16px; align-self:start; display:flex; min-height:calc(100svh - 32px);
     max-height:calc(100svh - 32px); padding:48px; border:0; border-radius:24px;
-    background:#080b0d; color:#eef6f5; isolation:isolate;
+    background:#ffffff; color:#191c1f; isolation:isolate;
 }
 .site-redesign .theme-white .auth-story::before {
-    content:''; position:absolute; z-index:-1; width:420px; height:420px; border:68px solid #72f6e40b;
+    content:''; position:absolute; z-index:-1; width:420px; height:420px; border:68px solid #0a5cff0b;
     border-radius:50%; right:-210px; top:18%; pointer-events:none;
 }
 .site-redesign .theme-white .auth-story::after {
-    content:''; position:absolute; z-index:-1; width:310px; height:310px; border:1px solid #72f6e41f;
+    content:''; position:absolute; z-index:-1; width:310px; height:310px; border:1px solid #0a5cff16;
     border-radius:50%; right:-115px; top:calc(18% + 55px); pointer-events:none;
 }
-.site-redesign .theme-white .auth-story .brand { position:relative; color:#72f6e4; }
-.site-redesign .theme-white .auth-story .brand :is(span,b,small) { color:#eef6f5; }
+.site-redesign .theme-white .auth-story .brand { position:relative; color:#0a5cff; }
+.site-redesign .theme-white .auth-story .brand :is(span,b,small) { color:#191c1f; }
 .site-redesign .theme-white .auth-story .brand small { opacity:.65; }
 .site-redesign .theme-white .auth-story-content { position:relative; max-width:500px; padding:64px 0; margin:auto 0; }
-.site-redesign .theme-white .auth-story .eyebrow { color:#a6bcbd; font-size:10px; line-height:1.7; letter-spacing:.15em; }
+.site-redesign .theme-white .auth-story .eyebrow { color:#636b84; font-size:10px; line-height:1.7; letter-spacing:.15em; }
 .site-redesign .theme-white .auth-story .live-dot { background:var(--form-mint); box-shadow:none; }
-.site-redesign .theme-white .auth-story h1 { margin:25px 0; font-size:clamp(44px,4.45vw,68px); font-weight:500; letter-spacing:-.065em; line-height:1.06; color:#eef6f5; }
+.site-redesign .theme-white .auth-story h1 { margin:25px 0; font-size:clamp(44px,4.45vw,68px); font-weight:650; letter-spacing:-.065em; line-height:1.06; color:#191c1f; }
 .site-redesign .theme-white .auth-story h1 .lime { color:var(--form-mint); }
-.site-redesign .theme-white .auth-story p { max-width:355px; color:#97a9aa; font-size:14px; line-height:1.85; }
+.site-redesign .theme-white .auth-story p { max-width:355px; color:#6b728b; font-size:14px; line-height:1.85; }
 .site-redesign .theme-white .auth-perks { margin-top:36px; gap:18px; }
-.site-redesign .theme-white .auth-perks>span { color:#d0e0e0; font-size:12px; line-height:1.6; gap:12px; }
+.site-redesign .theme-white .auth-perks>span { color:#3a435c; font-size:12px; line-height:1.6; gap:12px; }
 .site-redesign .theme-white .auth-perks .icon { width:18px; height:18px; color:var(--form-mint); flex-shrink:0; }
-.site-redesign .theme-white .auth-story-footer { position:relative; color:#82999c; font-size:10px; line-height:1.6; flex-wrap:wrap; }
-.site-redesign .theme-white .auth-main { min-width:0; padding:72px clamp(36px,6vw,100px); align-items:center; background:#050707; }
+.site-redesign .theme-white .auth-story-footer { position:relative; color:#6f7891; font-size:10px; line-height:1.6; flex-wrap:wrap; }
+.site-redesign .theme-white .auth-main { min-width:0; padding:72px clamp(36px,6vw,100px); align-items:center; background:#f5f6fa; }
 .site-redesign .theme-white .auth-form { width:100%; max-width:440px; }
 .site-redesign .theme-white .auth-back { width:fit-content; display:inline-flex; gap:9px; color:var(--form-muted); font-size:12px; line-height:1.6; margin-bottom:46px; }
 .site-redesign .theme-white .auth-back:hover { color:var(--form-ink); }
-.site-redesign .theme-white .auth-form>.eyebrow { color:#8ba6a7; font-size:10px; font-weight:600; letter-spacing:.15em; }
-.site-redesign .theme-white .auth-form h2 { margin:18px 0 16px; color:var(--form-ink); font-size:clamp(34px,3.25vw,46px); line-height:1.09; letter-spacing:-.055em; font-weight:500; text-wrap:balance; }
+.site-redesign .theme-white .auth-form>.eyebrow { color:#6a748e; font-size:10px; font-weight:600; letter-spacing:.15em; }
+.site-redesign .theme-white .auth-form h2 { margin:18px 0 16px; color:var(--form-ink); font-size:clamp(34px,3.25vw,46px); line-height:1.09; letter-spacing:-.055em; font-weight:650; text-wrap:balance; }
 .site-redesign .theme-white .auth-form>.muted { color:var(--form-muted); font-size:14px; line-height:1.8; margin-bottom:34px; }
 .site-redesign .theme-white .auth-form .form-field { gap:9px; margin-bottom:23px; }
 .site-redesign .theme-white .auth-form :is(.form-field>label,.field-label) { color:var(--form-ink); font-size:12px; font-weight:500; line-height:1.6; }
 .site-redesign .theme-white .auth-form :is(.form-field input:not([type=checkbox]),.form-field select,.form-field textarea) {
     width:100%; min-width:0; min-height:55px; padding:14px 16px; border:1px solid var(--form-line);
-    border-radius:13px; background:#101719; color:var(--form-ink); font-size:14px; line-height:1.65;
+    border-radius:13px; background:#ffffff; color:var(--form-ink); font-size:14px; line-height:1.65;
     box-shadow:none; transition:border-color 180ms ease,background 180ms ease;
 }
-.site-redesign .theme-white .auth-form .form-field input::placeholder,.site-redesign .theme-white .auth-form .form-field textarea::placeholder { color:#73898c; opacity:1; }
-.site-redesign .theme-white .auth-form .form-field :is(input:not([type=checkbox]):not([type=radio]),select,textarea):is(:focus,:focus-visible) { outline:0; box-shadow:none; border-color:#72f6e4; }
+.site-redesign .theme-white .auth-form .form-field input::placeholder,.site-redesign .theme-white .auth-form .form-field textarea::placeholder { color:#7b8298; opacity:1; }
+.site-redesign .theme-white .auth-form .form-field :is(input:not([type=checkbox]):not([type=radio]),select,textarea):is(:focus,:focus-visible) { outline:0; box-shadow:none; border-color:#0a5cff; }
 .site-redesign .theme-white .auth-form :is(.field-help,.auth-recovery-hint) { color:var(--form-muted); font-size:12px; line-height:1.8; }
-.site-redesign .theme-white .auth-form input[type=checkbox] { width:17px; height:17px; min-height:0; flex-shrink:0; accent-color:#72f6e4; }
+.site-redesign .theme-white .auth-form input[type=checkbox] { width:17px; height:17px; min-height:0; flex-shrink:0; accent-color:#0a5cff; }
 .site-redesign .theme-white .auth-form input[type=file] { padding:9px; font-size:12px; }
 .site-redesign .theme-white :is(.auth-form,.enquiry-form) input[type=file]::file-selector-button {
-    margin-right:10px; padding:10px 13px; border:0; border-radius:8px; background:#193536;
+    margin-right:10px; padding:10px 13px; border:0; border-radius:8px; background:#edf1f8;
     color:var(--form-ink); font:inherit; font-weight:500; cursor:pointer;
 }
 .site-redesign .theme-white .auth-form :is(.choice-grid,.form-grid) { gap:10px; }
-.site-redesign .theme-white .auth-form .choice-label { padding:11px 15px; min-height:44px; border:1px solid var(--form-line); border-radius:22px; background:#101719; color:var(--form-ink); font-size:12px; line-height:1.5; }
-.site-redesign .theme-white .auth-form .choice-label[style*="border-color"] { background:#72f6e4; color:#051011!important; border-color:#72f6e4!important; }
-.site-redesign .theme-white .auth-form label.choice-label:has(input:checked) { background:#153032; border-color:#315d5d; }
+.site-redesign .theme-white .auth-form .choice-label { padding:11px 15px; min-height:44px; border:1px solid var(--form-line); border-radius:22px; background:#ffffff; color:var(--form-ink); font-size:12px; line-height:1.5; }
+.site-redesign .theme-white .auth-form .choice-label[style*="border-color"] { background:#0a5cff; color:#ffffff!important; border-color:#0a5cff!important; }
+.site-redesign .theme-white .auth-form label.choice-label:has(input:checked) { background:#eef3ff; border-color:#97b4ed; }
 .site-redesign .theme-white .auth-form .btn-primary {
-    min-height:56px; padding:16px 22px; border:0; border-radius:50px; background:#72f6e4;
-    color:#051011; font-size:14px; font-weight:500; box-shadow:none; justify-content:space-between;
+    min-height:56px; padding:16px 22px; border:0; border-radius:14px; background:#191c1f;
+    color:#ffffff; font-size:14px; font-weight:500; box-shadow:none; justify-content:space-between;
 }
-.site-redesign .theme-white .auth-form .btn-primary:hover { background:#a4fff0; translate:0 -1px; }
-.site-redesign .theme-white .auth-form .btn-primary .icon { color:#051011; }
+.site-redesign .theme-white .auth-form .btn-primary:hover { background:#303541; translate:0 -1px; }
+.site-redesign .theme-white .auth-form .btn-primary .icon { color:#ffffff; }
 .site-redesign .theme-white .auth-form :is(.auth-recovery-links,.auth-switch) { font-size:12px; line-height:1.8; }
 .site-redesign .theme-white .auth-form .auth-recovery-links { margin-top:-8px; margin-bottom:23px; }
-.site-redesign .theme-white .auth-form :is(.auth-recovery-links a,.auth-switch a) { color:#72f6e4; text-decoration:underline; text-underline-offset:4px; text-decoration-color:#397174; }
+.site-redesign .theme-white .auth-form :is(.auth-recovery-links a,.auth-switch a) { color:#0a5cff; text-decoration:underline; text-underline-offset:4px; text-decoration-color:#b2c4e7; }
 .site-redesign .theme-white .auth-form .auth-switch { margin-top:28px; color:var(--form-muted); }
-.site-redesign .theme-white .auth-form .auth-notice { padding:17px 19px; border-radius:14px; background:#132d2b; color:#bcfae9; font-size:12px; line-height:1.8; }
-.site-redesign .theme-white .auth-form .auth-notice-error { background:#321f1d; color:#ffc0a9; }
-.site-redesign .theme-white .auth-form .field-error { color:#ffb098; font-size:12px; }
-.site-redesign .theme-white .auth-form .auth-divider { margin-top:32px; color:#8ba3a6; font-size:9px; }
-.site-redesign .theme-white .auth-form .auth-divider::before,.site-redesign .theme-white .auth-form .auth-divider::after { background:#26363a; }
-.site-redesign .theme-white .auth-form .demo-accounts button { background:#111e21; color:#c1d4d4; border:0; border-radius:10px; min-height:42px; font-size:11px; }
-.site-redesign .theme-white .auth-form :is(a,button):focus-visible { outline:2px solid #72f6e4; outline-offset:4px; }
+.site-redesign .theme-white .auth-form .auth-notice { padding:17px 19px; border-radius:14px; background:#eaf5ee; color:#29684b; font-size:12px; line-height:1.8; }
+.site-redesign .theme-white .auth-form .auth-notice-error { background:#fff0ec; color:#ac443b; }
+.site-redesign .theme-white .auth-form .field-error { color:#ac443b; font-size:12px; }
+.site-redesign .theme-white .auth-form .auth-divider { margin-top:32px; color:#78819a; font-size:9px; }
+.site-redesign .theme-white .auth-form .auth-divider::before,.site-redesign .theme-white .auth-form .auth-divider::after { background:#dde2ed; }
+.site-redesign .theme-white .auth-form .demo-accounts button { background:#edf1f8; color:#4c576f; border:0; border-radius:10px; min-height:42px; font-size:11px; }
+.site-redesign .theme-white .auth-form :is(a,button):focus-visible { outline:2px solid #0a5cff; outline-offset:4px; }
 
-/* Role selection and long-form registration share the same dark surface system. */
-.site-redesign .theme-white .partner-enquiry { --enquiry-ink:#eef6f5; --enquiry-muted:#97a9aa; --enquiry-line:#26363a; --enquiry-accent:#72f6e4; padding:48px clamp(20px,5vw,80px) 80px; }
+/* Role selection and long-form registration share the same light surface system. */
+.site-redesign .theme-white .partner-enquiry { --enquiry-ink:#191c1f; --enquiry-muted:#6b728b; --enquiry-line:#dde2ed; --enquiry-accent:#0a5cff; padding:48px clamp(20px,5vw,80px) 80px; }
 .site-redesign .theme-white .partner-enquiry .enquiry-shell { width:min(1040px,100%); }
 .site-redesign .theme-white .enquiry-brand { margin-bottom:60px; width:fit-content; }
-.site-redesign .theme-white .enquiry-brand .brand { color:#72f6e4; }
-.site-redesign .theme-white .enquiry-close { top:24px; right:24px; width:48px; height:48px; border:1px solid #26363a; border-radius:50%; background:#080b0ded; color:#edf6f5; backdrop-filter:blur(12px); }
-.site-redesign .theme-white .enquiry-close:hover { border-color:#355458; background:#182b2d; }
+.site-redesign .theme-white .enquiry-brand .brand { color:#0a5cff; }
+.site-redesign .theme-white .enquiry-close { top:24px; right:24px; width:48px; height:48px; border:1px solid #dde2ed; border-radius:50%; background:#ffffffed; color:#191c1f; backdrop-filter:blur(12px); }
+.site-redesign .theme-white .enquiry-close:hover { border-color:#b7c6e7; background:#edf1fa; }
 .site-redesign .theme-white .enquiry-intro { max-width:860px; padding-right:24px; }
-.site-redesign .theme-white .enquiry-eyebrow { color:#8ba7a8; font-size:10px; line-height:1.8; font-weight:600; letter-spacing:.16em; }
-.site-redesign .theme-white .enquiry-intro h1,.site-redesign .theme-white .enquiry-success h1 { color:#eef6f5; margin:22px 0; font-size:clamp(42px,5.2vw,72px); font-weight:500; letter-spacing:-.065em; line-height:1.055; text-wrap:balance; }
+.site-redesign .theme-white .enquiry-eyebrow { color:#6a748e; font-size:10px; line-height:1.8; font-weight:600; letter-spacing:.16em; }
+.site-redesign .theme-white .enquiry-intro h1,.site-redesign .theme-white .enquiry-success h1 { color:#191c1f; margin:22px 0; font-size:clamp(42px,5.2vw,72px); font-weight:650; letter-spacing:-.065em; line-height:1.055; text-wrap:balance; }
 .site-redesign .theme-white .enquiry-intro>p:last-child { max-width:670px; color:var(--form-muted); font-size:16px; line-height:1.8; }
 .site-redesign .theme-white .enquiry-category-tabs { margin:32px 0 25px; gap:9px; }
-.site-redesign .theme-white .enquiry-choice { min-height:47px; padding:11px 25px; border:1px solid #26363a; border-radius:40px; background:transparent; color:#b5c9cb; font-size:13px; font-weight:500; }
-.site-redesign .theme-white .enquiry-choice:hover { background:#162729; border-color:#355458; }
-.site-redesign .theme-white .enquiry-choice.is-selected { background:#72f6e4; color:#051011; border-color:#72f6e4; }
-.site-redesign .theme-white .enquiry-review-note { max-width:760px; gap:9px; margin:0 0 30px; color:#91a7a9; font-size:12px; line-height:1.8; }
-.site-redesign .theme-white .enquiry-review-note .icon { color:#72f6e4; }
-.site-redesign .theme-white .enquiry-form { padding:clamp(24px,4.2vw,52px); background:#080b0d; border:0; border-radius:24px; box-shadow:none; }
+.site-redesign .theme-white .enquiry-choice { min-height:47px; padding:11px 25px; border:1px solid #dde2ed; border-radius:40px; background:transparent; color:#4e5771; font-size:13px; font-weight:500; }
+.site-redesign .theme-white .enquiry-choice:hover { background:#f0f3fa; border-color:#b7c6e7; }
+.site-redesign .theme-white .enquiry-choice.is-selected { background:#0a5cff; color:#ffffff; border-color:#0a5cff; }
+.site-redesign .theme-white .enquiry-review-note { max-width:760px; gap:9px; margin:0 0 30px; color:#727b92; font-size:12px; line-height:1.8; }
+.site-redesign .theme-white .enquiry-review-note .icon { color:#0a5cff; }
+.site-redesign .theme-white .enquiry-form { padding:clamp(24px,4.2vw,52px); background:#ffffff; border:0; border-radius:24px; box-shadow:none; }
 .site-redesign .theme-white .enquiry-type-field { margin-bottom:24px!important; }
-.site-redesign .theme-white .enquiry-type-field>legend { margin-bottom:12px; font-size:12px; font-weight:500; color:#eef6f5; }
-.site-redesign .theme-white .enquiry-type-options { width:fit-content; max-width:100%; padding:5px; gap:4px; background:#10191c; border:0; border-radius:40px; }
+.site-redesign .theme-white .enquiry-type-field>legend { margin-bottom:12px; font-size:12px; font-weight:500; color:#191c1f; }
+.site-redesign .theme-white .enquiry-type-options { width:fit-content; max-width:100%; padding:5px; gap:4px; background:#eef1f8; border:0; border-radius:40px; }
 .site-redesign .theme-white .enquiry-type-options .enquiry-choice { min-height:39px; padding:9px 21px; border-color:transparent; background:transparent; font-size:12px; }
-.site-redesign .theme-white .enquiry-type-options .enquiry-choice.is-selected { background:#72f6e4; color:#051011; }
+.site-redesign .theme-white .enquiry-type-options .enquiry-choice.is-selected { background:#0a5cff; color:#ffffff; }
 .site-redesign .theme-white .enquiry-grid { gap:24px 22px; }
-.site-redesign .theme-white .enquiry-contact-grid,.site-redesign .theme-white .enquiry-password-grid { padding:25px; background:#11191c; border-radius:18px; margin-bottom:20px; }
+.site-redesign .theme-white .enquiry-contact-grid,.site-redesign .theme-white .enquiry-password-grid { padding:25px; background:#f3f5fa; border-radius:18px; margin-bottom:20px; }
 .site-redesign .theme-white .enquiry-field { min-width:0; }
-.site-redesign .theme-white .enquiry-field>label,.site-redesign .theme-white .enquiry-group-label { color:#d4e3e3; font-size:12px; line-height:1.65; font-weight:500; margin-bottom:9px; }
-.site-redesign .theme-white .enquiry-field :is(input,select,textarea) { min-width:0; min-height:55px; padding:14px 16px; border:1px solid #26363a; border-radius:12px; background:#080d0f; color:#eef6f5; font-size:14px; line-height:1.65; box-shadow:none; transition:border-color 180ms ease; }
-.site-redesign .theme-white .enquiry-field :is(input,textarea)::placeholder { color:#73898c; opacity:1; }
-.site-redesign .theme-white .enquiry-field :is(input,select,textarea):focus { border-color:#72f6e4; outline:0; box-shadow:none; }
+.site-redesign .theme-white .enquiry-field>label,.site-redesign .theme-white .enquiry-group-label { color:#293447; font-size:12px; line-height:1.65; font-weight:500; margin-bottom:9px; }
+.site-redesign .theme-white .enquiry-field :is(input,select,textarea) { min-width:0; min-height:55px; padding:14px 16px; border:1px solid #dde2ed; border-radius:12px; background:#ffffff; color:#191c1f; font-size:14px; line-height:1.65; box-shadow:none; transition:border-color 180ms ease; }
+.site-redesign .theme-white .enquiry-field :is(input,textarea)::placeholder { color:#7b8298; opacity:1; }
+.site-redesign .theme-white .enquiry-field :is(input,select,textarea):focus { border-color:#0a5cff; outline:0; box-shadow:none; }
 .site-redesign .theme-white .enquiry-field textarea { min-height:150px; resize:vertical; }
 .site-redesign .theme-white .enquiry-field input[type=file] { padding:9px; font-size:12px; }
-.site-redesign .theme-white .enquiry-field :is(input,select,textarea)[aria-invalid=true] { border-color:#e5a18b; }
-.site-redesign .theme-white .enquiry-form-section { margin-top:20px; padding:28px; background:#11191c; border-radius:18px; }
+.site-redesign .theme-white .enquiry-field :is(input,select,textarea)[aria-invalid=true] { border-color:#c35a4e; }
+.site-redesign .theme-white .enquiry-form-section { margin-top:20px; padding:28px; background:#f3f5fa; border-radius:18px; }
 .site-redesign .theme-white .enquiry-form-section:first-of-type { margin-top:20px; }
-.site-redesign .theme-white .enquiry-form-section:nth-of-type(2) { background:#102325; }
-.site-redesign .theme-white .enquiry-form-section h2 { font-size:25px; font-weight:500; line-height:1.2; letter-spacing:-.045em; margin-bottom:14px; color:#eef6f5; }
+.site-redesign .theme-white .enquiry-form-section:nth-of-type(2) { background:#edf2fc; }
+.site-redesign .theme-white .enquiry-form-section h2 { font-size:25px; font-weight:650; line-height:1.2; letter-spacing:-.045em; margin-bottom:14px; color:#191c1f; }
 .site-redesign .theme-white .enquiry-form-section .enquiry-grid { margin-top:12px; }
-.site-redesign .theme-white .enquiry-help { font-size:12px; line-height:1.8; color:#97a9aa; }
+.site-redesign .theme-white .enquiry-help { font-size:12px; line-height:1.8; color:#6b728b; }
 .site-redesign .theme-white .enquiry-campaign .enquiry-grid { padding-top:10px; }
 .site-redesign .theme-white .enquiry-requirements { margin-top:25px; }
 .site-redesign .theme-white .enquiry-currency { max-width:220px; margin-top:28px; }
 .site-redesign .theme-white .audience-picker { margin-top:16px; }
-.site-redesign .theme-white .audience-picker>summary { min-height:56px; padding:13px 16px; border:1px solid #26363a; border-radius:12px; color:#eef6f5; background:#080d0f; }
-.site-redesign .theme-white .audience-picker[open]>summary { border-color:#72f6e4; }
-.site-redesign .theme-white .audience-picker>summary:focus-visible { outline:2px solid #72f6e4; outline-offset:3px; }
-.site-redesign .theme-white .audience-country-chip { padding:4px 11px; background:#173b3b; color:#b6f8e9; font-size:11px; }
-.site-redesign .theme-white .audience-picker-panel { padding:17px; border:1px solid #26363a; border-radius:14px; box-shadow:none; background:#101719; color:#eef6f5; }
-.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-search] { min-height:48px; width:100%; padding:12px 14px; border:1px solid #26363a; border-radius:10px; background:#080d0f; color:#eef6f5; font-size:14px; box-shadow:none; }
-.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-search]:focus { outline:0; border-color:#72f6e4; box-shadow:none; }
-.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-search]::placeholder { color:#73898c; }
-.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-count] { color:#97a9aa; }
-.site-redesign .theme-white .audience-country-options>label { border-radius:9px; padding:9px; font-size:12px; color:#c4d7d8; background:transparent; }
-.site-redesign .theme-white .audience-country-options .icon { color:#72f6e4; }
-.site-redesign .theme-white .audience-country-options>label:has(input:checked) { background:#173b39; border-color:transparent; }
-.site-redesign .theme-white .audience-country-options input[type=checkbox] { width:17px; height:17px; min-height:0; padding:0; border-radius:4px; accent-color:#72f6e4; }
-.site-redesign .theme-white .enquiry-consent { margin-top:28px; gap:12px; font-size:13px; line-height:1.8; color:#b2c5c6; }
-.site-redesign .theme-white .enquiry-consent input { width:18px; height:18px; min-height:0; margin-top:3px; accent-color:#72f6e4; }
-.site-redesign .theme-white .enquiry-submit { min-height:57px; margin-top:28px; padding:16px 26px; border:0; border-radius:50px; background:#72f6e4; color:#051011; font-size:14px; font-weight:500; gap:32px; box-shadow:none; }
-.site-redesign .theme-white .enquiry-submit>.icon { color:#051011; }
-.site-redesign .theme-white .enquiry-submit:hover { background:#a4fff0; border-color:transparent; }
-.site-redesign .theme-white .enquiry-existing { margin-top:25px; font-size:12px; line-height:1.8; color:#91a7a9; }
-.site-redesign .theme-white .enquiry-existing a { color:#eef6f5; text-decoration-color:#397174; }
-.site-redesign .theme-white .enquiry-error { font-size:12px; color:#ffb098; }
-.site-redesign .theme-white .enquiry-errors { margin:0 0 24px; padding:20px 24px; border:0; border-radius:16px; background:#321f1d; color:#ffc2ac; }
-.site-redesign .theme-white .enquiry-shortlist-context { padding:23px; margin-bottom:25px; border:0; border-radius:17px; background:#142b2b; }
-.site-redesign .theme-white .enquiry-shortlist-chips>span { padding:6px 12px; font-size:11px; color:#c8e8e4; background:#20393b; }
+.site-redesign .theme-white .audience-picker>summary { min-height:56px; padding:13px 16px; border:1px solid #dde2ed; border-radius:12px; color:#191c1f; background:#ffffff; }
+.site-redesign .theme-white .audience-picker[open]>summary { border-color:#0a5cff; }
+.site-redesign .theme-white .audience-picker>summary:focus-visible { outline:2px solid #0a5cff; outline-offset:3px; }
+.site-redesign .theme-white .audience-country-chip { padding:4px 11px; background:#e4edff; color:#2859c5; font-size:11px; }
+.site-redesign .theme-white .audience-picker-panel { padding:17px; border:1px solid #dde2ed; border-radius:14px; box-shadow:none; background:#ffffff; color:#191c1f; }
+.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-search] { min-height:48px; width:100%; padding:12px 14px; border:1px solid #dde2ed; border-radius:10px; background:#ffffff; color:#191c1f; font-size:14px; box-shadow:none; }
+.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-search]:focus { outline:0; border-color:#0a5cff; box-shadow:none; }
+.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-search]::placeholder { color:#7b8298; }
+.site-redesign .theme-white .partner-enquiry .audience-picker [data-audience-count] { color:#6b728b; }
+.site-redesign .theme-white .audience-country-options>label { border-radius:9px; padding:9px; font-size:12px; color:#525c75; background:transparent; }
+.site-redesign .theme-white .audience-country-options .icon { color:#0a5cff; }
+.site-redesign .theme-white .audience-country-options>label:has(input:checked) { background:#e4edff; border-color:transparent; }
+.site-redesign .theme-white .audience-country-options input[type=checkbox] { width:17px; height:17px; min-height:0; padding:0; border-radius:4px; accent-color:#0a5cff; }
+.site-redesign .theme-white .enquiry-consent { margin-top:28px; gap:12px; font-size:13px; line-height:1.8; color:#5e6680; }
+.site-redesign .theme-white .enquiry-consent input { width:18px; height:18px; min-height:0; margin-top:3px; accent-color:#0a5cff; }
+.site-redesign .theme-white .enquiry-submit { min-height:57px; margin-top:28px; padding:16px 26px; border:0; border-radius:14px; background:#191c1f; color:#ffffff; font-size:14px; font-weight:500; gap:32px; box-shadow:none; }
+.site-redesign .theme-white .enquiry-submit>.icon { color:#ffffff; }
+.site-redesign .theme-white .enquiry-submit:hover { background:#2c67eb; border-color:transparent; }
+.site-redesign .theme-white .enquiry-existing { margin-top:25px; font-size:12px; line-height:1.8; color:#727b92; }
+.site-redesign .theme-white .enquiry-existing a { color:#191c1f; text-decoration-color:#b2c4e7; }
+.site-redesign .theme-white .enquiry-error { font-size:12px; color:#ac443b; }
+.site-redesign .theme-white .enquiry-errors { margin:0 0 24px; padding:20px 24px; border:0; border-radius:16px; background:#fff0ec; color:#ac443b; }
+.site-redesign .theme-white .enquiry-shortlist-context { padding:23px; margin-bottom:25px; border:0; border-radius:17px; background:#edf2fc; }
+.site-redesign .theme-white .enquiry-shortlist-chips>span { padding:6px 12px; font-size:11px; color:#365ca0; background:#e2eafb; }
 .site-redesign .theme-white .enquiry-success { margin-block:60px 100px; }
-.site-redesign .theme-white .enquiry-success-icon { width:72px; height:72px; background:#72f6e4; border-radius:22px; color:#051011; }
-.site-redesign .theme-white .enquiry-success>p:not(.enquiry-eyebrow) { color:#97a9aa; font-size:16px; line-height:1.9; }
+.site-redesign .theme-white .enquiry-success-icon { width:72px; height:72px; background:#0a5cff; border-radius:22px; color:#ffffff; }
+.site-redesign .theme-white .enquiry-success>p:not(.enquiry-eyebrow) { color:#6b728b; font-size:16px; line-height:1.9; }
 
 /* The three entry paths are distinct, with one accent card. */
 .site-redesign .theme-white .enquiry-role-page { align-items:center; }
 .site-redesign .theme-white .enquiry-role-page .enquiry-shell { width:min(1160px,100%); padding-block:0; }
 .site-redesign .theme-white .enquiry-role-page .enquiry-intro { max-width:760px; }
 .site-redesign .theme-white .enquiry-role-cards { grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-top:44px; }
-.site-redesign .theme-white .enquiry-role-card { min-height:300px; padding:32px; border:0; border-radius:22px; background:#101719; color:#eef6f5; box-shadow:none; }
-.site-redesign .theme-white .enquiry-role-card:nth-child(2) { background:#111f22; }
-.site-redesign .theme-white .enquiry-role-card:nth-child(3) { background:#123638; color:#edf6f5; }
-.site-redesign .theme-white .enquiry-role-icon { width:52px; height:52px; display:grid; place-items:center; border-radius:50%; margin-bottom:42px; background:#ffffff08; }
+.site-redesign .theme-white .enquiry-role-card { min-height:300px; padding:32px; border:0; border-radius:22px; background:#ffffff; color:#191c1f; box-shadow:none; }
+.site-redesign .theme-white .enquiry-role-card:nth-child(2) { background:#eef2fb; }
+.site-redesign .theme-white .enquiry-role-card:nth-child(3) { background:#e8eeff; color:#191c1f; }
+.site-redesign .theme-white .enquiry-role-icon { width:52px; height:52px; display:grid; place-items:center; border-radius:50%; margin-bottom:42px; background:#0a5cff08; }
 .site-redesign .theme-white .enquiry-role-card:nth-child(2) .enquiry-role-icon { color:var(--form-cyan); }
-.site-redesign .theme-white .enquiry-role-card:nth-child(3) .enquiry-role-icon { background:#72f6e4; color:#051011; }
-.site-redesign .theme-white .enquiry-role-card h2 { color:inherit; font-size:29px; font-weight:500; letter-spacing:-.045em; }
-.site-redesign .theme-white .enquiry-role-card p { font-size:13px; line-height:1.9; color:#97a9aa; }
-.site-redesign .theme-white .enquiry-role-card:nth-child(3) p { color:#b3cfcb; }
-.site-redesign .theme-white .enquiry-role-arrow { top:32px; right:30px; width:36px; height:36px; border-color:#65878a55; }
-.site-redesign .theme-white .enquiry-role-card:nth-child(3) .enquiry-role-arrow { border-color:#72f6e450; }
+.site-redesign .theme-white .enquiry-role-card:nth-child(3) .enquiry-role-icon { background:#0a5cff; color:#ffffff; }
+.site-redesign .theme-white .enquiry-role-card h2 { color:inherit; font-size:29px; font-weight:650; letter-spacing:-.045em; }
+.site-redesign .theme-white .enquiry-role-card p { font-size:13px; line-height:1.9; color:#6b728b; }
+.site-redesign .theme-white .enquiry-role-card:nth-child(3) p { color:#5e6680; }
+.site-redesign .theme-white .enquiry-role-arrow { top:32px; right:30px; width:36px; height:36px; border-color:#b8c6e15c; }
+.site-redesign .theme-white .enquiry-role-card:nth-child(3) .enquiry-role-arrow { border-color:#0a5cff40; }
 .site-redesign .theme-white .enquiry-role-card:hover { transform:translateY(-5px); box-shadow:none; }
 
 @media(max-width:1100px) {
-    .site-redesign .theme-white .auth-story { padding:36px; background:#080b0d; color:#eef6f5; }
+    .site-redesign .theme-white .auth-story { padding:36px; background:#ffffff; color:#191c1f; }
     .site-redesign .theme-white .auth-main { padding:60px 38px; }
     .site-redesign .theme-white .auth-story h1 { font-size:49px; }
     .site-redesign .theme-white .auth-story .eyebrow { font-size:9px; }
 }
 @media(max-width:900px) {
     .site-redesign .theme-white .auth-page { grid-template-columns:minmax(0,1fr); padding:0; }
-    .site-redesign .theme-white .auth-story { position:relative; top:auto; display:block; min-height:0; max-height:none; border-radius:0; padding:28px 32px; background:#050707; color:#eef6f5; }
+    .site-redesign .theme-white .auth-story { position:relative; top:auto; display:block; min-height:0; max-height:none; border-radius:0; padding:28px 32px; background:#f5f6fa; color:#191c1f; }
     .site-redesign .theme-white .auth-story :is(.auth-story-content,.auth-story-footer),.site-redesign .theme-white .auth-story::before,.site-redesign .theme-white .auth-story::after { display:none; }
-    .site-redesign .theme-white .auth-story .brand { color:#72f6e4; }
-    .site-redesign .theme-white .auth-story .brand :is(span,b,small) { color:#eef6f5; }
+    .site-redesign .theme-white .auth-story .brand { color:#0a5cff; }
+    .site-redesign .theme-white .auth-story .brand :is(span,b,small) { color:#191c1f; }
     .site-redesign .theme-white .auth-main { padding:28px 32px 64px; }
     .site-redesign .theme-white .auth-form { max-width:500px; }
     .site-redesign .theme-white .auth-back { margin-bottom:36px; }
@@ -199,7 +199,7 @@
     .site-redesign .theme-white .enquiry-role-arrow { top:26px; right:23px; width:32px; height:32px; }
 }
 @media(max-width:700px) {
-    .site-redesign .theme-white .auth-story { padding:26px 22px 12px; background:#050707; color:#eef6f5; }
+    .site-redesign .theme-white .auth-story { padding:26px 22px 12px; background:#f5f6fa; color:#191c1f; }
     .site-redesign .theme-white .auth-story .brand>span { font-size:22px; }
     .site-redesign .theme-white .auth-main { padding:26px 22px 50px; }
     .site-redesign .theme-white .auth-form h2 { font-size:37px; }
@@ -207,11 +207,11 @@
     .site-redesign .theme-white .auth-back { margin-bottom:30px; font-size:12px; }
     .site-redesign .theme-white .auth-form :is(.form-field input:not([type=checkbox]),.form-field select,.form-field textarea) { font-size:16px; min-height:56px; }
     .site-redesign .theme-white .auth-form .choice-label { padding:10px 12px; }
-    .site-redesign .theme-white .auth-form .btn-primary { min-height:56px; font-size:14px; background:#72f6e4; color:#051011; }
+    .site-redesign .theme-white .auth-form .btn-primary { min-height:56px; font-size:14px; background:#191c1f; color:#ffffff; }
     .site-redesign .theme-white .partner-enquiry { padding:27px 18px 42px; }
     .site-redesign .theme-white .enquiry-brand { margin-bottom:42px; max-width:calc(100% - 48px); }
     .site-redesign .theme-white .enquiry-brand .brand>span { font-size:21px; }
-    .site-redesign .theme-white .enquiry-close { top:22px; right:17px; width:42px; height:42px; background:#080b0ded; color:#edf6f5; }
+    .site-redesign .theme-white .enquiry-close { top:22px; right:17px; width:42px; height:42px; background:#ffffffed; color:#191c1f; }
     .site-redesign .theme-white .enquiry-intro { padding-right:0; }
     .site-redesign .theme-white .enquiry-intro h1,.site-redesign .theme-white .enquiry-success h1 { font-size:clamp(35px,9vw,48px); margin:19px 0; line-height:1.09; letter-spacing:-.055em; }
     .site-redesign .theme-white .enquiry-intro>p:last-child { font-size:14px; line-height:1.85; }
@@ -219,11 +219,11 @@
     .site-redesign .theme-white .enquiry-category-tabs { margin:28px 0 21px; gap:7px; }
     .site-redesign .theme-white .enquiry-category-tabs .enquiry-choice { min-height:44px; padding:10px 20px; font-size:12px; }
     .site-redesign .theme-white .enquiry-review-note { font-size:11px; margin-bottom:23px; }
-    .site-redesign .theme-white .enquiry-form { padding:22px 16px; border-radius:20px; background:#080b0d; border:0; box-shadow:none; }
+    .site-redesign .theme-white .enquiry-form { padding:22px 16px; border-radius:20px; background:#ffffff; border:0; box-shadow:none; }
     .site-redesign .theme-white .enquiry-grid { grid-template-columns:minmax(0,1fr); gap:20px; }
     .site-redesign .theme-white .enquiry-contact-grid,.site-redesign .theme-white .enquiry-password-grid { padding:19px 14px; border-radius:14px; margin-bottom:18px; }
     .site-redesign .theme-white .enquiry-field>label,.site-redesign .theme-white .enquiry-group-label { font-size:12px; margin-bottom:8px; }
-    .site-redesign .theme-white .enquiry-field :is(input,select,textarea) { min-height:54px; padding:13px 14px; font-size:16px; border-radius:11px; background:#080d0f; color:#eef6f5; }
+    .site-redesign .theme-white .enquiry-field :is(input,select,textarea) { min-height:54px; padding:13px 14px; font-size:16px; border-radius:11px; background:#ffffff; color:#191c1f; }
     .site-redesign .theme-white .enquiry-field input[type=file] { padding:8px; font-size:11px; }
     .site-redesign .theme-white .enquiry-form-section { padding:22px 14px; border-radius:14px; margin-top:18px; }
     .site-redesign .theme-white .enquiry-form-section h2 { font-size:24px; }
@@ -232,11 +232,11 @@
     .site-redesign .theme-white .enquiry-help { font-size:11px; }
     .site-redesign .theme-white .enquiry-currency { max-width:100%; margin-top:24px; }
     .site-redesign .theme-white .enquiry-consent { font-size:12px; }
-    .site-redesign .theme-white .enquiry-submit { width:100%; min-height:55px; justify-content:space-between; padding:16px 22px; margin-top:26px; background:#72f6e4; color:#051011; }
-    .site-redesign .theme-white .audience-picker>summary { padding:12px; background:#080d0f; color:#eef6f5; }
-    .site-redesign .theme-white .audience-picker-panel { padding:12px; background:#101719; color:#eef6f5; }
+    .site-redesign .theme-white .enquiry-submit { width:100%; min-height:55px; justify-content:space-between; padding:16px 22px; margin-top:26px; background:#0a5cff; color:#ffffff; }
+    .site-redesign .theme-white .audience-picker>summary { padding:12px; background:#ffffff; color:#191c1f; }
+    .site-redesign .theme-white .audience-picker-panel { padding:12px; background:#ffffff; color:#191c1f; }
     .site-redesign .theme-white .audience-country-options { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .site-redesign .theme-white .audience-country-options>label { padding:9px 6px; font-size:11px; gap:6px; color:#c4d7d8; background:transparent; }
+    .site-redesign .theme-white .audience-country-options>label { padding:9px 6px; font-size:11px; gap:6px; color:#525c75; background:transparent; }
     .site-redesign .theme-white .enquiry-role-page .enquiry-shell { padding-block:0; }
     .site-redesign .theme-white .enquiry-role-cards { grid-template-columns:minmax(0,1fr); gap:13px; margin-top:30px; }
     .site-redesign .theme-white .enquiry-role-card { min-height:210px; padding:26px; }
@@ -250,7 +250,7 @@
 @media(max-width:360px) {
     .site-redesign .theme-white .auth-main { padding-inline:18px; }
     .site-redesign .theme-white .partner-enquiry { padding-inline:14px; }
-    .site-redesign .theme-white .enquiry-form { padding:20px 12px; background:#080b0d; border:0; box-shadow:none; }
+    .site-redesign .theme-white .enquiry-form { padding:20px 12px; background:#ffffff; border:0; box-shadow:none; }
     .site-redesign .theme-white .enquiry-contact-grid,.site-redesign .theme-white .enquiry-password-grid { padding:18px 12px; }
     .site-redesign .theme-white .enquiry-category-tabs .enquiry-choice { padding-inline:12px; }
     .site-redesign .theme-white .enquiry-form-section { padding-inline:12px; }

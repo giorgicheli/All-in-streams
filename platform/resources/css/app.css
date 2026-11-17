@@ -24,6 +24,7 @@
 @import './creator-network-redesign.css';
 @import './public-auth-redesign.css';
 @import './pointer-effect.css';
+@import './creator-reels.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

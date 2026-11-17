@@ -5,9 +5,9 @@ const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, v
 const simulationInterval = 1 / 120;
 let sceneSequence = 0;
 const connectorColors = {
-    'anchor-0': ['#72f6e4', '#72f6e4'], 'anchor-1': ['#b0bbff', '#b0bbff'],
-    '0-1': ['#72f6e4', '#b0bbff'], '0-2': ['#72f6e4', '#49d5e6'],
-    '1-3': ['#b0bbff', '#91e5cf'], '2-3': ['#49d5e6', '#eaa6b4'],
+    'anchor-0': ['#3b73d4', '#3b73d4'], 'anchor-1': ['#8c76cf', '#8c76cf'],
+    '0-1': ['#3b73d4', '#8c76cf'], '0-2': ['#3b73d4', '#2396a8'],
+    '1-3': ['#8c76cf', '#318e80'], '2-3': ['#2396a8', '#b66985'],
 };
 
 export function initializeRopeStatistics(root = document) {

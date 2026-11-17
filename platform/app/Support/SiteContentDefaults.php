@@ -153,6 +153,20 @@ class SiteContentDefaults
                 'description' => 'Discover streamers and influencers by audience region. Compare their audiences, build your shortlist, and send us your brief to find the right match.',
                 'request_label' => 'Request more profiles', 'request_url' => '/talk-to-us?type=brand',
             ],
+            'creator_reels' => [
+                'enabled' => true, 'eyebrow' => 'Creator culture',
+                'title' => 'Creator content. In motion.',
+                'description' => 'Live moments. Fresh perspectives. Discover the formats that bring brands and creator communities together.',
+                'label' => 'Explore the network', 'url' => '#creators',
+                'clips' => [
+                    ['sample_clip' => 'studio', 'video_path' => null, 'poster_path' => null, 'title' => 'In the studio', 'format' => 'Format preview'],
+                    ['sample_clip' => 'gaming', 'video_path' => null, 'poster_path' => null, 'title' => 'Made for gaming', 'format' => 'Format preview'],
+                    ['sample_clip' => 'creator', 'video_path' => null, 'poster_path' => null, 'title' => 'A creator perspective', 'format' => 'Format preview'],
+                    ['sample_clip' => 'setup', 'video_path' => null, 'poster_path' => null, 'title' => 'Behind the setup', 'format' => 'Format preview'],
+                    ['sample_clip' => 'live', 'video_path' => null, 'poster_path' => null, 'title' => 'The live moment', 'format' => 'Format preview'],
+                    ['sample_clip' => 'community', 'video_path' => null, 'poster_path' => null, 'title' => 'Community in focus', 'format' => 'Format preview'],
+                ],
+            ],
             'enquiry_entry' => [
                 'eyebrow' => 'LET’S MAKE IT HAPPEN', 'title' => 'Let’s find your right match.',
                 'description' => 'Choose how you would like to work with All In Streams.',

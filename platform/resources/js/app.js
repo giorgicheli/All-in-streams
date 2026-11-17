@@ -11,6 +11,7 @@ import { initializePublicRefinements } from './public-refinement';
 import { initializeCreatorNetwork } from './creator-network';
 import { initializeRopeStatistics } from './rope-statistics';
 import { initializePointerEffect } from './pointer-effect';
+import { initializeCreatorReels } from './creator-reels';
 
 let cleanup = () => {};
 
@@ -30,6 +31,7 @@ function initializePage() {
     const disposeCreatorNetwork = initializeCreatorNetwork();
     const disposeRopeStatistics = initializeRopeStatistics();
     const disposePointerEffect = initializePointerEffect();
+    const disposeCreatorReels = initializeCreatorReels();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -55,6 +57,7 @@ function initializePage() {
         disposeCreatorNetwork();
         disposeRopeStatistics();
         disposePointerEffect();
+        disposeCreatorReels();
     };
 }
 

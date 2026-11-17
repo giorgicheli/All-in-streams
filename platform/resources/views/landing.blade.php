@@ -5,6 +5,8 @@
     $hasHeroStage = ($visibleBlocks[0]['type'] ?? null) === 'hero'
         && ($visibleBlocks[1]['type'] ?? null) === 'geo_strip'
         && ($site['network_stats']['enabled'] ?? false);
+    $creatorReelAnchor = array_search('geo_strip', array_column($visibleBlocks, 'type'), true);
+    $creatorReelAnchor = $creatorReelAnchor === false ? 0 : $creatorReelAnchor;
 @endphp
 <x-layout :title="$home['seo']['title']" :description="$home['seo']['description']" :light-preview="$lightPreview ?? false">
     @include('site.navigation')
@@ -14,10 +16,16 @@
                 @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data']])
                 @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
             </div>
+            @if($site['creator_reels']['enabled'] ?? false)
+                @include('site.blocks.creator-reels', ['data' => $site['creator_reels']])
+            @endif
         @endif
         @foreach($visibleBlocks as $block)
             @continue($hasHeroStage && $loop->index < 2)
             @include('site.blocks.'.$block['type'], ['data' => $block['data']])
+            @if(! $hasHeroStage && $loop->index === $creatorReelAnchor && ($site['creator_reels']['enabled'] ?? false))
+                @include('site.blocks.creator-reels', ['data' => $site['creator_reels']])
+            @endif
             @if($block['type'] === 'geo_strip' && ($site['network_stats']['enabled'] ?? false) && ! $hasHeroNetwork)
                 @include('site.blocks.network-stats', ['data' => $site['network_stats']])
             @endif

@@ -109,7 +109,7 @@ class SiteContent
         // typed tree instead of Laravel moving wildcard repeaters to its end.
         $validated = $content;
         array_walk_recursive($validated, function (&$value, $key): void {
-            if (in_array($key, ['image_path', 'logo_path'], true)) {
+            if (in_array($key, ['image_path', 'logo_path', 'video_path', 'poster_path'], true)) {
                 $value = $value === '' ? null : preg_replace('~^/storage/~', '', $value ?? '');
                 if ($value === '') $value = null;
             } elseif ($key === 'image_alt' && $value === null) {
@@ -131,13 +131,20 @@ class SiteContent
             if (is_array($value)) {
                 if (array_is_list($value)) {
                     $limit = match ($key) { 'countries', 'preview_countries', 'items' => 30, default => 12 };
-                    $rules[$path] = ['required', 'array', 'min:1', 'max:'.$limit];
+                    $rules[$path] = ['required', 'array', 'min:'.($key === 'clips' ? 2 : 1), 'max:'.$limit];
                     if ($value) $this->objectRules($value[0], $path.'.*', $rules);
                 } else $this->objectRules($value, $path, $rules);
             } elseif (is_int($value)) {
                 $rules[$path] = ['required', 'integer', 'min:0', 'max:10000000'];
             } elseif (is_bool($value)) {
                 $rules[$path] = ['required', 'boolean'];
+            } elseif (in_array($key, ['video_path', 'poster_path'], true)) {
+                $extensions = $key === 'video_path' ? 'mp4|webm' : 'png|jpg|jpeg|webp';
+                $rules[$path] = ['present', 'nullable', 'string', 'max:255', function (string $attribute, mixed $media, \Closure $fail) use ($extensions): void {
+                    if ($media !== null && $media !== '' && (! is_string($media) || ! preg_match('~^(?:/storage/)?site-content/reels/[A-Za-z0-9][A-Za-z0-9/_-]*\.(?:'.$extensions.')$~D', $media))) {
+                        $fail('Choose a public creator-preview upload.');
+                    }
+                }];
             } elseif ($value === null) {
                 $rules[$path] = ['present', 'nullable', 'string', 'max:255', function (string $attribute, mixed $media, \Closure $fail): void {
                     if ($media !== null && $media !== '' && (! is_string($media) || ! preg_match('~^(?:/storage/)?site-content/[A-Za-z0-9][A-Za-z0-9/_-]*\.(?:png|jpg|jpeg|webp|gif)$~D', $media))) {
@@ -149,6 +156,7 @@ class SiteContent
                     if (is_string($text) && (strip_tags($text) !== $text || preg_match('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', $text))) $fail('Use plain text without HTML or executable markup.');
                 }]);
                 if ($key === 'icon') $rules[$path][] = Rule::in(SiteContentDefaults::ICONS);
+                if ($key === 'sample_clip') $rules[$path][] = Rule::in(['studio', 'gaming', 'creator', 'setup', 'live', 'community']);
                 if ($key === 'code') $rules[$path][] = 'regex:/^[A-Z]{2}$/D';
                 if ($key === 'url' || str_ends_with($key, '_url')) {
                     $rules[$path][] = 'max:2048';
