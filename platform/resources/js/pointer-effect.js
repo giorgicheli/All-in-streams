@@ -1,10 +1,10 @@
 const instances = new WeakMap();
 const quietControls = 'input,textarea,select,[data-rope-node],[contenteditable]:not([contenteditable="false"])';
-const headerLabels = '.desktop-site-navigation a, .desktop-site-navigation summary, .header-actions > a';
+const headerLabels = '.desktop-site-navigation a, .desktop-site-navigation summary, .header-actions > a, button, [role="button"]';
 const buttonLabels = 'button,.btn,[role="button"],summary,.text-link,.site-footer a:not(.brand)';
 const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const simulationStep = 1 / 120;
-const pointerDelay = 50;
+const pointerDelay = 85;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -357,9 +357,10 @@ function mountPointerEffect(root) {
     document.addEventListener('pointermove', event => {
         if (event.pointerType !== 'mouse' || event.isPrimary === false) { stop(); return; }
         const now = performance.now();
-        const inHeader = Boolean(header && event.target instanceof Node && header.contains(event.target));
-        const control = !inHeader && event.target instanceof Element ? event.target.closest(buttonLabels) : null;
-        const inCircle = inHeader || Boolean(control);
+        const overHeader = Boolean(header && event.target instanceof Node && header.contains(event.target));
+        const control = event.target instanceof Element ? event.target.closest(overHeader ? headerLabels : buttonLabels) : null;
+        const inHeader = overHeader && Boolean(control);
+        const inCircle = Boolean(control);
         if (!permitted(inCircle) || isQuiet(event.target)) { stop(); return; }
         const changedControl = control !== hoveredControl;
         const changedMode = inHeader !== headerMode || inCircle !== circleMode;

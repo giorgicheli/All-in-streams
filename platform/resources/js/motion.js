@@ -121,8 +121,9 @@ export function initializeMotion(root = document) {
             element.setAttribute('data-ais-reveal', 'done');
             return;
         }
-        const duration = element.matches('.stat-card, .process-step, .faq-list details') ? 780 : 860;
-        const lift = element.matches('.cta-copy, .cta-buttons') ? 8 : 10;
+        const networkCard = element.matches('.network-after-hero .network-stat-card');
+        const duration = networkCard ? 920 : element.matches('.stat-card, .process-step, .faq-list details') ? 780 : 860;
+        const lift = networkCard ? 16 : element.matches('.cta-copy, .cta-buttons') ? 8 : 10;
         const frames = canTranslate
             ? [{ opacity: 0, translate: `0 ${lift}px` }, { opacity: 1, translate: '0 0' }]
             : [{ opacity: 0 }, { opacity: 1 }];
@@ -186,7 +187,8 @@ export function initializeMotion(root = document) {
                 || (cta && Math.min(item.bounds.bottom, candidate.bounds.bottom) > Math.max(item.bounds.top, candidate.bounds.top))));
             peers.sort((a, b) => intro ? a.bounds.top - b.bounds.top || a.bounds.left - b.bounds.left : a.bounds.left - b.bounds.left || a.bounds.top - b.bounds.top);
             peers.forEach((item, index) => {
-                const delay = 60 + Math.min(index, intro ? 4 : 3) * (intro ? 70 : 100);
+                const networkCard = item.element.matches('.network-after-hero .network-stat-card');
+                const delay = (networkCard ? 80 : 60) + Math.min(index, intro ? 4 : 3) * (networkCard ? 140 : intro ? 70 : 100);
                 if (!schedules.has(item.element)) schedules.set(item.element, delay);
             });
         }

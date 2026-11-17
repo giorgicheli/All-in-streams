@@ -124,11 +124,11 @@ class CreatorReelsTest extends TestCase
         $this->assertSame($orderedClips, $published['creator_reels']['clips']);
     }
 
-    public function test_video_markup_starts_with_posters_and_one_ordered_playlist(): void
+    public function test_video_markup_starts_with_posters_and_one_ordered_ribbon(): void
     {
         $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => SiteContentDefaults::settings()['creator_reels']]);
-        $this->assertStringContainsString('data-reel-feature', $html);
-        $this->assertStringContainsString('data-reel-playlist', $html);
+        $this->assertStringContainsString('data-reel-ribbon', $html);
+        $this->assertStringNotContainsString('data-reel-playlist', $html);
         $this->assertStringContainsString('/images/creator-reels/studio.jpg', $html);
         $this->assertStringNotContainsString('data-reel-row', $html);
         $this->assertStringNotContainsString('data-reel-clone', $html);
@@ -140,8 +140,9 @@ class CreatorReelsTest extends TestCase
         $document = new \DOMDocument();
         $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
         $xpath = new \DOMXPath($document);
-        $this->assertSame(9, $xpath->query('//button[@data-reel-select]')->length);
-        $this->assertSame(1, $xpath->query('//button[@data-reel-select and @aria-pressed="true"]')->length);
+        $this->assertSame(9, $xpath->query('//article[@data-reel-panel]')->length);
+        $this->assertSame(9, $xpath->query('//video[@data-reel-video and @data-src]')->length);
+        $this->assertSame(2, $xpath->query('//button')->length);
     }
 
     public function test_disabling_the_showcase_omits_media_and_controls(): void
@@ -202,7 +203,7 @@ class CreatorReelsTest extends TestCase
         app(SiteContent::class)->validate('settings', $settings);
     }
 
-    public function test_admin_order_and_link_pairs_are_kept_in_the_public_playlist(): void
+    public function test_admin_order_and_link_pairs_are_kept_in_the_public_ribbon(): void
     {
         $settings = SiteContentDefaults::settings();
         $settings['creator_reels']['clips'] = array_reverse($settings['creator_reels']['clips']);
@@ -219,15 +220,16 @@ class CreatorReelsTest extends TestCase
         $document = new \DOMDocument();
         $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
         $xpath = new \DOMXPath($document);
-        $items = $xpath->query('//button[@data-reel-select]');
+        $items = $xpath->query('//article[@data-reel-panel]');
         $pool = json_decode($xpath->query('//*[@data-reel-clips]')->item(0)->textContent, true, 512, JSON_THROW_ON_ERROR);
         $this->assertSame(9, $items->length);
         $this->assertCount(9, $pool);
         $positions = [];
         foreach ($items as $index => $item) {
             $positions[] = (int) $item->getAttribute('data-reel-position');
-            $this->assertSame((string) $index, $item->getAttribute('data-reel-select'));
-            $this->assertStringContainsString($settings['creator_reels']['clips'][$index]['title'], $item->textContent);
+            $this->assertSame($settings['creator_reels']['clips'][$index]['title'], $item->getAttribute('aria-label'));
+            $this->assertSame($settings['creator_reels']['clips'][$index]['video_source_url'], $xpath->query('.//video', $item)->item(0)->getAttribute('data-src'));
+            $this->assertSame($settings['creator_reels']['clips'][$index]['link_url'], $xpath->query('.//a[@data-reel-link]', $item)->item(0)->getAttribute('href'));
             $this->assertSame($settings['creator_reels']['clips'][$index]['video_source_url'], $pool[$index]['src']);
             $this->assertSame($settings['creator_reels']['clips'][$index]['link_url'], $pool[$index]['link']);
         }
