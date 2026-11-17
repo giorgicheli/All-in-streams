@@ -1,6 +1,8 @@
 const instances = new WeakMap();
 const protectedContent = 'h1,h2,h3,h4,h5,h6,p,strong,small,a,button,label,li,dt,dd,summary,figcaption,input,textarea,select,img,video,[role="button"],[contenteditable]:not([contenteditable="false"]),[data-rope-node]';
 const quietControls = 'input,textarea,select,[data-rope-node],[contenteditable]:not([contenteditable="false"])';
+const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
+const simulationStep = 1 / 120;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -8,7 +10,7 @@ function mountPointerEffect(root) {
     canvas.className = 'pointer-effect';
     canvas.setAttribute('aria-hidden', 'true');
     canvas.dataset.pointerEffect = 'ink';
-    canvas.dataset.pointerShape = 'droplet';
+    canvas.dataset.pointerShape = 'connected-ink';
     canvas.dataset.pointerState = 'sleeping';
     const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
     if (!context) return () => {};
@@ -16,13 +18,12 @@ function mountPointerEffect(root) {
     document.body.append(canvas);
     const events = new AbortController();
     const options = { signal: events.signal, passive: true };
-    // These points only carry the motion. One closed silhouette is painted,
-    // rather than stamping a chain of circles along the mouse's path.
-    const trail = Array.from({ length: 8 }, () => ({ x: 0, y: 0 }));
-    let heading = -.5;
+    const beads = radii.map(radius => ({ x: 0, y: 0, previousX: 0, previousY: 0, radius }));
+    const paintedBeads = radii.map(radius => ({ x: 0, y: 0, radius, paintRadius: 0 }));
     let frame = 0;
     let resizeFrame = 0;
     let previousTime = 0;
+    let accumulator = 0;
     let lastMotion = 0;
     let lastMaskRefresh = 0;
     let masks = [];
@@ -42,8 +43,9 @@ function mountPointerEffect(root) {
 
     function stop() {
         cancelAnimationFrame(frame);
-        frame = previousTime = 0;
+        frame = previousTime = accumulator = 0;
         pointer = null;
+        paintedBeads.forEach(bead => { bead.paintRadius = 0; });
         canvas.classList.remove('is-active');
         canvas.dataset.pointerState = 'sleeping';
         clear();
@@ -71,55 +73,35 @@ function mountPointerEffect(root) {
         refreshMasks();
     }
 
-    function paintDrop(scale, dt) {
-        const head = trail[0];
-        const last = trail[trail.length - 1];
-        const dx = head.x - last.x;
-        const dy = head.y - last.y;
+    function bridge(first, second) {
+        const dx = second.x - first.x;
+        const dy = second.y - first.y;
         const distance = Math.hypot(dx, dy);
-        if (distance > 3) {
-            const target = Math.atan2(dy, dx);
-            const turn = Math.atan2(Math.sin(target - heading), Math.cos(target - heading));
-            heading += turn * (1 - Math.exp(-dt * 14));
-        }
-        const ux = Math.cos(heading);
-        const uy = Math.sin(heading);
-        const nx = -uy;
-        const ny = ux;
-        const radius = 12.5 * scale;
-        const length = clamp(distance, 19, 96) * scale;
-        // A slight bend follows the middle of the trail while the two sides
-        // share a single pointed tail. Even quick turns cannot shed droplets.
-        const middle = trail[3];
-        const bend = clamp((middle.x - head.x) * nx + (middle.y - head.y) * ny, -length * .24, length * .24);
-        const point = (along, across) => ({ x: head.x + ux * along + nx * across, y: head.y + uy * along + ny * across });
-        const front = point(radius * .9, 0);
-        const left = point(0, radius);
-        const right = point(0, -radius);
-        const tail = point(-length, bend * .45);
-        const capLeft = point(radius * .9, radius * .62);
-        const shoulderLeft = point(radius * .52, radius);
-        const bodyLeft = point(-length * .38, radius * .92 + bend);
-        const tipLeft = point(-length * .76, radius * .13 + bend * .7);
-        const tipRight = point(-length * .76, -radius * .13 + bend * .7);
-        const bodyRight = point(-length * .38, -radius * .92 + bend);
-        const shoulderRight = point(radius * .52, -radius);
-        const capRight = point(radius * .9, -radius * .62);
+        const sum = first.paintRadius + second.paintRadius;
+        if (distance < .1 || distance > sum * 2.35) return;
+        const nx = -dy / distance;
+        const ny = dx / distance;
+        const ux = dx / distance;
+        const uy = dy / distance;
+        const handle = distance * .58;
+        const neck = clamp(1 - distance / (sum * 2.65), .23, .86);
+        const firstRadius = first.paintRadius * .9;
+        const secondRadius = second.paintRadius * .9;
         context.beginPath();
-        context.moveTo(front.x, front.y);
-        context.bezierCurveTo(capLeft.x, capLeft.y, shoulderLeft.x, shoulderLeft.y, left.x, left.y);
-        context.bezierCurveTo(bodyLeft.x, bodyLeft.y, tipLeft.x, tipLeft.y, tail.x, tail.y);
-        context.bezierCurveTo(tipRight.x, tipRight.y, bodyRight.x, bodyRight.y, right.x, right.y);
-        context.bezierCurveTo(shoulderRight.x, shoulderRight.y, capRight.x, capRight.y, front.x, front.y);
+        context.moveTo(first.x + nx * firstRadius, first.y + ny * firstRadius);
+        context.bezierCurveTo(
+            first.x + ux * handle + nx * firstRadius * neck, first.y + uy * handle + ny * firstRadius * neck,
+            second.x - ux * handle + nx * secondRadius * neck, second.y - uy * handle + ny * secondRadius * neck,
+            second.x + nx * secondRadius, second.y + ny * secondRadius,
+        );
+        context.lineTo(second.x - nx * secondRadius, second.y - ny * secondRadius);
+        context.bezierCurveTo(
+            second.x - ux * handle - nx * secondRadius * neck, second.y - uy * handle - ny * secondRadius * neck,
+            first.x + ux * handle - nx * firstRadius * neck, first.y + uy * handle - ny * firstRadius * neck,
+            first.x - nx * firstRadius, first.y - ny * firstRadius,
+        );
         context.closePath();
         context.fill();
-        const outline = [front, left, right, tail, capLeft, shoulderLeft, bodyLeft, tipLeft, tipRight, bodyRight, shoulderRight, capRight];
-        return {
-            left: Math.min(...outline.map(point => point.x)) - 1,
-            top: Math.min(...outline.map(point => point.y)) - 1,
-            right: Math.max(...outline.map(point => point.x)) + 1,
-            bottom: Math.max(...outline.map(point => point.y)) + 1,
-        };
     }
 
     function draw(now) {
@@ -128,22 +110,50 @@ function mountPointerEffect(root) {
         const dt = previousTime ? Math.min((now - previousTime) / 1000, 1 / 30) : 1 / 60;
         previousTime = now;
         const drying = clamp((now - lastMotion - 150) / 930, 0, 1);
-        const scale = Math.pow(1 - drying, 1.5);
+        const scale = 1 - drying * drying * (3 - 2 * drying);
+        // The same simulation rate on every display keeps the familiar elastic
+        // chain consistent. Interpolation smooths the frames between its steps.
+        accumulator = Math.min(accumulator + dt, .05);
+        while (accumulator >= simulationStep) {
+            beads.forEach((bead, index) => {
+                bead.previousX = bead.x;
+                bead.previousY = bead.y;
+                const leader = index === 0 ? pointer : beads[index - 1];
+                const follow = 1 - Math.exp(-simulationStep * (index === 0 ? 20 : 18.5));
+                bead.x += (leader.x - bead.x) * follow;
+                bead.y += (leader.y - bead.y) * follow;
+                const distance = Math.hypot(bead.x - pointer.x, bead.y - pointer.y);
+                if (distance > 140) {
+                    bead.x = pointer.x + (bead.x - pointer.x) / distance * 140;
+                    bead.y = pointer.y + (bead.y - pointer.y) / distance * 140;
+                }
+            });
+            accumulator -= simulationStep;
+        }
+        const interpolation = accumulator / simulationStep;
         clear();
         context.fillStyle = '#17191f';
-        trail.forEach((sample, index) => {
-            const leader = index === 0 ? pointer : trail[index - 1];
-            const follow = 1 - Math.exp(-dt * (index === 0 ? 19 : 17));
-            sample.x += (leader.x - sample.x) * follow;
-            sample.y += (leader.y - sample.y) * follow;
-            const distance = Math.hypot(sample.x - pointer.x, sample.y - pointer.y);
-            const limit = index === 0 ? 36 : 112;
-            if (distance > limit) {
-                sample.x = pointer.x + (sample.x - pointer.x) / distance * limit;
-                sample.y = pointer.y + (sample.y - pointer.y) / distance * limit;
-            }
+        let left = width;
+        let top = height;
+        let right = 0;
+        let bottom = 0;
+        paintedBeads.forEach((bead, index) => {
+            const sample = beads[index];
+            bead.x = sample.previousX + (sample.x - sample.previousX) * interpolation;
+            bead.y = sample.previousY + (sample.y - sample.previousY) * interpolation;
+            bead.paintRadius = bead.radius * scale;
+            left = Math.min(left, bead.x - bead.paintRadius);
+            top = Math.min(top, bead.y - bead.paintRadius);
+            right = Math.max(right, bead.x + bead.paintRadius);
+            bottom = Math.max(bottom, bead.y + bead.paintRadius);
         });
-        const { left, top, right, bottom } = paintDrop(scale, dt);
+        for (let index = 0; index < paintedBeads.length - 1; index++) bridge(paintedBeads[index], paintedBeads[index + 1]);
+        paintedBeads.forEach(bead => {
+            if (bead.paintRadius < .1) return;
+            context.beginPath();
+            context.arc(bead.x, bead.y, bead.paintRadius, 0, Math.PI * 2);
+            context.fill();
+        });
         masks.forEach(rect => {
             if (rect.right >= left && rect.left <= right && rect.bottom >= top && rect.top <= bottom) {
                 context.clearRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
@@ -160,7 +170,8 @@ function mountPointerEffect(root) {
         if (now - lastMaskRefresh > 250) refreshMasks();
         const next = { x: event.clientX - 7, y: event.clientY + 10 };
         if (!pointer || Math.hypot(next.x - pointer.x, next.y - pointer.y) > 220) {
-            trail.forEach(sample => { sample.x = next.x; sample.y = next.y; });
+            beads.forEach(bead => { bead.x = bead.previousX = next.x; bead.y = bead.previousY = next.y; });
+            accumulator = 0;
         }
         pointer = next;
         lastMotion = now;
