@@ -12,7 +12,10 @@
             <a class="btn btn-secondary" href="{{ $data['secondary_url'] }}">{{ $data['secondary_label'] }}<x-ui-icon name="chevron" size="18"/></a>
         </div>
     </div>
-    <div class="brand-spotlight-visual" data-motion-reveal>
+    <div class="brand-spotlight-visual{{ ($site['creator_orbit']['enabled'] ?? false) ? ' brand-spotlight-visual--orbit' : '' }}" data-motion-reveal>
+        @if($site['creator_orbit']['enabled'] ?? false)
+            <x-creator-orbit :clips="$site['creator_reels']['clips']" :brand="$data" :data="$site['creator_orbit']"/>
+        @else
         <img class="brand-spotlight-photo" src="{{ $spotlightImage }}" alt="{{ $data['image_alt'] }}" width="1240" height="820" loading="lazy" decoding="async">
         <svg class="brand-spotlight-connector" viewBox="0 0 120 132" fill="none" aria-hidden="true" focusable="false"><path d="M15 2C18 32 1 40 1 63C1 81 7 86 24 86H46"/><circle cx="46" cy="86" r="5"/></svg>
         <aside class="brand-spotlight-match" aria-label="Partnership example">
@@ -22,5 +25,6 @@
                 <span><i aria-hidden="true"><x-ui-icon name="check" size="12"/></i>{{ $data['card_status'] }}</span>
             </div>
         </aside>
+        @endif
     </div>
 </div>

@@ -178,6 +178,13 @@ class SiteContentDefaults
                 'image_path' => null, 'image_alt' => 'Streamer wearing headphones at a microphone in a blue-lit studio.',
                 'card_title' => 'Brand campaign', 'card_status' => 'Matched with a creator',
             ],
+            'creator_orbit' => [
+                'enabled' => true, 'accessible_label' => 'Brands and creators connected through video',
+                'top_title' => 'Gaming creators', 'main_title' => 'Live streamers',
+                'main_subtitle' => 'Gaming & entertainment', 'bottom_title' => 'Brands + creators',
+                'bottom_subtitle' => 'A shared connection.', 'tag' => 'Better together',
+                'preview_label' => 'CREATOR PREVIEW', 'pause_label' => 'Pause motion', 'play_label' => 'Play motion',
+            ],
             'enquiry_entry' => [
                 'eyebrow' => 'LET’S MAKE IT HAPPEN', 'title' => 'Let’s find your right match.',
                 'description' => 'Choose how you would like to work with All In Streams.',

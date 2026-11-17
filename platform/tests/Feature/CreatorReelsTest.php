@@ -243,7 +243,12 @@ class CreatorReelsTest extends TestCase
 
         app(SiteContent::class)->publish($admin, 'settings');
         $this->get('/')->assertOk()->assertSee('An authored brand headline')
-            ->assertSee('/images/brand-spotlight/streamer.jpg')->assertSee('Partnership example');
+            ->assertSee('data-creator-orbit', false);
+
+        $settings['creator_orbit']['enabled'] = false;
+        app(SiteContent::class)->publish($admin, 'settings', $settings);
+        $this->get('/')->assertOk()->assertSee('/images/brand-spotlight/streamer.jpg')
+            ->assertSee('Partnership example')->assertDontSee('data-creator-orbit');
 
         $settings['brand_spotlight']['enabled'] = false;
         app(SiteContent::class)->publish($admin, 'settings', $settings);

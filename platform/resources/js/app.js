@@ -12,6 +12,7 @@ import { initializeCreatorNetwork } from './creator-network';
 import { initializeRopeStatistics } from './rope-statistics';
 import { initializePointerEffect } from './pointer-effect';
 import { initializeCreatorReels } from './creator-reels';
+import { initializeCreatorOrbit } from './creator-orbit';
 
 let cleanup = () => {};
 
@@ -32,6 +33,7 @@ function initializePage() {
     const disposeRopeStatistics = initializeRopeStatistics();
     const disposePointerEffect = initializePointerEffect();
     const disposeCreatorReels = initializeCreatorReels();
+    const disposeCreatorOrbit = initializeCreatorOrbit();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -58,6 +60,7 @@ function initializePage() {
         disposeRopeStatistics();
         disposePointerEffect();
         disposeCreatorReels();
+        disposeCreatorOrbit();
     };
 }
 

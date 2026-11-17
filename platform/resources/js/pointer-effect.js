@@ -1,5 +1,5 @@
 const instances = new WeakMap();
-const protectedContent = 'h1,h2,h3,h4,h5,h6,p,a,button,label,li,dt,dd,summary,figcaption,input,textarea,select,img,video,[role="button"],[contenteditable]:not([contenteditable="false"]),[data-rope-node]';
+const protectedContent = 'h1,h2,h3,h4,h5,h6,p,strong,small,a,button,label,li,dt,dd,summary,figcaption,input,textarea,select,img,video,[role="button"],[contenteditable]:not([contenteditable="false"]),[data-rope-node]';
 const quietControls = 'input,textarea,select,[data-rope-node],[contenteditable]:not([contenteditable="false"])';
 const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
