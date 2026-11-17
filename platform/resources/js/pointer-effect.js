@@ -3,6 +3,7 @@ const quietControls = 'input,textarea,select,[data-rope-node],[contenteditable]:
 const headerLabels = '.desktop-site-navigation a, .desktop-site-navigation summary, .header-actions > a';
 const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const simulationStep = 1 / 120;
+const pointerDelay = 50;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -11,8 +12,9 @@ function mountPointerEffect(root) {
     canvas.setAttribute('aria-hidden', 'true');
     canvas.dataset.pointerEffect = 'ink';
     canvas.dataset.pointerShape = 'connected-ink';
+    canvas.dataset.pointerDelayMs = String(pointerDelay);
     canvas.dataset.pointerState = 'sleeping';
-    const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
+    const context = canvas.getContext('2d', { alpha: true, desynchronized: false });
     if (!context) return () => {};
 
     const header = root.querySelector('.site-header');
@@ -34,6 +36,8 @@ function mountPointerEffect(root) {
     let lastLabelRefresh = 0;
     let headerMode = false;
     const lens = { x: 0, y: 0 };
+    const pointerSamples = [];
+    let inputPointer = null;
     let pointer = null;
     let width = innerWidth;
     let height = innerHeight;
@@ -52,6 +56,8 @@ function mountPointerEffect(root) {
         cancelAnimationFrame(frame);
         frame = previousTime = accumulator = 0;
         pointer = null;
+        inputPointer = null;
+        pointerSamples.length = 0;
         paintedBeads.forEach(bead => { bead.paintRadius = 0; });
         canvas.classList.remove('is-active');
         headerCopy.classList.remove('is-active');
@@ -116,13 +122,25 @@ function mountPointerEffect(root) {
     function resize() {
         resizeFrame = 0;
         if (disposed) return;
-        width = innerWidth;
-        height = innerHeight;
+        // CSS fixed width excludes classic scrollbars; innerWidth includes
+        // them. Match the real drawing surface so the ink and CSS clip align.
+        const rect = canvas.getBoundingClientRect();
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
         const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(4_000_000 / Math.max(1, width * height)));
         canvas.width = Math.max(1, Math.round(width * ratio));
         canvas.height = Math.max(1, Math.round(height * ratio));
-        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        context.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
         refreshHeaderLabels();
+    }
+
+    function delayedPointer(now) {
+        const time = now - pointerDelay;
+        while (pointerSamples.length > 1 && pointerSamples[1].time <= time) pointerSamples.shift();
+        const first = pointerSamples[0];
+        const next = pointerSamples[1] || first;
+        const amount = clamp((time - first.time) / (next.time - first.time || 1), 0, 1);
+        return { x: first.x + (next.x - first.x) * amount, y: first.y + (next.y - first.y) * amount };
     }
 
     function bridge(first, second) {
@@ -159,6 +177,14 @@ function mountPointerEffect(root) {
     function draw(now) {
         frame = 0;
         if (!permitted() || !pointer || (!headerMode && now - lastMotion > 1180)) { stop(); return; }
+        const target = delayedPointer(now);
+        if (Math.hypot(target.x - pointer.x, target.y - pointer.y) > 150) {
+            beads.forEach(bead => { bead.x = bead.previousX = target.x; bead.y = bead.previousY = target.y; });
+            lens.x = target.x;
+            lens.y = target.y;
+            accumulator = 0;
+        }
+        pointer = target;
         const dt = previousTime ? Math.min((now - previousTime) / 1000, 1 / 30) : 1 / 60;
         previousTime = now;
         const drying = headerMode ? 0 : clamp((now - lastMotion - 150) / 930, 0, 1);
@@ -178,13 +204,15 @@ function mountPointerEffect(root) {
             context.beginPath();
             context.arc(lens.x, lens.y, radius, 0, Math.PI * 2);
             context.fill();
-            headerCopy.style.clipPath = `circle(${radius}px at ${lens.x}px ${lens.y}px)`;
+            // Keep white glyph antialiasing inside the opaque black edge.
+            headerCopy.style.clipPath = `circle(${Math.max(0, radius - .75)}px at ${lens.x}px ${lens.y}px)`;
             headerCopy.dataset.lensX = lens.x.toFixed(2);
             headerCopy.dataset.lensY = lens.y.toFixed(2);
             headerCopy.dataset.lensRadius = radius.toFixed(2);
             if (now - lastLabelRefresh > 100) refreshHeaderLabels();
             // A stationary hover remains visible without an idle animation loop.
-            if (Math.hypot(lens.x - pointer.x, lens.y - pointer.y) > .05) frame = requestAnimationFrame(draw);
+            const awaitingInput = now < pointerSamples[pointerSamples.length - 1].time + pointerDelay;
+            if (awaitingInput || Math.hypot(lens.x - pointer.x, lens.y - pointer.y) > .05) frame = requestAnimationFrame(draw);
             else previousTime = 0;
             return;
         }
@@ -255,17 +283,25 @@ function mountPointerEffect(root) {
         const changedMode = inHeader !== headerMode;
         headerMode = inHeader;
         const next = { x: event.clientX - (headerMode ? 0 : 7), y: event.clientY + (headerMode ? 0 : 10) };
-        if (!pointer || changedMode || Math.hypot(next.x - pointer.x, next.y - pointer.y) > 150) {
+        if (!inputPointer || changedMode) {
             beads.forEach(bead => { bead.x = bead.previousX = next.x; bead.y = bead.previousY = next.y; });
             lens.x = next.x;
             lens.y = next.y;
             accumulator = 0;
+            pointer = next;
+            pointerSamples.length = 0;
+            pointerSamples.push({ ...next, time: now - pointerDelay });
+        } else if (now - pointerSamples[pointerSamples.length - 1].time > 32) {
+            // Do not interpolate a new movement back across stationary time.
+            pointerSamples.push({ ...inputPointer, time: now - .001 });
         }
+        inputPointer = next;
+        pointerSamples.push({ ...next, time: now });
+        if (pointerSamples.length > 128) pointerSamples.splice(0, pointerSamples.length - 128);
         headerCopy.classList.toggle('is-active', headerMode);
         if (headerMode && (changedMode || now - lastLabelRefresh > 100)) refreshHeaderLabels();
         if (!headerMode) headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
         canvas.dataset.pointerMode = headerMode ? 'header' : 'body';
-        pointer = next;
         lastMotion = now;
         canvas.classList.add('is-active');
         canvas.dataset.pointerState = 'active';
