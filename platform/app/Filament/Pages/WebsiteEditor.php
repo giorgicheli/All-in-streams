@@ -310,6 +310,7 @@ class WebsiteEditor extends Page
             'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer', 'network_stats' => 'Network statistics', 'count' => 'Displayed count', 'is_demo' => 'Show sample-data label',
             'creator_reels' => 'Creator video showcase', 'clips' => 'Public preview clips', 'format' => 'Format caption',
             'creator_orbit' => 'Creator connections visual',
+            'site_intro' => 'First-visit introduction',
             'brand_spotlight' => 'Brands & streamers spotlight', 'card_title' => 'Overlay card title', 'card_status' => 'Overlay card status',
             'auth_story' => 'Sign-in & registration story', 'auth' => 'Account page copy', 'labels' => 'Form labels',
             'login' => 'Sign-in page', 'register' => 'Registration page', 'eyebrow' => 'Small heading',

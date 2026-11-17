@@ -185,6 +185,20 @@ class SiteContentDefaults
                 'bottom_subtitle' => 'A shared connection.', 'tag' => 'Better together',
                 'preview_label' => 'CREATOR PREVIEW', 'pause_label' => 'Pause motion', 'play_label' => 'Play motion',
             ],
+            'site_intro' => [
+                'enabled' => true, 'accessible_label' => 'All In Streams introduction',
+                'eyebrow' => 'WHERE BRANDS MEET CREATORS', 'skip_label' => 'Skip intro', 'progress_label' => 'Intro progress',
+                'headlines' => [
+                    ['line_1' => 'Great', 'line_2' => 'brands.'],
+                    ['line_1' => 'Real', 'line_2' => 'creators.'],
+                    ['line_1' => 'Better', 'line_2' => 'together.'],
+                ],
+                'card_labels' => [
+                    ['label' => 'Made for gaming'], ['label' => 'A creator perspective'],
+                    ['label' => 'The live moment'], ['label' => 'Community in motion'],
+                    ['label' => 'Shared passions'], ['label' => 'Made for connection'],
+                ],
+            ],
             'enquiry_entry' => [
                 'eyebrow' => 'LET’S MAKE IT HAPPEN', 'title' => 'Let’s find your right match.',
                 'description' => 'Choose how you would like to work with All In Streams.',

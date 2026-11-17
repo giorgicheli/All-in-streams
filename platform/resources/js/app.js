@@ -13,8 +13,37 @@ import { initializeRopeStatistics } from './rope-statistics';
 import { initializePointerEffect } from './pointer-effect';
 import { initializeCreatorReels } from './creator-reels';
 import { initializeCreatorOrbit } from './creator-orbit';
+import { initializeSiteIntro } from './site-intro';
 
 let cleanup = () => {};
+let disposeIntro = () => {};
+let introReady;
+let pageGeneration = 0;
+
+function initializeAfterIntro() {
+    const generation = ++pageGeneration;
+    if (!introReady) {
+        try {
+            disposeIntro = initializeSiteIntro();
+            clearTimeout(window.__aisIntroFailsafe);
+            introReady = Promise.resolve(disposeIntro.readyPromise);
+        } catch {
+            document.documentElement.removeAttribute('data-site-intro-pending');
+            document.dispatchEvent(new Event('ais:site-intro-abort'));
+            const intro = document.querySelector('[data-site-intro]');
+            if (intro?.open) intro.close();
+            intro?.remove();
+            introReady = Promise.resolve();
+        }
+    }
+    introReady.then(() => { if (generation === pageGeneration) initializePage(); });
+}
+
+function disposePage() {
+    pageGeneration++;
+    disposeIntro();
+    cleanup();
+}
 
 function initializePage() {
     cleanup();
@@ -65,14 +94,14 @@ function initializePage() {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializePage, { once: true });
+    document.addEventListener('DOMContentLoaded', initializeAfterIntro, { once: true });
 } else {
-    initializePage();
+    initializeAfterIntro();
 }
 
-document.addEventListener('livewire:navigating', () => cleanup());
-document.addEventListener('livewire:navigated', initializePage);
-window.addEventListener('pagehide', () => cleanup());
+document.addEventListener('livewire:navigating', disposePage);
+document.addEventListener('livewire:navigated', initializeAfterIntro);
+window.addEventListener('pagehide', disposePage);
 window.addEventListener('pageshow', (event) => {
-    if (event.persisted) initializePage();
+    if (event.persisted) initializeAfterIntro();
 });

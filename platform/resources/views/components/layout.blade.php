@@ -1,4 +1,8 @@
 @props(['title' => 'Creator partnerships. All in.', 'description' => null, 'lightPreview' => false, 'lightTheme' => true, 'sensitive' => false])
+@php
+    $introEligible = $lightTheme && ! request()->attributes->get('website.preview')
+        && request()->routeIs('home', 'home.white') && ($site['site_intro']['enabled'] ?? false);
+@endphp
 <!doctype html>
 <html lang="en" @if($lightTheme) class="light-preview site-redesign" @endif><head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,12 +15,14 @@
     <link rel="icon" href="/favicon-32x32.png?v=2" type="image/png" sizes="32x32">
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180">
+    @if($lightTheme && ! request()->attributes->get('website.preview'))<x-site-intro-gate :eligible="$introEligible"/>@endif
     @vite(['resources/css/app.css','resources/js/app.js'])
     @unless($lightPreview || $sensitive)
         @livewireStyles
     @endunless
 </head><body @if($lightTheme) class="theme-white" @endif>
     {{ $slot }}
+    @if($introEligible)<x-site-intro :clips="$site['creator_reels']['clips']" :data="$site['site_intro']"/>@endif
     @if(request()->attributes->get('website.preview'))
         <span class="site-preview-label">Draft preview · Changes are not public</span>
         <script>
