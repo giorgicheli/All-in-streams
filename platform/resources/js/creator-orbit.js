@@ -19,7 +19,7 @@ function mountOrbit(root) {
         const seen = new Set();
         clips = source.filter(clip => clip && typeof clip.src === 'string' && typeof clip.poster === 'string' && !seen.has(clip.src) && seen.add(clip.src));
     } catch { return () => {}; }
-    if (!stage || !svg || !button || !clips.length) return () => {};
+    if (!stage || !svg || !clips.length) return () => {};
 
     const events = new AbortController();
     const options = { signal: events.signal };
@@ -218,11 +218,13 @@ function mountOrbit(root) {
         cancelAnimationFrame(frame);
         frame = lastTime = 0;
         root.dataset.orbitRunning = String(moving());
-        button.setAttribute('aria-pressed', String(intent()));
-        const label = intent() ? button.dataset.pauseLabel : button.dataset.playLabel;
-        button.setAttribute('aria-label', label);
-        button.querySelector('[data-orbit-control-label]').textContent = label;
-        button.querySelector('[data-orbit-symbol]').classList.toggle('creator-orbit-play', !intent());
+        if (button) {
+            button.setAttribute('aria-pressed', String(intent()));
+            const label = intent() ? button.dataset.pauseLabel : button.dataset.playLabel;
+            button.setAttribute('aria-label', label);
+            button.querySelector('[data-orbit-control-label]').textContent = label;
+            button.querySelector('[data-orbit-symbol]').classList.toggle('creator-orbit-play', !intent());
+        }
         if (!running()) states.forEach(unload);
         else states.forEach(ensureCurrent);
         if (moving()) frame = requestAnimationFrame(tick);
@@ -233,7 +235,7 @@ function mountOrbit(root) {
         }
     }
 
-    button.addEventListener('click', () => {
+    button?.addEventListener('click', () => {
         if (intent()) paused = true;
         else { paused = false; optedIn = true; failed.clear(); }
         sync();
@@ -258,7 +260,7 @@ function mountOrbit(root) {
     resize.observe(stage);
     root.dataset.orbitReady = 'true';
     root.dataset.orbitClipCount = String(clips.length);
-    button.hidden = false;
+    if (button) button.hidden = false;
     paintRoutes();
     sync();
 
@@ -271,7 +273,7 @@ function mountOrbit(root) {
         resize.disconnect();
         states.forEach(unload);
         anchors.forEach(anchor => anchor.style.removeProperty('translate'));
-        button.hidden = true;
+        if (button) button.hidden = true;
         delete root.dataset.orbitReady;
         delete root.dataset.orbitRunning;
         delete root.dataset.orbitClipCount;

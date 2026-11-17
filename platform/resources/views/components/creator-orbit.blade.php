@@ -64,6 +64,5 @@
             <div class="creator-orbit-match-tag"><i aria-hidden="true"></i>{{ $orbitLabels['tag'] }}</div>
         </div>
     </div>
-    <div class="creator-orbit-controls"><button class="creator-orbit-motion" data-orbit-control data-pause-label="{{ $orbitLabels['pause_label'] }}" data-play-label="{{ $orbitLabels['play_label'] }}" type="button" aria-pressed="false" hidden><span class="creator-orbit-motion-symbol creator-orbit-play" data-orbit-symbol aria-hidden="true"></span><span data-orbit-control-label>{{ $orbitLabels['play_label'] }}</span></button></div>
     <script type="application/json" data-orbit-clips>{!! json_encode($orbitClips, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) !!}</script>
 </section>
