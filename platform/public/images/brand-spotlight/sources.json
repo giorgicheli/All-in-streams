@@ -5,5 +5,13 @@
   "usage": "Fictional streamer illustration for the brand partnership section. Not a registered partner, testimonial or campaign result.",
   "prompt": "Create one photorealistic editorial lifestyle photograph for a premium creator partnership website, horizontal 3:2 composition, no text or graphic UI. An adult female livestreamer about 27 years old, natural freckles, wavy dark brown hair in a loose bun, wearing a plain black hoodie and large black over-ear headphones, seated in a black gaming chair at a professional desk. Her face on the right half, shoulders and upper torso visible, looking toward camera with a subtle confident friendly smile. A studio microphone on a boom arm in the left foreground, two monitors and a tasteful blue-lit PC in the left background, softly blurred home streaming studio, a small green plant high in background. Blue/cool studio accents balanced with natural soft daylight on her face, real skin texture, candid polished photography, believable hands mostly out of frame. Frame should fill a wide rounded website image panel; leave the lower-left portion comparatively calm/dark so a separate HTML status card can overlay it. This is a generic fictional streamer illustration, not a real partner or endorsement. No brand logos, no writing, no watermark, no visible gambling content.",
   "width": 1536,
-  "height": 1024
+  "height": 1024,
+  "supplied_portrait": {
+    "file": "streamer-portrait.webp",
+    "source": "Embedded WebP in the user-supplied all-in-streams-hero.html",
+    "imported_on": "2026-11-17",
+    "width": 1122,
+    "height": 1402,
+    "sha256": "349b6d3456608652171c09da3a9abeabfe65471180c743125c8937dda7f9caff"
+  }
 }

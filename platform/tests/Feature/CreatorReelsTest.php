@@ -260,7 +260,7 @@ class CreatorReelsTest extends TestCase
 
         $settings['creator_orbit']['enabled'] = false;
         app(SiteContent::class)->publish($admin, 'settings', $settings);
-        $this->get('/')->assertOk()->assertSee('/images/brand-spotlight/streamer.jpg')
+        $this->get('/')->assertOk()->assertSee('/images/brand-spotlight/streamer-portrait.webp')
             ->assertSee('Partnership example')->assertDontSee('data-creator-orbit')
             ->assertSee('data-rope-statistics', false)->assertDontSee('network-after-hero');
 
