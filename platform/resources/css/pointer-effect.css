@@ -1,3 +1,20 @@
+.site-redesign .pointer-layer {
+    position: fixed;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    z-index: 10000;
+    pointer-events: none;
+}
+.site-redesign .pointer-layer::backdrop { display: none; background: transparent; pointer-events: none; }
 .site-redesign .pointer-effect {
     position: fixed;
     inset: 0;
@@ -33,12 +50,24 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: #fff;
-    -webkit-text-fill-color: #fff;
+    color: var(--pointer-label-color, #fff);
+    -webkit-text-fill-color: var(--pointer-label-color, #fff);
     white-space: pre;
     pointer-events: none;
     text-decoration: none;
 }
+.site-redesign .header-pointer-icon {
+    position: fixed;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--pointer-label-color, #fff);
+    pointer-events: none;
+    transform: none;
+    overflow: visible;
+}
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
-    .site-redesign .pointer-effect, .site-redesign .header-pointer-lens { display: none; }
+    .site-redesign .pointer-layer, .site-redesign .pointer-effect, .site-redesign .header-pointer-lens { display: none; }
 }

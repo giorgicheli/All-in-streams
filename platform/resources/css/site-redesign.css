@@ -1,7 +1,7 @@
 /* All In Streams — a clear, light editorial identity. */
 .site-redesign { --stream-ink:#191c1f; --stream-green:#0a5cff; --stream-mint:#0a5cff; --stream-paper:#f5f6fa; --stream-muted:#676e86; color-scheme:light; }
 .site-redesign .theme-white { --bg:var(--stream-paper); --panel:#ffffff; --line:#e4e6ef; --muted:var(--stream-muted); --lime:var(--stream-green); --teal:#3772dc; background:var(--stream-paper); color:var(--stream-ink); font-size:15px; }
-.site-redesign ::selection { background:var(--stream-mint); color:#ffffff; }
+.site-redesign ::selection { background:#000000; color:#ffffff; -webkit-text-fill-color:#ffffff; text-shadow:none; }
 .site-redesign .container { width:min(1320px,calc(100% - 96px)); }
 .site-redesign .theme-white :is(h1,h2,h3,h4) { font-family:'Inter Variable',sans-serif; font-weight:650; letter-spacing:-.055em; }
 .site-redesign .theme-white .section { padding:110px 0; }
@@ -379,7 +379,7 @@
 .site-redesign .theme-white .platform-dropdown-panel > a:hover { background:#f0f3fc; }
 .site-redesign .theme-white .platform-dropdown-panel strong { color:#232b3f; }
 .site-redesign .theme-white :is(a,button,summary):focus-visible { outline-color:#0a5cff; }
-.site-redesign ::selection { background:#0a5cff; color:#ffffff; }
+.site-redesign ::selection { background:#000000; color:#ffffff; -webkit-text-fill-color:#ffffff; text-shadow:none; }
 .site-reading-progress { height:2px; background:linear-gradient(90deg,#0a5cff,#3772dc,#7b72c9); }
 .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { padding-top:20px; }
 .site-redesign .theme-white .hero-reference .hero-grid { grid-template-columns:1.05fr 1fr; gap:36px; min-height:545px; }

@@ -1,6 +1,7 @@
 const instances = new WeakMap();
 const quietControls = 'input,textarea,select,[data-rope-node],[contenteditable]:not([contenteditable="false"])';
 const headerLabels = '.desktop-site-navigation a, .desktop-site-navigation summary, .header-actions > a';
+const buttonLabels = 'button,.btn,[role="button"],summary,.text-link,.site-footer a:not(.brand)';
 const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const simulationStep = 1 / 120;
 const pointerDelay = 50;
@@ -18,12 +19,19 @@ function mountPointerEffect(root) {
     if (!context) return () => {};
 
     const header = root.querySelector('.site-header');
+    const footer = root.querySelector('.site-footer');
+    const layer = document.createElement('div');
+    layer.className = 'pointer-layer';
+    layer.dataset.pointerLayer = '';
+    layer.setAttribute('aria-hidden', 'true');
+    layer.inert = true;
     const headerCopy = document.createElement('div');
     headerCopy.className = 'header-pointer-lens';
     headerCopy.dataset.headerPointerLens = '';
     headerCopy.setAttribute('aria-hidden', 'true');
     headerCopy.inert = true;
-    document.body.append(canvas, headerCopy);
+    layer.append(canvas, headerCopy);
+    document.body.append(layer);
     const events = new AbortController();
     const options = { signal: events.signal, passive: true };
     const beads = radii.map(radius => ({ x: 0, y: 0, previousX: 0, previousY: 0, radius }));
@@ -35,6 +43,9 @@ function mountPointerEffect(root) {
     let lastMotion = 0;
     let lastLabelRefresh = 0;
     let headerMode = false;
+    let circleMode = false;
+    let hoveredControl = null;
+    let activeModal = null;
     const lens = { x: 0, y: 0 };
     const pointerSamples = [];
     let inputPointer = null;
@@ -46,7 +57,32 @@ function mountPointerEffect(root) {
     let disposed = false;
 
     const isQuiet = element => element instanceof Element && Boolean(element.closest(quietControls));
-    const permitted = () => !disposed && !pageSuspended && !menuOpen && !document.hidden && !isQuiet(document.activeElement);
+    const permitted = (overControl = circleMode) => !disposed && !pageSuspended && !menuOpen && !document.hidden && (overControl || !isQuiet(document.activeElement));
+
+    function syncLayer(modal) {
+        if (modal === activeModal) return;
+        activeModal = modal;
+        if (typeof layer.showPopover !== 'function') return;
+        if (modal) {
+            layer.setAttribute('popover', 'manual');
+            try { layer.showPopover(); } catch { layer.removeAttribute('popover'); }
+        } else {
+            if (layer.matches(':popover-open')) layer.hidePopover();
+            layer.removeAttribute('popover');
+        }
+        layer.dataset.pointerLayerMode = modal ? 'modal' : 'page';
+        resize();
+    }
+
+    function inkAt(x, y) {
+        const contains = rect => rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        const overHeader = contains(header?.getBoundingClientRect());
+        const lightInk = !headerMode && !activeModal && !overHeader && contains(footer?.getBoundingClientRect());
+        const ink = lightInk ? '#fff' : '#17191f';
+        canvas.dataset.pointerContrast = lightInk ? 'light' : 'dark';
+        headerCopy.style.setProperty('--pointer-label-color', lightInk ? '#17191f' : '#fff');
+        return ink;
+    }
 
     function clear() {
         context.clearRect(0, 0, width, height);
@@ -65,20 +101,62 @@ function mountPointerEffect(root) {
         headerCopy.dataset.lensRadius = '0';
         canvas.dataset.pointerState = 'sleeping';
         clear();
+        syncLayer(null);
     }
 
-    // Copies contain just public navigation glyphs, without links, icons or
-    // backgrounds. A shared circular clip reveals only the white letter parts
-    // inside the black lens while all original click targets stay in place.
+    // Copy only visible label glyphs and built-in line icons, never controls,
+    // logos or backgrounds.
+    // Their shared circular clip changes only the letter parts under the lens;
+    // all original controls and accessible names stay in place.
     function refreshHeaderLabels() {
-        if (disposed || !header) return;
+        if (disposed) return;
         const copies = [];
+        const icons = [];
+        const seen = new Set();
         const typography = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontStretch', 'fontVariant', 'fontFeatureSettings', 'fontVariationSettings', 'fontKerning', 'letterSpacing', 'wordSpacing', 'lineHeight', 'textTransform', 'textRendering'];
-        header.querySelectorAll(headerLabels).forEach(label => {
+        const labels = headerMode ? [...(header?.querySelectorAll(headerLabels) || [])] : circleMode ? [...(activeModal || root).querySelectorAll(buttonLabels)] : [];
+        labels.forEach(label => {
+            const bounds = label.getBoundingClientRect();
+            if (!bounds.width || !bounds.height || bounds.bottom < 0 || bounds.top > height || bounds.right < 0 || bounds.left > width) return;
+            label.querySelectorAll('svg.icon').forEach(icon => {
+                if (seen.has(icon)) return;
+                seen.add(icon);
+                const rect = icon.getBoundingClientRect();
+                const style = getComputedStyle(icon);
+                const matrix = icon.getScreenCTM();
+                if (!matrix || !rect.width || !rect.height || style.visibility !== 'visible' || style.display === 'none' || ![matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f].every(Number.isFinite)) return;
+                const copy = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                copy.classList.add('header-pointer-icon');
+                copy.dataset.headerPointerIcon = '';
+                copy.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+                copy.setAttribute('fill', 'none');
+                copy.setAttribute('stroke', 'currentColor');
+                copy.setAttribute('stroke-width', style.strokeWidth);
+                copy.setAttribute('stroke-linecap', style.strokeLinecap);
+                copy.setAttribute('stroke-linejoin', style.strokeLinejoin);
+                copy.setAttribute('aria-hidden', 'true');
+                copy.setAttribute('focusable', 'false');
+                copy.style.left = `${rect.left}px`;
+                copy.style.top = `${rect.top}px`;
+                copy.style.width = `${rect.width}px`;
+                copy.style.height = `${rect.height}px`;
+                const paths = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                // Apply the measured screen matrix inside the measured bounds,
+                // so an original icon rotation/scale is never applied twice.
+                paths.setAttribute('transform', `matrix(${matrix.a} ${matrix.b} ${matrix.c} ${matrix.d} ${matrix.e - rect.left} ${matrix.f - rect.top})`);
+                icon.querySelectorAll('path').forEach(path => {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    line.setAttribute('d', path.getAttribute('d') || '');
+                    paths.append(line);
+                });
+                copy.append(paths);
+                icons.push(copy);
+            });
             const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT);
             let node;
             while ((node = walker.nextNode())) {
-                if (!node.textContent.trim()) continue;
+                if (seen.has(node) || !node.textContent.trim() || node.parentElement.closest('svg,.sr-only,[hidden],[aria-hidden="true"]')) continue;
+                seen.add(node);
                 const style = getComputedStyle(node.parentElement);
                 if (style.visibility !== 'visible' || style.display === 'none') continue;
                 const range = document.createRange();
@@ -103,7 +181,7 @@ function mountPointerEffect(root) {
                 });
             }
         });
-        headerCopy.replaceChildren(...copies.map(item => item.copy));
+        headerCopy.replaceChildren(...copies.map(item => item.copy), ...icons);
         // Match the glyph bounds instead of estimating a font baseline. This
         // stays aligned with variable fonts and the site's responsive sizes.
         const positions = copies.map(({ copy, line }) => {
@@ -176,7 +254,8 @@ function mountPointerEffect(root) {
 
     function draw(now) {
         frame = 0;
-        if (!permitted() || !pointer || (!headerMode && now - lastMotion > 1180)) { stop(); return; }
+        if (!permitted() || !pointer || (!circleMode && now - lastMotion > 1180)) { stop(); return; }
+        if (activeModal && !activeModal.matches(':modal')) { stop(); return; }
         const target = delayedPointer(now);
         if (Math.hypot(target.x - pointer.x, target.y - pointer.y) > 150) {
             beads.forEach(bead => { bead.x = bead.previousX = target.x; bead.y = bead.previousY = target.y; });
@@ -187,9 +266,9 @@ function mountPointerEffect(root) {
         pointer = target;
         const dt = previousTime ? Math.min((now - previousTime) / 1000, 1 / 30) : 1 / 60;
         previousTime = now;
-        const drying = headerMode ? 0 : clamp((now - lastMotion - 150) / 930, 0, 1);
+        const drying = circleMode ? 0 : clamp((now - lastMotion - 150) / 930, 0, 1);
         const scale = 1 - drying * drying * (3 - 2 * drying);
-        if (headerMode) {
+        if (circleMode) {
             const follow = 1 - Math.exp(-dt * 24);
             lens.x += (pointer.x - lens.x) * follow;
             lens.y += (pointer.y - lens.y) * follow;
@@ -200,11 +279,11 @@ function mountPointerEffect(root) {
             }
             const radius = 30 * scale;
             clear();
-            context.fillStyle = '#17191f';
+            context.fillStyle = inkAt(lens.x, lens.y);
             context.beginPath();
             context.arc(lens.x, lens.y, radius, 0, Math.PI * 2);
             context.fill();
-            // Keep white glyph antialiasing inside the opaque black edge.
+            // Keep contrasting glyph antialiasing inside the opaque lens edge.
             headerCopy.style.clipPath = `circle(${Math.max(0, radius - .75)}px at ${lens.x}px ${lens.y}px)`;
             headerCopy.dataset.lensX = lens.x.toFixed(2);
             headerCopy.dataset.lensY = lens.y.toFixed(2);
@@ -244,7 +323,6 @@ function mountPointerEffect(root) {
         }
         const interpolation = accumulator / simulationStep;
         clear();
-        context.fillStyle = '#17191f';
         paintedBeads.forEach((bead, index) => {
             const sample = beads[index];
             bead.x = sample.previousX + (sample.x - sample.previousX) * interpolation;
@@ -264,6 +342,7 @@ function mountPointerEffect(root) {
             }
             bead.paintRadius = bead.radius * scale;
         });
+        context.fillStyle = inkAt(paintedBeads[0].x, paintedBeads[0].y);
         for (let index = 0; index < paintedBeads.length - 1; index++) bridge(paintedBeads[index], paintedBeads[index + 1]);
         paintedBeads.forEach(bead => {
             if (bead.paintRadius < .1) return;
@@ -277,12 +356,18 @@ function mountPointerEffect(root) {
 
     document.addEventListener('pointermove', event => {
         if (event.pointerType !== 'mouse' || event.isPrimary === false) { stop(); return; }
-        if (!permitted() || isQuiet(event.target)) { stop(); return; }
         const now = performance.now();
         const inHeader = Boolean(header && event.target instanceof Node && header.contains(event.target));
-        const changedMode = inHeader !== headerMode;
+        const control = !inHeader && event.target instanceof Element ? event.target.closest(buttonLabels) : null;
+        const inCircle = inHeader || Boolean(control);
+        if (!permitted(inCircle) || isQuiet(event.target)) { stop(); return; }
+        const changedControl = control !== hoveredControl;
+        const changedMode = inHeader !== headerMode || inCircle !== circleMode;
         headerMode = inHeader;
-        const next = { x: event.clientX - (headerMode ? 0 : 7), y: event.clientY + (headerMode ? 0 : 10) };
+        circleMode = inCircle;
+        hoveredControl = control;
+        syncLayer(event.target instanceof Element ? event.target.closest('dialog:modal') : null);
+        const next = { x: event.clientX - (circleMode ? 0 : 7), y: event.clientY + (circleMode ? 0 : 10) };
         if (!inputPointer || changedMode) {
             beads.forEach(bead => { bead.x = bead.previousX = next.x; bead.y = bead.previousY = next.y; });
             lens.x = next.x;
@@ -298,10 +383,10 @@ function mountPointerEffect(root) {
         inputPointer = next;
         pointerSamples.push({ ...next, time: now });
         if (pointerSamples.length > 128) pointerSamples.splice(0, pointerSamples.length - 128);
-        headerCopy.classList.toggle('is-active', headerMode);
-        if (headerMode && (changedMode || now - lastLabelRefresh > 100)) refreshHeaderLabels();
-        if (!headerMode) headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
-        canvas.dataset.pointerMode = headerMode ? 'header' : 'body';
+        headerCopy.classList.toggle('is-active', circleMode);
+        if (circleMode && (changedMode || changedControl || now - lastLabelRefresh > 100)) refreshHeaderLabels();
+        if (!circleMode) headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
+        canvas.dataset.pointerMode = headerMode ? 'header' : circleMode ? 'button' : 'body';
         lastMotion = now;
         canvas.classList.add('is-active');
         canvas.dataset.pointerState = 'active';
@@ -318,7 +403,7 @@ function mountPointerEffect(root) {
     document.addEventListener('livewire:navigating', cleanup, { signal: events.signal });
     window.addEventListener('blur', stop, options);
     window.addEventListener('scroll', () => { stop(); lastLabelRefresh = 0; }, options);
-    header?.addEventListener('toggle', refreshHeaderLabels, { signal: events.signal, capture: true });
+    document.addEventListener('toggle', refreshHeaderLabels, { signal: events.signal, capture: true });
     window.addEventListener('resize', () => {
         stop();
         cancelAnimationFrame(resizeFrame);
@@ -343,6 +428,7 @@ function mountPointerEffect(root) {
         cancelAnimationFrame(resizeFrame);
         canvas.remove();
         headerCopy.remove();
+        layer.remove();
     }
 
     resize();
