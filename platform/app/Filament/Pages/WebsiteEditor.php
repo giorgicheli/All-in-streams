@@ -258,7 +258,7 @@ class WebsiteEditor extends Page
                     $sample = $value[0] ?? ['text' => ''];
                     $repeater = Repeater::make($name)->label($label)->default($value)->maxItems(static::listLimit($key))
                         ->collapsible()->collapsed()->reorderableWithButtons()->columnSpanFull();
-                    if ($key === 'clips') $repeater->minItems(2)->itemNumbers()->helperText('Use the arrow buttons to set clip order. The list is split into top, stationary middle, and bottom rows: with nine clips, positions 1–3 are top, 4–6 middle, and 7–9 bottom. Each clip has its own source and click-through link. Private creator verification videos are never used here.');
+                    if ($key === 'clips') $repeater->minItems(2)->itemNumbers()->helperText('Use the arrow buttons to set playlist order. The first clip opens in the featured player; visitors can choose any clip from the playlist. Each clip keeps its own video source and optional watch link. Private creator verification videos are never used here.');
                     if (is_array($sample)) {
                         $repeater->schema(static::fields($sample))->columns(2)
                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? $state['question'] ?? $state['label'] ?? $state['name'] ?? $state['text'] ?? null);
