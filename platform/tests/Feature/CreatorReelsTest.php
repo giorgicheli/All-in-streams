@@ -242,13 +242,23 @@ class CreatorReelsTest extends TestCase
         $this->get('/')->assertOk()->assertSee('Brands meet')->assertDontSee('An authored brand headline');
 
         app(SiteContent::class)->publish($admin, 'settings');
-        $this->get('/')->assertOk()->assertSee('An authored brand headline')
+        $page = $this->get('/')->assertOk()->assertSee('An authored brand headline')
             ->assertSee('data-creator-orbit', false);
+        $document = new \DOMDocument();
+        $document->loadHTML($page->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new \DOMXPath($document);
+        $this->assertSame(1, $xpath->query('//section[@id="top"]//*[@data-creator-orbit]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-creator-orbit]')->length);
+        $this->assertSame(0, $xpath->query('//*[@id="platform"]//*[@data-creator-orbit]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-brand-spotlight]//img[contains(@class,"brand-spotlight-photo")]')->length);
+        $this->assertSame(4, $xpath->query('//section[@id="network"]//article[contains(@class,"network-stat-card")]')->length);
+        $this->assertSame(1, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " hero-stage ")]/*[contains(concat(" ", normalize-space(@class), " "), " geo-strip ")]')->length);
 
         $settings['creator_orbit']['enabled'] = false;
         app(SiteContent::class)->publish($admin, 'settings', $settings);
         $this->get('/')->assertOk()->assertSee('/images/brand-spotlight/streamer.jpg')
-            ->assertSee('Partnership example')->assertDontSee('data-creator-orbit');
+            ->assertSee('Partnership example')->assertDontSee('data-creator-orbit')
+            ->assertSee('data-rope-statistics', false)->assertDontSee('network-after-hero');
 
         $settings['brand_spotlight']['enabled'] = false;
         app(SiteContent::class)->publish($admin, 'settings', $settings);

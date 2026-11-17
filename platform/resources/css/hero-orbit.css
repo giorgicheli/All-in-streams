@@ -1,0 +1,36 @@
+/* The supplied creator composition belongs in the opening story. */
+.site-redesign .theme-white .hero-orbit-art {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    pointer-events: auto;
+}
+.hero-orbit-art .creator-orbit { max-width: 580px; padding: 10px; }
+.site-redesign .theme-white .network-after-hero { padding: 38px 0 42px; }
+
+@media (min-width: 701px) and (max-height: 800px) {
+    .hero-orbit-art .creator-orbit { max-width: min(100%, calc((100svh - 250px) * 1.05)); }
+}
+@media (max-width: 700px) {
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy { padding: 12px 0 4px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy h1 { margin: 12px 0 18px; }
+    .site-redesign .theme-white .hero-orbit-art { max-width: 350px; margin: 0 auto 4px; }
+    .hero-orbit-art .creator-orbit { padding: 4px 8px; }
+    .hero-orbit-art .creator-orbit-stage-wrap { aspect-ratio: 1.12; }
+    .hero-orbit-art .creator-orbit-brand-card { top: 44%; }
+    .hero-orbit-art .creator-orbit-creator-bottom { top: 82%; }
+    .hero-orbit-art .creator-orbit-controls { padding-top: 5px; }
+    .site-redesign .theme-white .network-after-hero { padding: 30px 0; }
+    .site-redesign .theme-white .network-after-hero .network-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 30px; }
+    .site-redesign .theme-white .network-after-hero .network-stat-value { font-size: 34px; }
+    .site-redesign .theme-white .network-after-hero .network-stat-card h3 { font-size: 11px; }
+    .site-redesign .theme-white .network-after-hero .network-stat-icon { width: 22px; }
+    .site-redesign .theme-white .network-after-hero .network-stat-icon .icon { width: 17px; height: 17px; }
+}
+@media (max-width: 360px) {
+    .hero-orbit-art .creator-orbit-stage-wrap { aspect-ratio: .98; }
+    .hero-orbit-art .creator-orbit-brand-card { top: 48%; }
+    .hero-orbit-art .creator-orbit-creator-bottom { top: 85%; }
+}

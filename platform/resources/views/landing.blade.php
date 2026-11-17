@@ -1,10 +1,10 @@
 @php
     $visibleBlocks = array_values(array_filter($home['blocks'], fn (array $block) => $block['data']['enabled'] ?? true));
     $hasHeroNetwork = ($site['network_stats']['enabled'] ?? false)
+        && ! ($site['creator_orbit']['enabled'] ?? false)
         && count(array_filter($visibleBlocks, fn (array $block) => $block['type'] === 'hero')) > 0;
     $hasHeroStage = ($visibleBlocks[0]['type'] ?? null) === 'hero'
-        && ($visibleBlocks[1]['type'] ?? null) === 'geo_strip'
-        && ($site['network_stats']['enabled'] ?? false);
+        && ($visibleBlocks[1]['type'] ?? null) === 'geo_strip';
     $creatorReelAnchor = array_search('geo_strip', array_column($visibleBlocks, 'type'), true);
     $creatorReelAnchor = $creatorReelAnchor === false ? 0 : $creatorReelAnchor;
 @endphp
@@ -16,6 +16,9 @@
                 @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data']])
                 @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
             </div>
+            @if(($site['network_stats']['enabled'] ?? false) && ! $hasHeroNetwork)
+                @include('site.blocks.network-stats', ['data' => $site['network_stats'], 'compact' => true, 'afterHero' => true])
+            @endif
             @if($site['creator_reels']['enabled'] ?? false)
                 @include('site.blocks.creator-reels', ['data' => $site['creator_reels']])
             @endif

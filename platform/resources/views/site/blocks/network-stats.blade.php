@@ -1,4 +1,4 @@
-<section class="network-section section {{ ($networkPanel ?? false) ? 'network-panel' : '' }}{{ ($compact ?? false) ? ' network-compact' : '' }}" id="network" aria-labelledby="network-title">
+<section class="network-section section {{ ($networkPanel ?? false) ? 'network-panel' : '' }}{{ ($compact ?? false) ? ' network-compact' : '' }}{{ ($afterHero ?? false) ? ' network-after-hero' : '' }}" id="network" aria-labelledby="network-title">
     <div class="container">
         @if($compact ?? false)
             <h2 id="network-title" class="sr-only">{{ $data['title'] }}</h2>

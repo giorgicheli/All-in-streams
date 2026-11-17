@@ -3,10 +3,11 @@
         [['line_1' => $data['title_line_1'], 'line_2' => $data['title_line_2']]],
         $data['headlines'] ?? []
     );
+    $hasCreatorOrbit = $site['creator_orbit']['enabled'] ?? false;
 @endphp
 <section class="hero hero-reference" id="top">
     <div class="container">
-        <div class="hero-grid{{ ! ($site['network_stats']['enabled'] ?? false) && ! $data['image_path'] ? ' hero-grid--copy-only' : '' }}" data-motion-group>
+        <div class="hero-grid{{ $hasCreatorOrbit ? ' hero-grid--orbit' : '' }}{{ ! $hasCreatorOrbit && ! ($site['network_stats']['enabled'] ?? false) && ! $data['image_path'] ? ' hero-grid--copy-only' : '' }}" data-motion-group>
             <div class="hero-copy">
                 <h1 class="hero-headline" data-hero-headlines>
                     <span class="sr-only">{{ $data['title_line_1'] }} {{ $data['title_line_2'] }}</span>
@@ -26,7 +27,11 @@
                 </div>
                 <span class="hero-footnote"><x-ui-icon name="check" size="14"/>{{ $data['footnote'] }}</span>
             </div>
-            @if($site['network_stats']['enabled'] ?? false)
+            @if($hasCreatorOrbit)
+                <div class="hero-art hero-orbit-art">
+                    <x-creator-orbit :clips="$site['creator_reels']['clips']" :brand="$site['brand_spotlight']" :data="$site['creator_orbit']"/>
+                </div>
+            @elseif($site['network_stats']['enabled'] ?? false)
                 <div class="hero-art hero-network-art" data-motion-reveal>
                     <x-rope-statistics :data="$site['network_stats']"/>
                 </div>
