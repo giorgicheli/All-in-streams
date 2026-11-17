@@ -107,16 +107,21 @@ class CreatorReelsTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin);
         Filament::setCurrentPanel(Filament::getPanel('admin'));
+        $orderedClips = array_reverse(SiteContentDefaults::settings()['creator_reels']['clips']);
+        $orderedClips[0]['video_source_url'] = 'https://media.example.com/from-editor.mp4';
+        $orderedClips[0]['link_url'] = 'https://kick.com/example_creator';
         $editor = Livewire::test(WebsiteEditor::class)->call('selectPage', 'settings')
             ->set('data.creator_reels.title', 'Our public format library')
             ->set('data.creator_reels.enabled', false)
+            ->set('data.creator_reels.clips', $orderedClips)
             ->call('saveDraft')->assertHasNoErrors();
         $this->assertTrue(app(SiteContent::class)->getPublished('settings')['creator_reels']['enabled']);
         $editor->call('publish')->assertHasNoErrors();
         $published = app(SiteContent::class)->getPublished('settings');
         $this->assertFalse($published['creator_reels']['enabled']);
         $this->assertSame('Our public format library', $published['creator_reels']['title']);
-        $this->assertCount(6, $published['creator_reels']['clips']);
+        $this->assertCount(9, $published['creator_reels']['clips']);
+        $this->assertSame($orderedClips, $published['creator_reels']['clips']);
     }
 
     public function test_video_markup_starts_with_posters_and_contains_three_distinct_rows(): void
@@ -125,7 +130,7 @@ class CreatorReelsTest extends TestCase
         $this->assertStringContainsString('data-reel-row="forward"', $html);
         $this->assertStringContainsString('data-reel-row="still"', $html);
         $this->assertStringContainsString('data-reel-row="reverse"', $html);
-        $this->assertStringContainsString('aria-hidden="true" inert', $html);
+        $this->assertStringContainsString('aria-hidden="true" data-reel-clone', $html);
         $this->assertStringContainsString('data-src="/videos/creator-reels/studio.mp4"', $html);
         $this->assertStringContainsString('poster="/images/creator-reels/studio.jpg"', $html);
         $this->assertDoesNotMatchRegularExpression('/<video\b[^>]*(?<!data-)\ssrc=/', $html);
@@ -140,5 +145,109 @@ class CreatorReelsTest extends TestCase
         $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => $data]);
         $this->assertStringNotContainsString('<video', $html);
         $this->assertStringNotContainsString('data-reel-control', $html);
+    }
+
+    public function test_old_authored_clips_gain_optional_links_without_reordering_or_replacing_content(): void
+    {
+        $settings = SiteContentDefaults::settings();
+        unset($settings['brand_spotlight']);
+        $settings['creator_reels']['clips'] = array_reverse(array_slice($settings['creator_reels']['clips'], 0, 4));
+        foreach ($settings['creator_reels']['clips'] as &$clip) unset($clip['video_source_url'], $clip['link_url']);
+        unset($clip);
+        SitePage::create(['slug' => 'settings', 'title' => 'Site settings', 'published_content' => $settings, 'draft_content' => $settings]);
+
+        $published = app(SiteContent::class)->getPublished('settings');
+        $this->assertSame(array_column($settings['creator_reels']['clips'], 'sample_clip'), array_column($published['creator_reels']['clips'], 'sample_clip'));
+        foreach ($published['creator_reels']['clips'] as $clip) {
+            $this->assertSame('', $clip['video_source_url']);
+            $this->assertSame('', $clip['link_url']);
+        }
+        $this->assertSame(SiteContentDefaults::settings()['brand_spotlight'], $published['brand_spotlight']);
+        $this->assertSame($settings, SitePage::where('slug', 'settings')->value('published_content'));
+    }
+
+    public function test_optional_video_and_watch_links_accept_public_sources_and_reject_unsafe_urls(): void
+    {
+        $settings = SiteContentDefaults::settings();
+        $settings['creator_reels']['clips'][0]['video_source_url'] = 'https://media.example.com/creator.mp4?token=public-preview';
+        $settings['creator_reels']['clips'][0]['link_url'] = 'https://www.twitch.tv/example_creator';
+        $validated = app(SiteContent::class)->validate('settings', $settings);
+        $this->assertSame($settings['creator_reels']['clips'][0], $validated['creator_reels']['clips'][0]);
+
+        foreach ([
+            'http://media.example.com/clip.mp4', 'javascript:alert(1)', '//media.example.com/clip.mp4',
+            '/storage/creator-verification/private.mp4', 'https://localhost/clip.mp4', 'https://127.0.0.1/clip.mp4',
+            'https://192.168.0.2/clip.mp4', 'https://10.0.0.2/clip.mp4', 'https://[::1]/clip.mp4',
+            'https://user:password@media.example.com/clip.mp4', 'https://media.example.com/clip.mp4#fragment',
+            'https://www.youtube.com/watch?v=example', 'https://media.example.com/clip.php',
+            'https://media.example.com/creator-verification/private.mp4',
+        ] as $url) {
+            $settings['creator_reels']['clips'][0]['video_source_url'] = $url;
+            try {
+                app(SiteContent::class)->validate('settings', $settings);
+                $this->fail('An unsupported video source was accepted.');
+            } catch (ValidationException $exception) {
+                $this->assertArrayHasKey('creator_reels.clips.0.video_source_url', $exception->errors());
+            }
+        }
+        $settings['creator_reels']['clips'][0]['video_source_url'] = '';
+        $settings['creator_reels']['clips'][0]['link_url'] = 'javascript:alert(1)';
+        $this->expectException(ValidationException::class);
+        app(SiteContent::class)->validate('settings', $settings);
+    }
+
+    public function test_admin_order_and_link_pairs_are_kept_in_distinct_public_rows(): void
+    {
+        $settings = SiteContentDefaults::settings();
+        $settings['creator_reels']['clips'] = array_reverse($settings['creator_reels']['clips']);
+        foreach ($settings['creator_reels']['clips'] as $index => &$clip) {
+            $clip['video_source_url'] = 'https://media.example.com/ordered-'.$index.'.mp4';
+            $clip['link_url'] = 'https://www.youtube.com/watch?v=ordered-'.$index;
+        }
+        unset($clip);
+        $admin = User::factory()->create(['role' => 'admin']);
+        app(SiteContent::class)->publish($admin, 'settings', $settings);
+        $published = app(SiteContent::class)->getPublished('settings');
+        $this->assertSame($settings['creator_reels']['clips'], $published['creator_reels']['clips']);
+        $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => $published['creator_reels']]);
+        $document = new \DOMDocument();
+        $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new \DOMXPath($document);
+        $rows = $xpath->query('//*[@data-reel-row]');
+        $positions = [];
+        foreach ($rows as $rowIndex => $row) {
+            $originals = $xpath->query('.//article[not(@aria-hidden) and not(ancestor::*[@aria-hidden="true"])]', $row);
+            $this->assertSame(3, $originals->length);
+            foreach ($originals as $articleIndex => $article) {
+                $index = $rowIndex * 3 + $articleIndex;
+                $positions[] = (int) $article->getAttribute('data-reel-position');
+                $this->assertSame($settings['creator_reels']['clips'][$index]['video_source_url'], $xpath->query('.//video', $article)->item(0)->getAttribute('data-src'));
+                $this->assertSame($settings['creator_reels']['clips'][$index]['link_url'], $xpath->query('.//a[@data-reel-link]', $article)->item(0)->getAttribute('href'));
+            }
+        }
+        $this->assertSame(range(1, 9), $positions);
+        $this->assertCount(9, array_unique(array_column($settings['creator_reels']['clips'], 'sample_clip')));
+        foreach ($xpath->query('//*[@data-reel-clone]//a[@data-reel-link]') as $link) {
+            $this->assertSame('-1', $link->getAttribute('tabindex'));
+            $this->assertSame(0, $xpath->query('ancestor::*[@inert]', $link)->length);
+        }
+    }
+
+    public function test_brand_spotlight_respects_draft_publication_and_visibility(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $settings = SiteContentDefaults::settings();
+        $settings['brand_spotlight']['title_line_1'] = 'An authored brand headline';
+        app(SiteContent::class)->saveDraft($admin, 'settings', $settings);
+        $this->get('/')->assertOk()->assertSee('Brands meet')->assertDontSee('An authored brand headline');
+
+        app(SiteContent::class)->publish($admin, 'settings');
+        $this->get('/')->assertOk()->assertSee('An authored brand headline')
+            ->assertSee('/images/brand-spotlight/streamer.jpg')->assertSee('Partnership example');
+
+        $settings['brand_spotlight']['enabled'] = false;
+        app(SiteContent::class)->publish($admin, 'settings', $settings);
+        $this->get('/')->assertOk()->assertDontSee('data-brand-spotlight')
+            ->assertSee('Your growth. Our game plan.')->assertSee('For agencies')->assertSee('For creators');
     }
 }

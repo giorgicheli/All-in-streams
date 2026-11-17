@@ -6,6 +6,7 @@ use App\Models\SitePage;
 use App\Models\SitePageRevision;
 use App\Models\User;
 use App\Rules\SiteLink;
+use App\Rules\PublicVideoSource;
 use App\Rules\LegalRichText;
 use App\Support\SiteContentDefaults;
 use Illuminate\Support\Facades\DB;
@@ -118,6 +119,8 @@ class SiteContent
                 $value = (bool) $value;
             } elseif ($key === 'suffix' && $value === null) {
                 $value = '';
+            } elseif (in_array($key, ['video_source_url', 'link_url'], true) && $value === null) {
+                $value = '';
             }
         });
         return $validated;
@@ -156,11 +159,11 @@ class SiteContent
                     if (is_string($text) && (strip_tags($text) !== $text || preg_match('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', $text))) $fail('Use plain text without HTML or executable markup.');
                 }]);
                 if ($key === 'icon') $rules[$path][] = Rule::in(SiteContentDefaults::ICONS);
-                if ($key === 'sample_clip') $rules[$path][] = Rule::in(['studio', 'gaming', 'creator', 'setup', 'live', 'community']);
+                if ($key === 'sample_clip') $rules[$path][] = Rule::in(['studio', 'gaming', 'creator', 'setup', 'live', 'community', 'camera', 'portrait', 'focus']);
                 if ($key === 'code') $rules[$path][] = 'regex:/^[A-Z]{2}$/D';
                 if ($key === 'url' || str_ends_with($key, '_url')) {
                     $rules[$path][] = 'max:2048';
-                    $rules[$path][] = new SiteLink();
+                    $rules[$path][] = $key === 'video_source_url' ? new PublicVideoSource() : new SiteLink();
                 }
             }
         }
@@ -206,6 +209,13 @@ class SiteContent
             }
             return $authored;
         };
-        return $merge(SiteContentDefaults::settings(), $content);
+        $content = $merge(SiteContentDefaults::settings(), $content);
+        if (is_array($content['creator_reels']['clips'] ?? null)) {
+            foreach ($content['creator_reels']['clips'] as &$clip) {
+                if (is_array($clip)) $clip += ['video_source_url' => '', 'link_url' => ''];
+            }
+            unset($clip);
+        }
+        return $content;
     }
 }

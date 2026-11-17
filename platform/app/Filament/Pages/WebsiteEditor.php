@@ -224,10 +224,24 @@ class WebsiteEditor extends Page
                 $fields[] = $upload;
                 continue;
             }
+            if (in_array($key, ['video_source_url', 'link_url'], true)) {
+                $field = TextInput::make($name)->label($key === 'video_source_url' ? 'Video source link (optional)' : 'Open this link when clicked (optional)')
+                    ->default($value)->maxLength(2048)->columnSpanFull();
+                if ($key === 'video_source_url') {
+                    $field->placeholder('https://media.example.com/preview.mp4')->rules([new \App\Rules\PublicVideoSource()])
+                        ->helperText('Direct public HTTPS MP4 or WebM. This overrides the upload and sample footage. A YouTube, Twitch or Kick watch-page link belongs in the next field.');
+                } else {
+                    $field->placeholder('https://www.youtube.com/watch?v=...')->rules([new SiteLink()])
+                        ->helperText('Optional destination for this exact clip, such as its YouTube, Twitch or Kick page. Empty leaves the preview unlinked.');
+                }
+                $fields[] = $field;
+                continue;
+            }
             if ($key === 'sample_clip') {
                 $fields[] = Select::make($name)->label('Fallback sample footage')->options([
                     'studio' => 'Studio', 'gaming' => 'Gaming', 'creator' => 'Creator',
                     'setup' => 'Setup', 'live' => 'Live moment', 'community' => 'Community',
+                    'camera' => 'Camera', 'portrait' => 'Portrait', 'focus' => 'Focus',
                 ])->default($value)->required();
                 continue;
             }
@@ -244,7 +258,7 @@ class WebsiteEditor extends Page
                     $sample = $value[0] ?? ['text' => ''];
                     $repeater = Repeater::make($name)->label($label)->default($value)->maxItems(static::listLimit($key))
                         ->collapsible()->collapsed()->reorderableWithButtons()->columnSpanFull();
-                    if ($key === 'clips') $repeater->minItems(2)->helperText('These clips are public website previews. Private creator verification videos are never used here.');
+                    if ($key === 'clips') $repeater->minItems(2)->itemNumbers()->helperText('Use the arrow buttons to set clip order. The list is split into top, stationary middle, and bottom rows: with nine clips, positions 1–3 are top, 4–6 middle, and 7–9 bottom. Each clip has its own source and click-through link. Private creator verification videos are never used here.');
                     if (is_array($sample)) {
                         $repeater->schema(static::fields($sample))->columns(2)
                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? $state['question'] ?? $state['label'] ?? $state['name'] ?? $state['text'] ?? null);
@@ -295,6 +309,7 @@ class WebsiteEditor extends Page
             'seo' => 'Search & sharing', 'brand_name' => 'Brand name', 'brand_tagline' => 'Brand tagline',
             'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer', 'network_stats' => 'Network statistics', 'count' => 'Displayed count', 'is_demo' => 'Show sample-data label',
             'creator_reels' => 'Creator video showcase', 'clips' => 'Public preview clips', 'format' => 'Format caption',
+            'brand_spotlight' => 'Brands & streamers spotlight', 'card_title' => 'Overlay card title', 'card_status' => 'Overlay card status',
             'auth_story' => 'Sign-in & registration story', 'auth' => 'Account page copy', 'labels' => 'Form labels',
             'login' => 'Sign-in page', 'register' => 'Registration page', 'eyebrow' => 'Small heading',
             'title_line_1' => 'Headline · first line', 'title_line_2' => 'Headline · second line',

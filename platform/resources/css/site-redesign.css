@@ -187,22 +187,22 @@
 .site-redesign .theme-white .faq-list details p { font-size:13px; line-height:1.9; color:#5e657e; padding-top:18px; }
 
 /* The last section is the footer itself, not another sales card. */
-.site-redesign .theme-white .site-footer { position:relative; overflow:hidden; isolation:isolate; background:#ffffff; color:#5e657e; padding:78px 0 29px; }
+.site-redesign .theme-white .site-footer { position:relative; overflow:hidden; isolation:isolate; border-radius:36px 36px 0 0; background:#08090d; color:#c3cad9; padding:78px 0 29px; }
 .site-redesign .theme-white .site-footer .container { position:relative; }
 .footer-ambient { position:absolute; z-index:-1; right:-15%; top:-200px; width:850px; height:850px; border-radius:50%; background:radial-gradient(circle at 45% 45%,#84a7f51c,transparent 65%); pointer-events:none; }
 .site-redesign .theme-white .footer-intro { grid-template-columns:1.25fr 1fr; gap:120px; align-items:end; padding:0 0 67px; margin:0; }
-.site-redesign .theme-white .footer-intro .eyebrow { color:#69718a; }
-.site-redesign .theme-white .footer-intro h2 { max-width:700px; font-size:clamp(43px,4.8vw,69px); color:#191c1f; line-height:1.04; margin-top:25px; }
-.site-redesign .theme-white .footer-intro > p { color:#6b728b; max-width:455px; font-size:14px; line-height:1.95; padding-bottom:3px; }
+.site-redesign .theme-white .footer-intro .eyebrow { color:#a5b5d8; }
+.site-redesign .theme-white .footer-intro h2 { max-width:700px; font-size:clamp(43px,4.8vw,69px); color:#f7f8fc; line-height:1.04; margin-top:25px; }
+.site-redesign .theme-white .footer-intro > p { color:#b3bccf; max-width:455px; font-size:14px; line-height:1.95; padding-bottom:3px; }
 .site-redesign .theme-white .site-footer .footer-top { padding-top:22px; }
 .site-redesign .theme-white .site-footer .brand { color:#215ccc; }
-.site-redesign .theme-white .site-footer .brand > span,.site-redesign .theme-white .site-footer .brand b { color:#5e657e; }
-.site-redesign .theme-white .site-footer .brand small { color:#6b728b; }
-.site-redesign .theme-white .site-footer .text-link { border-radius:100px; padding:13px 21px; background:#ffffff; color:#215ccc; font-size:12px; }
-.site-redesign .theme-white .site-footer .footer-bottom { margin-top:29px; padding-top:24px; color:#6b728b; font-size:10px; border:0; }
+.site-redesign .theme-white .site-footer .brand > span,.site-redesign .theme-white .site-footer .brand b { color:#f7f8fc; }
+.site-redesign .theme-white .site-footer .brand small { color:#98a3bc; }
+.site-redesign .theme-white .site-footer .text-link { border-radius:100px; padding:13px 21px; background:#1b2231; color:#dfe7ff; font-size:12px; }
+.site-redesign .theme-white .site-footer .footer-bottom { margin-top:29px; padding-top:24px; color:#98a3bc; font-size:10px; border:0; }
 .site-redesign .theme-white .site-footer .footer-legal { gap:27px; font-size:10px; }
-.site-redesign .theme-white .site-footer .footer-legal a { color:#6b728b; }
-.site-redesign .theme-white .site-footer .footer-legal a:hover { color:#6b728b; }
+.site-redesign .theme-white .site-footer .footer-legal a { color:#aab4cb; }
+.site-redesign .theme-white .site-footer .footer-legal a:hover { color:#ffffff; }
 .site-redesign .theme-white .legal-page { padding:85px 0 115px; }
 .site-redesign .theme-white .legal-page > .container { max-width:900px; }
 .site-redesign .theme-white .legal-header h1 { font-size:clamp(45px,6vw,78px); }
@@ -413,9 +413,10 @@
 .site-redesign .theme-white .industry-card:nth-child(3) > .icon { color:#7b72c9; }
 .site-redesign .theme-white .result-badge.is-sample { color:#78768a; }
 .site-redesign .theme-white .gallery-tab.selected { color:#ffffff; background:#0a5cff; }
-.site-redesign .theme-white .site-footer .brand { color:#0a5cff; }
-.site-redesign .theme-white .site-footer .text-link { color:#214caf; background:#e9edfa; }
-.site-redesign .theme-white .site-footer .brand > span,.site-redesign .theme-white .site-footer .brand b { color:#1c263e; }
+.site-redesign .theme-white .site-footer .brand { color:#6d90ff; }
+.site-redesign .theme-white .site-footer .text-link { color:#dfe7ff; background:#1b2231; }
+.site-redesign .theme-white .site-footer .text-link:hover { color:#ffffff; background:#28334a; }
+.site-redesign .theme-white .site-footer .brand > span,.site-redesign .theme-white .site-footer .brand b { color:#f7f8fc; }
 .site-redesign .theme-white .faq-list details[open] { background:#e8edfa; }
 @media(min-width:701px) and (max-height:800px) {
  .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { padding-top:0; }

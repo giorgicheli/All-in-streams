@@ -1,0 +1,86 @@
+.site-redesign .theme-white .brand-spotlight {
+    display: grid;
+    grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+    align-items: center;
+    gap: clamp(28px, 3.8vw, 58px);
+    margin-bottom: 84px;
+}
+
+.brand-spotlight-copy { min-width: 0; }
+.site-redesign .theme-white .brand-spotlight-copy h2 {
+    margin: 0;
+    color: #08090b;
+    font-family: 'Inter Variable', sans-serif;
+    font-size: clamp(52px, 6vw, 86px);
+    font-weight: 750;
+    letter-spacing: -.065em;
+    line-height: 1.02;
+}
+.brand-spotlight-copy h2 > span { display: block; }
+.site-redesign .theme-white .brand-spotlight-copy h2 > span:last-child { color: #0757ff; }
+.site-redesign .theme-white .brand-spotlight-copy > p {
+    max-width: 505px;
+    margin: 25px 0 0;
+    color: #626c84;
+    font-size: clamp(15px, 1.37vw, 19px);
+    line-height: 1.55;
+    letter-spacing: -.025em;
+}
+.brand-spotlight-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 29px; }
+.site-redesign .theme-white .brand-spotlight-actions .btn { min-height: 54px; padding: 16px 23px; border-radius: 13px; gap: 18px; font-size: 13px; }
+.site-redesign .theme-white .brand-spotlight-actions .btn-primary { background: #191c1f; color: #fff; }
+.site-redesign .theme-white .brand-spotlight-actions .btn-primary:hover { background: #0a5cff; }
+.site-redesign .theme-white .brand-spotlight-actions .btn-secondary { background: #e9edf7; color: #141820; }
+.site-redesign .theme-white .brand-spotlight-actions .btn-secondary:hover { background: #e0e7f7; }
+
+.brand-spotlight-visual { position: relative; min-width: 0; isolation: isolate; }
+.brand-spotlight-photo { display: block; width: 100%; height: auto; aspect-ratio: 1.54; border-radius: 30px; object-fit: cover; object-position: center; background: #dfe6f3; }
+.brand-spotlight-connector { position: absolute; z-index: 3; width: 120px; height: 132px; left: -10px; bottom: 24px; overflow: visible; pointer-events: none; }
+.brand-spotlight-connector path { stroke: #0757ff; stroke-width: 2.2px; stroke-linecap: round; }
+.brand-spotlight-connector circle { fill: #0757ff; stroke: #fff; stroke-width: 1.5px; }
+.brand-spotlight-match { position: absolute; z-index: 2; display: flex; align-items: flex-start; gap: 16px; left: 36px; bottom: 24px; width: max-content; max-width: calc(100% - 60px); padding: 18px 20px; border: 0; border-radius: 17px; background: #fff; box-shadow: 0 12px 32px #0c173b13; }
+.brand-spotlight-match-icon { flex: none; display: grid; place-items: center; width: 30px; height: 30px; color: #0757ff; }
+.brand-spotlight-match-copy { min-width: 0; }
+.brand-spotlight-match-copy strong { display: block; color: #101318; font: 650 17px/1.35 'Inter Variable', sans-serif; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.brand-spotlight-match-copy > span { display: flex; align-items: center; gap: 8px; margin-top: 9px; color: #5f687e; font-size: 12px; line-height: 1.4; }
+.brand-spotlight-match-copy i { flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #0757ff; color: #fff; font-style: normal; }
+
+@media (min-width: 1500px) {
+    .site-redesign .theme-white .brand-spotlight-copy h2 { font-size: 88px; }
+}
+@media (max-width: 1050px) and (min-width: 701px) {
+    .site-redesign .theme-white .brand-spotlight { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 28px; }
+    .site-redesign .theme-white .brand-spotlight-copy h2 { font-size: clamp(43px, 5.6vw, 60px); }
+    .site-redesign .theme-white .brand-spotlight-copy > p { font-size: 15px; line-height: 1.6; margin-top: 20px; }
+    .brand-spotlight-actions { gap: 9px; margin-top: 22px; }
+    .site-redesign .theme-white .brand-spotlight-actions .btn { gap: 10px; padding: 13px 16px; min-height: 47px; font-size: 11px; }
+    .brand-spotlight-match { left: 24px; bottom: 20px; gap: 11px; padding: 14px 15px; max-width: calc(100% - 43px); }
+    .brand-spotlight-match-copy strong { font-size: 14px; }
+    .brand-spotlight-match-copy > span { font-size: 10px; margin-top: 7px; gap: 6px; }
+    .brand-spotlight-match-icon { width: 26px; height: 26px; }
+    .brand-spotlight-match-icon .icon { width: 25px; height: 25px; }
+    .brand-spotlight-connector { left: -22px; bottom: 15px; }
+}
+@media (max-width: 700px) {
+    .site-redesign .theme-white .brand-spotlight { grid-template-columns: minmax(0, 1fr); gap: 30px; margin-bottom: 47px; }
+    .site-redesign .theme-white .brand-spotlight-copy h2 { font-size: clamp(46px, 12.9vw, 64px); line-height: 1.03; }
+    .site-redesign .theme-white .brand-spotlight-copy > p { max-width: 420px; margin-top: 21px; font-size: 15px; line-height: 1.65; }
+    .brand-spotlight-actions { margin-top: 24px; gap: 10px; }
+    .site-redesign .theme-white .brand-spotlight-actions .btn { min-height: 48px; padding: 14px 18px; gap: 13px; font-size: 11px; }
+    .brand-spotlight-photo { aspect-ratio: 1.36; border-radius: 24px; }
+    .brand-spotlight-match { left: 23px; bottom: 19px; gap: 11px; max-width: calc(100% - 42px); padding: 14px 15px; border-radius: 14px; }
+    .brand-spotlight-match-icon { width: 27px; height: 27px; }
+    .brand-spotlight-match-icon .icon { width: 25px; height: 25px; }
+    .brand-spotlight-match-copy strong { font-size: 14px; }
+    .brand-spotlight-match-copy > span { margin-top: 7px; gap: 6px; font-size: 10px; }
+    .brand-spotlight-match-copy i { width: 16px; height: 16px; }
+    .brand-spotlight-connector { width: 105px; height: 116px; left: -17px; bottom: 15px; }
+}
+@media (max-width: 360px) {
+    .site-redesign .theme-white .brand-spotlight-copy h2 { font-size: 43px; }
+    .site-redesign .theme-white .brand-spotlight-actions .btn { padding-inline: 15px; gap: 9px; font-size: 10px; }
+    .brand-spotlight-match { left: 17px; bottom: 16px; gap: 9px; padding: 12px; max-width: calc(100% - 32px); }
+    .brand-spotlight-match-copy strong { font-size: 13px; }
+    .brand-spotlight-match-copy > span { font-size: 9px; }
+    .brand-spotlight-connector { left: -18px; bottom: 9px; }
+}

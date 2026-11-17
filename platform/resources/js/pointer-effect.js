@@ -1,7 +1,7 @@
 const instances = new WeakMap();
 const protectedContent = 'h1,h2,h3,h4,h5,h6,p,a,button,label,li,dt,dd,summary,figcaption,input,textarea,select,img,video,[role="button"],[contenteditable]:not([contenteditable="false"]),[data-rope-node]';
 const quietControls = 'input,textarea,select,[data-rope-node],[contenteditable]:not([contenteditable="false"])';
-const radii = [7.8, 7, 5.9, 4.8, 3.7, 2.8, 1.9, 1.2];
+const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -80,9 +80,9 @@ function mountPointerEffect(root) {
         const ux = dx / distance;
         const uy = dy / distance;
         const handle = distance * .58;
-        const neck = clamp(1 - distance / (sum * 2.65), .16, .8);
-        const firstRadius = first.paintRadius * .87;
-        const secondRadius = second.paintRadius * .87;
+        const neck = clamp(1 - distance / (sum * 2.65), .23, .86);
+        const firstRadius = first.paintRadius * .9;
+        const secondRadius = second.paintRadius * .9;
         context.beginPath();
         context.moveTo(first.x + nx * firstRadius, first.y + ny * firstRadius);
         context.bezierCurveTo(
@@ -102,11 +102,11 @@ function mountPointerEffect(root) {
 
     function draw(now) {
         frame = 0;
-        if (!permitted() || !pointer || now - lastMotion > 900) { stop(); return; }
+        if (!permitted() || !pointer || now - lastMotion > 1180) { stop(); return; }
         const dt = previousTime ? Math.min((now - previousTime) / 1000, 1 / 30) : 1 / 60;
         previousTime = now;
-        const drying = clamp((now - lastMotion - 110) / 690, 0, 1);
-        const scale = Math.pow(1 - drying, 1.65);
+        const drying = clamp((now - lastMotion - 150) / 930, 0, 1);
+        const scale = Math.pow(1 - drying, 1.5);
         clear();
         context.fillStyle = '#17191f';
         let left = width;
@@ -115,14 +115,14 @@ function mountPointerEffect(root) {
         let bottom = 0;
         beads.forEach((bead, index) => {
             const leader = index === 0 ? pointer : beads[index - 1];
-            const follow = 1 - Math.exp(-dt * (index === 0 ? 27 : 24));
+            const follow = 1 - Math.exp(-dt * (index === 0 ? 19 : 17));
             bead.x += (leader.x - bead.x) * follow;
             bead.y += (leader.y - bead.y) * follow;
             // Keep the trail short; quick motion separates it into droplets.
             const distance = Math.hypot(bead.x - pointer.x, bead.y - pointer.y);
-            if (distance > 108) {
-                bead.x = pointer.x + (bead.x - pointer.x) / distance * 108;
-                bead.y = pointer.y + (bead.y - pointer.y) / distance * 108;
+            if (distance > 140) {
+                bead.x = pointer.x + (bead.x - pointer.x) / distance * 140;
+                bead.y = pointer.y + (bead.y - pointer.y) / distance * 140;
             }
             bead.paintRadius = bead.radius * scale;
             left = Math.min(left, bead.x - bead.paintRadius);
