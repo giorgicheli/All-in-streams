@@ -31,16 +31,16 @@
 .site-redesign .theme-white .brand small { font-size:6.5px; letter-spacing:.17em; margin-top:6px; color:#6b728b; }
 .site-redesign .theme-white .brand > svg { width:32px; height:36px; }
 .site-redesign .theme-white .site-nav nav { gap:28px; }
-.site-redesign .theme-white .site-nav nav > a,.site-redesign .theme-white .platform-dropdown > summary { font-size:12px; color:#6b728b; }
+.site-redesign .theme-white .site-nav nav > a,.site-redesign .theme-white .platform-dropdown > summary { font-size:13px; color:#6b728b; }
 .site-redesign .theme-white .site-nav nav > a:hover { color:#292e3d; }
 .site-redesign .theme-white .header-actions { gap:24px; }
-.site-redesign .theme-white .sign-in { font-size:12px; color:var(--stream-ink); }
-.site-redesign .theme-white .header-actions .btn { min-height:44px; padding:12px 21px; font-size:12px; }
+.site-redesign .theme-white .sign-in { font-size:13px; color:var(--stream-ink); }
+.site-redesign .theme-white .header-actions .btn { min-height:44px; padding:12px 21px; font-size:13px; }
 .site-redesign .theme-white .platform-dropdown-panel { padding:10px; top:calc(100% + 18px); width:300px; border-radius:18px; background:#f0f2f8; box-shadow:none; }
 .site-redesign .theme-white .platform-dropdown-panel > a { padding:17px 15px; border-radius:12px; }
 .site-redesign .theme-white .platform-dropdown-panel > a:hover { background:#f0f2f8; }
-.site-redesign .theme-white .platform-dropdown-panel strong { font-size:14px; color:var(--stream-ink); }
-.site-redesign .theme-white .platform-dropdown-panel span { font-size:11px; color:var(--stream-muted); }
+.site-redesign .theme-white .platform-dropdown-panel strong { font-size:15px; color:var(--stream-ink); }
+.site-redesign .theme-white .platform-dropdown-panel span { font-size:12px; color:var(--stream-muted); }
 .site-reading-progress { position:fixed; top:0; left:0; z-index:110; width:100%; height:3px; background:#f0f2f8; transform:scaleX(0); transform-origin:left; pointer-events:none; }
 @supports(animation-timeline:scroll()) { .site-reading-progress { animation:stream-reading linear both; animation-timeline:scroll(root); } }
 @keyframes stream-reading { to { transform:scaleX(1); } }
@@ -213,7 +213,7 @@
     .site-redesign .container,.site-redesign .theme-white .hero-stage > .hero-reference > .container,.site-redesign .theme-white .hero-stage > .geo-strip .geo-inner { width:calc(100% - 56px); }
     .site-redesign .theme-white .site-nav { padding-inline:18px; gap:14px; }
     .site-redesign .theme-white .site-nav nav { gap:17px; }
-    .site-redesign .theme-white .site-nav nav > a,.site-redesign .theme-white .platform-dropdown > summary { font-size:11px; }
+    .site-redesign .theme-white .site-nav nav > a,.site-redesign .theme-white .platform-dropdown > summary { font-size:12px; }
     .site-redesign .theme-white .header-actions { gap:14px; }
     .site-redesign .theme-white .brand > span { font-size:19px; }
     .site-redesign .theme-white .hero-reference .hero-grid { min-height:550px; gap:10px; }
@@ -238,8 +238,8 @@
     .site-redesign .theme-white .site-nav .brand small { display:none; }
     .site-redesign .theme-white .site-nav .brand > svg { width:27px; }
     .site-redesign .theme-white .site-nav .brand > span { font-size:17px; }
-    .site-redesign .theme-white .header-actions .btn { min-height:40px; padding:10px 15px; font-size:11px; }
-    .site-redesign .theme-white .sign-in { font-size:11px; }
+    .site-redesign .theme-white .header-actions .btn { min-height:40px; padding:10px 15px; font-size:12px; }
+    .site-redesign .theme-white .sign-in { font-size:12px; }
     .site-redesign .theme-white .network-stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .site-redesign .theme-white .result-metrics dd { font-size:26px; }
     .site-redesign .theme-white .result-metrics > div:first-child dd { font-size:31px; }
@@ -258,7 +258,7 @@
     .site-redesign .theme-white .brand > span { font-size:18px; }
     .site-redesign .theme-white .brand small { font-size:5.5px; letter-spacing:.12em; margin-top:4px; }
     .site-redesign .theme-white .header-actions { gap:7px; }
-    .site-redesign .theme-white .header-actions .btn { min-height:39px; padding:11px 15px; gap:8px; font-size:12px; }
+    .site-redesign .theme-white .header-actions .btn { min-height:39px; padding:11px 15px; gap:8px; font-size:13px; }
     .site-redesign .theme-white .header-actions .btn > .icon { width:12px; }
     .site-redesign .theme-white .site-header .site-menu-toggle { display:inline-flex; width:35px; height:39px; padding:8px; border:0; background:transparent; color:var(--stream-ink); }
     .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { padding:0; min-height:calc(100svh - 164px); display:flex; flex-direction:column; justify-content:center; }
@@ -338,7 +338,7 @@
 @media(max-width:360px) {
     .site-redesign .theme-white .brand > span { font-size:16px; }
     .site-redesign .theme-white .brand small { font-size:5px; }
-    .site-redesign .theme-white .header-actions .btn { font-size:11px; padding-inline:12px; }
+    .site-redesign .theme-white .header-actions .btn { font-size:12px; padding-inline:12px; }
     .site-redesign .theme-white .hero-copy h1 { font-size:50px; }
     .hero-art { width:108px; right:-20px; top:53px; }
     .site-redesign .theme-white .hero-copy > p { font-size:14px; }

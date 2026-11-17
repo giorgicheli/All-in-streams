@@ -8,6 +8,7 @@ use App\Filament\Resources\PublicCampaignResultResource\Pages\ManagePublicResult
 use App\Models\PublicCampaignResult;
 use App\Models\User;
 use App\Services\SiteContent;
+use App\Support\SiteContentDefaults;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
@@ -37,7 +38,14 @@ class PublicCampaignResultsTest extends TestCase
 
     public function test_only_reviewed_published_aggregates_reach_the_public_gallery_and_private_fields_never_do(): void
     {
-        $this->staff();
+        $admin = $this->staff();
+        $this->get('/')->assertOk()->assertDontSee('data-results-gallery', false);
+        $home = SiteContentDefaults::home();
+        foreach ($home['blocks'] as &$block) {
+            if ($block['type'] === 'results') $block['data']['enabled'] = true;
+        }
+        unset($block);
+        app(SiteContent::class)->publish($admin, 'home', $home);
         $shown=PublicCampaignResult::create($this->data());
         PublicCampaignResult::create($this->data(['country'=>'France','is_verified'=>false,'is_published'=>false]));
         PublicCampaignResult::create($this->data(['country'=>'Brazil','is_published'=>false]));

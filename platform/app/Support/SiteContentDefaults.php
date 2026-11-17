@@ -91,7 +91,7 @@ class SiteContentDefaults
                     ],
                 ]],
                 ['type' => 'results', 'data' => [
-                    'enabled' => true, 'eyebrow' => 'Across communities. Across borders.', 'title' => 'Local audiences. Shared ambition.',
+                    'enabled' => false, 'eyebrow' => 'Across communities. Across borders.', 'title' => 'Local audiences. Shared ambition.',
                     'description' => 'A place for approved campaign stories, published when results are ready to share.',
                     'regions' => [['label' => 'All GEOs'], ['label' => 'Europe'], ['label' => 'LATAM'], ['label' => 'North America']],
                     'empty_title' => 'Our next story is in the making.', 'empty_description' => 'No approved campaign results published yet.',
