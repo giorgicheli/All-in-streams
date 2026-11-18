@@ -32,7 +32,7 @@ function mountOrbit(root) {
     const states = [...root.querySelectorAll('[data-orbit-reel]')].map((element, index) => ({
         element, videos: [...element.querySelectorAll('[data-orbit-video]')], poster: element.querySelector('[data-orbit-poster]'),
         clipIndex: index % clips.length, activeSlot: 0, pendingIndex: null, incomingSlot: null,
-        loading: false, token: 0, elapsed: 0, interval: 8 + index * 1.7, blendEnd: null,
+        loading: false, rendered: false, token: 0, elapsed: 0, interval: 8 + index * 1.7, blendEnd: null,
     }));
     const paths = [...root.querySelectorAll('[data-orbit-route]')];
     const particles = [...root.querySelectorAll('[data-orbit-flow]')];
@@ -75,12 +75,36 @@ function mountOrbit(root) {
     }
 
     function choose(state) {
-        const occupied = new Set(states.flatMap(item => item === state ? [] : [item.clipIndex, item.pendingIndex]));
+        const occupied = new Set(states.flatMap(item => item === state || !item.rendered ? [] : [item.clipIndex, item.pendingIndex]));
         const candidates = clips.map((_, index) => index).filter(index => index !== state.clipIndex && !failed.has(index) && !occupied.has(index));
         return candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : null;
     }
 
+    function refreshRenderedStates() {
+        const revealed = [];
+        states.forEach(state => {
+            const rect = state.element.getClientRects()[0];
+            const rendered = Boolean(rect?.width && rect?.height && getComputedStyle(state.element).visibility === 'visible');
+            if (rendered === state.rendered) return;
+            state.rendered = rendered;
+            state.elapsed = 0;
+            if (rendered) revealed.push(state);
+            else unload(state);
+        });
+        // A hidden mobile card does not reserve a clip. When it returns on
+        // desktop, choose an unused clip before starting its video again.
+        revealed.forEach(state => {
+            if (!states.some(other => other !== state && other.rendered && (other.clipIndex === state.clipIndex || other.pendingIndex === state.clipIndex))) return;
+            const next = choose(state);
+            if (next !== null) {
+                state.clipIndex = next;
+                state.poster.src = clips[next].poster;
+            }
+        });
+    }
+
     async function playBuffer(state, slot, index, token) {
+        if (!state.rendered || !running()) return false;
         const video = state.videos[slot];
         video.muted = video.defaultMuted = true;
         video.poster = clips[index].poster;
@@ -90,7 +114,7 @@ function mountOrbit(root) {
         let timeout;
         try {
             await Promise.race([video.play(), new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Preview unavailable')), 8000); })]);
-            return !disposed && token === state.token && running() && video.readyState >= 2;
+            return !disposed && state.rendered && token === state.token && running() && video.readyState >= 2;
         } catch (error) {
             if (token === state.token && !disposed && error.name !== 'AbortError') {
                 if (error.name === 'NotAllowedError') paused = true;
@@ -101,7 +125,7 @@ function mountOrbit(root) {
     }
 
     async function ensureCurrent(state) {
-        if (state.loading || state.videos[state.activeSlot].hasAttribute('src') || failed.has(state.clipIndex)) return;
+        if (!state.rendered || state.loading || state.videos[state.activeSlot].hasAttribute('src') || failed.has(state.clipIndex)) return;
         state.loading = true;
         const token = ++state.token;
         const okay = await playBuffer(state, state.activeSlot, state.clipIndex, token);
@@ -123,6 +147,7 @@ function mountOrbit(root) {
     }
 
     async function beginSwap(state) {
+        if (!state.rendered || !moving()) return;
         const next = choose(state);
         if (next === null) { state.elapsed = 0; return; }
         state.loading = true;
@@ -132,7 +157,7 @@ function mountOrbit(root) {
         const okay = await playBuffer(state, slot, next, token);
         if (disposed || token !== state.token) return;
         state.loading = false;
-        if (okay && moving()) {
+        if (okay && state.rendered && moving()) {
             state.incomingSlot = slot;
             state.blendEnd = progress + .85;
             state.videos[slot].classList.add('is-incoming');
@@ -167,7 +192,7 @@ function mountOrbit(root) {
 
     function paintRoutes() {
         const bounds = stage.getBoundingClientRect();
-        if (!bounds.width || !bounds.height || !hub) return;
+        if (!bounds.width || !bounds.height || !hub || !svg.getClientRects().length || !hub.getClientRects().length) return;
         width = bounds.width;
         height = bounds.height;
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -203,6 +228,7 @@ function mountOrbit(root) {
             anchor.style.translate = `${pointer.x * depth}px ${pointer.y * depth}px`;
         });
         states.forEach(state => {
+            if (!state.rendered) return;
             if (state.blendEnd !== null && progress >= state.blendEnd) finishSwap(state);
             else if (!state.loading && state.pendingIndex === null) {
                 state.elapsed += delta;
@@ -215,6 +241,7 @@ function mountOrbit(root) {
 
     function sync() {
         if (disposed) return;
+        refreshRenderedStates();
         cancelAnimationFrame(frame);
         frame = lastTime = 0;
         root.dataset.orbitRunning = String(moving());
@@ -256,8 +283,9 @@ function mountOrbit(root) {
     document.addEventListener('livewire:navigating', cleanup, options);
     const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }, { threshold: .05 });
     observer.observe(root);
-    const resize = new ResizeObserver(paintRoutes);
+    const resize = new ResizeObserver(() => { if (!disposed) { sync(); paintRoutes(); } });
     resize.observe(stage);
+    states.forEach(state => resize.observe(state.element));
     root.dataset.orbitReady = 'true';
     root.dataset.orbitClipCount = String(clips.length);
     if (button) button.hidden = false;

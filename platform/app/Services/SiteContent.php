@@ -190,7 +190,10 @@ class SiteContent
                 if (($block['type'] ?? null) === 'faq' && is_array($block['data'] ?? null)) {
                     $block['data'] += ['label' => 'Talk to us', 'url' => '/talk-to-us'];
                 } elseif (($block['type'] ?? null) === 'hero' && is_array($block['data'] ?? null)) {
-                    $block['data'] += ['headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']]];
+                    $block['data'] += [
+                        'headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']],
+                        'mobile_body' => SiteContentDefaults::home()['blocks'][0]['data']['mobile_body'],
+                    ];
                 }
             }
             unset($block);

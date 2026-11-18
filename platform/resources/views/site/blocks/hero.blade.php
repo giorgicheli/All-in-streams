@@ -20,7 +20,8 @@
                         @endforeach
                     </span>
                 </h1>
-                <p>{{ $data['body'] }}</p>
+                <p class="hero-desktop-description">{{ $data['body'] }}</p>
+                <p class="hero-mobile-description">{{ $data['mobile_body'] ?? $data['body'] }}</p>
                 <div class="hero-buttons">
                     <a href="{{ $data['primary_url'] }}" class="btn btn-primary">{{ $data['primary_label'] }}<x-ui-icon name="arrow" size="17"/></a>
                     <a href="{{ $data['secondary_url'] }}" class="btn btn-secondary">{{ $data['secondary_label'] }}<x-ui-icon name="chevron" size="16"/></a>

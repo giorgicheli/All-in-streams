@@ -284,9 +284,9 @@ class WebsiteEditor extends Page
                 $fields[] = Select::make($name)->label('Country flag')->options(fn () => Countries::options())->required()->searchable()->default($value);
                 continue;
             }
-            $long = in_array($key, ['body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true);
+            $long = in_array($key, ['body', 'mobile_body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true);
             $field = $long ? Textarea::make($name)->rows(3)->columnSpanFull() : TextInput::make($name);
-            $field->label($label)->default($value)->maxLength(5000);
+            $field->label($key === 'mobile_body' ? 'Mobile matching description' : $label)->default($value)->maxLength(5000);
             if ($value !== '' && $value !== null && $key !== 'suffix') $field->required();
             if ($key === 'url' || str_ends_with($key, '_url')) $field->maxLength(2048)->rules([new SiteLink()]);
             if ($prefix === 'seo.') $field->maxLength($key === 'title' ? 200 : 500);

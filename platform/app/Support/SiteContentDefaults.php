@@ -35,6 +35,7 @@ class SiteContentDefaults
                     'headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']],
                     'subtitle' => 'Their community.', 'subtitle_accent' => 'Your next big move.',
                     'body' => 'We connect betting, casino, and gaming brands with vetted streamers and creators who turn audience attention into action. The right talent. The right markets. Campaigns built for growth.',
+                    'mobile_body' => 'Get matched with streamers and creators who fit your brand, audience and budget. We handle introductions, campaign delivery and reporting.',
                     'primary_label' => 'Start a campaign', 'primary_url' => '/talk-to-us?type=brand',
                     'secondary_label' => 'Explore creators', 'secondary_url' => '#platform',
                     'footnote' => 'Vetted creator partnerships · Global GEO coverage',

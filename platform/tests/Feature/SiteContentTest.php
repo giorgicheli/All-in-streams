@@ -22,10 +22,14 @@ class SiteContentTest extends TestCase
         return User::factory()->create(['role' => 'admin']);
     }
 
-    public function test_older_home_revisions_receive_the_faq_link_without_replacing_authored_content(): void
+    public function test_older_home_revisions_receive_new_fields_without_replacing_authored_content(): void
     {
         $legacy = SiteContentDefaults::home();
         foreach ($legacy['blocks'] as &$block) {
+            if ($block['type'] === 'hero') {
+                unset($block['data']['mobile_body']);
+                $block['data']['body'] = 'Previously authored desktop description.';
+            }
             if ($block['type'] !== 'faq') continue;
             unset($block['data']['label'], $block['data']['url']);
             $block['data']['title_line_1'] = 'Previously authored FAQ';
@@ -35,6 +39,9 @@ class SiteContentTest extends TestCase
         SitePage::create(['slug' => 'home', 'title' => 'Home page', 'draft_content' => $legacy, 'published_content' => $legacy]);
         $service = app(SiteContent::class);
         foreach ([$service->getPublished('home'), $service->getDraft('home'), $service->validate('home', $legacy)] as $content) {
+            $hero = collect($content['blocks'])->firstWhere('type', 'hero')['data'];
+            $this->assertSame('Previously authored desktop description.', $hero['body']);
+            $this->assertSame(SiteContentDefaults::home()['blocks'][0]['data']['mobile_body'], $hero['mobile_body']);
             $faq = collect($content['blocks'])->firstWhere('type', 'faq')['data'];
             $this->assertSame('Talk to us', $faq['label']);
             $this->assertSame('/talk-to-us', $faq['url']);
