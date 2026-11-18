@@ -2,6 +2,7 @@ const instances = new WeakMap();
 const autoSlideInterval = 11;
 const crossfadeDuration = .72;
 const manualResumeDelay = 8000;
+const nextClipInterval = () => 4 + Math.random() * 2;
 
 export function initializeNetworkShowcase(root = document) {
     instances.get(root)?.();
@@ -36,7 +37,7 @@ function mountShowcase(section) {
         poster: element.querySelector('[data-network-poster]'), link: element.querySelector('[data-network-link]'),
         clipIndex: (Number(element.dataset.networkIndex) || panelIndex) % clips.length,
         activeSlot: 0, incomingSlot: null, pendingIndex: null, blendRemaining: null,
-        token: 0, loading: false, rendered: false, elapsed: 0, interval: 7 + Math.random() * 4,
+        token: 0, loading: false, rendered: false, elapsed: 0, interval: nextClipInterval(),
     }))).filter(state => state.poster && state.videos.length === 2);
     if (!states.length) return () => {};
 
@@ -65,7 +66,10 @@ function mountShowcase(section) {
     const intent = () => !paused && (!limited() || optedIn);
     const available = () => !disposed && !suspended && visible && !menuOpen && !document.hidden;
     const playing = () => available() && intent();
-    const clockRunning = () => playing() && !limited() && !hovering && !focused && !touching && !scrolling && performance.now() >= resumeAt;
+    const clipClockRunning = () => playing() && !limited() && !touching && !scrolling;
+    // Inspecting a card or using the controls only holds the outer carousel.
+    // Its video previews keep changing on their own shorter clock.
+    const carouselClockRunning = () => clipClockRunning() && !hovering && !focused && performance.now() >= resumeAt;
     const activeStates = () => states.filter(state => state.slideIndex === activeIndex && state.rendered);
     const valid = (state, token) => !disposed && token === state.token && state.slideIndex === activeIndex && state.rendered && playing();
 
@@ -86,7 +90,7 @@ function mountShowcase(section) {
         section.dataset.networkLoaded = String(allVideos.filter(video => video.hasAttribute('src')).length);
         section.dataset.networkPlaying = String(playing() && activeStates().some(state => state.videos.some(video => video.hasAttribute('src') && !video.paused)));
         section.dataset.networkPaused = String(!intent());
-        section.dataset.networkMoving = String(clockRunning() && slides.length > 1);
+        section.dataset.networkMoving = String(carouselClockRunning() && slides.length > 1);
         if (previous) previous.disabled = slides.length < 2;
         if (next) next.disabled = slides.length < 2;
         if (toggle) {
@@ -162,7 +166,7 @@ function mountShowcase(section) {
     function choose(state) {
         const occupied = new Set(activeStates().flatMap(other => other === state ? [] : [other.clipIndex, other.pendingIndex]
             .filter(index => index !== null).map(index => clips[index].src)));
-        const candidates = clips.map((_, index) => index).filter(index => index !== state.clipIndex && !failed.has(clips[index].src) && !occupied.has(clips[index].src));
+        const candidates = clips.map((_, index) => index).filter(index => clips[index].src !== clips[state.clipIndex].src && !failed.has(clips[index].src) && !occupied.has(clips[index].src));
         return candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : null;
     }
 
@@ -244,10 +248,10 @@ function mountShowcase(section) {
     }
 
     async function beginSwap(state) {
-        if (!clockRunning() || state.loading || state.pendingIndex !== null) return;
+        if (!clipClockRunning() || state.loading || state.pendingIndex !== null) return;
         const index = choose(state);
         state.elapsed = 0;
-        state.interval = 7 + Math.random() * 4;
+        state.interval = nextClipInterval();
         if (index === null) return;
         const slot = 1 - state.activeSlot;
         state.pendingIndex = index;
@@ -329,7 +333,7 @@ function mountShowcase(section) {
     }
 
     function schedule() {
-        if (!frame && playing() && (clockRunning() || activeStates().some(state => state.blendRemaining !== null))) frame = requestAnimationFrame(tick);
+        if (!frame && playing() && (clipClockRunning() || activeStates().some(state => state.blendRemaining !== null))) frame = requestAnimationFrame(tick);
     }
 
     function tick(time) {
@@ -341,12 +345,12 @@ function mountShowcase(section) {
             if (state.blendRemaining !== null) {
                 state.blendRemaining -= delta;
                 if (state.blendRemaining <= 0) finishSwap(state);
-            } else if (clockRunning() && !state.loading && state.pendingIndex === null) {
+            } else if (clipClockRunning() && !state.loading && state.pendingIndex === null) {
                 state.elapsed += delta;
                 if (state.elapsed >= state.interval) beginSwap(state);
             }
         });
-        if (clockRunning() && slides.length > 1) {
+        if (carouselClockRunning() && slides.length > 1) {
             autoElapsed += delta;
             if (autoElapsed >= autoSlideInterval) goTo(activeIndex + 1);
         }
