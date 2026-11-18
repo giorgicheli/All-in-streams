@@ -5,7 +5,8 @@ const buttonLabels = 'button,.btn,[role="button"],summary,.text-link,.site-foote
 const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const simulationStep = 1 / 120;
 const pointerDelay = 120;
-const lensExitDuration = 320;
+const lensExitHold = 220;
+const lensExitDuration = 480;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -16,6 +17,7 @@ function mountPointerEffect(root) {
     canvas.dataset.pointerShape = 'connected-ink';
     canvas.dataset.pointerDelayMs = String(pointerDelay);
     canvas.dataset.pointerExitDurationMs = String(lensExitDuration);
+    canvas.dataset.pointerExitHoldMs = String(lensExitHold);
     canvas.dataset.pointerState = 'sleeping';
     const context = canvas.getContext('2d', { alpha: true, desynchronized: false });
     if (!context) return () => {};
@@ -114,22 +116,23 @@ function mountPointerEffect(root) {
         syncLayer(null);
     }
 
-    function beginLensExit(now) {
+    function beginLensExit(now, resumeDismissal = false) {
         const radius = Number(headerCopy.dataset.lensRadius);
         if (!circleMode || !pointer || !(radius > 0)) return;
         const ink = inkAt(lens.x, lens.y);
         exitingLens = {
             x: lens.x, y: lens.y, radius,
             ink, labelColor: headerCopy.style.getPropertyValue('--pointer-label-color'),
-            header: headerMode, started: now,
+            header: headerMode, started: now - (resumeDismissal ? lensExitHold : 0),
+            startAlpha: resumeDismissal ? clamp(Number.parseFloat(getComputedStyle(headerCopy).opacity) || 0, 0, 1) : 1,
         };
         headerCopy.style.transition = 'none';
     }
 
     function paintLensExit(now) {
         if (!exitingLens) return;
-        const progress = clamp((now - exitingLens.started) / lensExitDuration, 0, 1);
-        const alpha = 1 - progress * progress * (3 - 2 * progress);
+        const progress = clamp((now - exitingLens.started - lensExitHold) / lensExitDuration, 0, 1);
+        const alpha = exitingLens.startAlpha * (1 - progress ** 3 * (progress * (progress * 6 - 15) + 10));
         if (progress >= 1) {
             exitingLens = null;
             headerCopy.classList.remove('is-active');
@@ -164,7 +167,7 @@ function mountPointerEffect(root) {
         delete canvas.dataset.pointerLensFade;
         // Keep the last painted pixels and their matching clipped glyphs until
         // both opacity transitions finish; clearing now would bypass the fade.
-        headerCopy.style.transition = `opacity ${lensExitDuration}ms cubic-bezier(.22,.61,.36,1)`;
+        headerCopy.style.transition = `opacity ${lensExitDuration}ms ease-in-out`;
         headerCopy.style.opacity = '0';
         canvas.classList.remove('is-active');
         headerCopy.classList.remove('is-active');
@@ -432,6 +435,7 @@ function mountPointerEffect(root) {
         const inHeader = overHeader && Boolean(control);
         const inCircle = Boolean(control);
         if (!permitted(inCircle) || isQuiet(event.target)) { fadeOut(); return; }
+        const resumeDismissal = Boolean(dismissalTimer);
         clearTimeout(dismissalTimer);
         dismissalTimer = 0;
         if (inCircle) {
@@ -439,7 +443,7 @@ function mountPointerEffect(root) {
             headerCopy.style.removeProperty('opacity');
             headerCopy.style.removeProperty('transition');
             delete canvas.dataset.pointerLensFade;
-        } else if (circleMode) beginLensExit(now);
+        } else if (circleMode) beginLensExit(now, resumeDismissal);
         const changedControl = control !== hoveredControl;
         const changedMode = inHeader !== headerMode || inCircle !== circleMode;
         headerMode = inHeader;

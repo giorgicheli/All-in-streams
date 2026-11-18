@@ -25,7 +25,7 @@
     pointer-events: none;
     mix-blend-mode: normal;
     opacity: 0;
-    transition: opacity 320ms cubic-bezier(.22,.61,.36,1);
+    transition: opacity 480ms ease-in-out;
     contain: strict;
 }
 .site-redesign .pointer-effect.is-active { opacity: .97; transition-duration: 120ms; }
@@ -36,7 +36,7 @@
     pointer-events: none;
     clip-path: circle(0px at 0px 0px);
     opacity: 0;
-    transition: opacity 320ms cubic-bezier(.22,.61,.36,1);
+    transition: opacity 480ms ease-in-out;
     overflow: hidden;
 }
 .site-redesign .header-pointer-lens.is-active { opacity: 1; transition-duration: 120ms; }
