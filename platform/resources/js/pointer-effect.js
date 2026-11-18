@@ -473,7 +473,7 @@ function mountPointerEffect(root) {
     }, options);
     document.addEventListener('pointerdown', event => {
         if (event.pointerType !== 'mouse') stop();
-        else if (isQuiet(event.target) || event.target.closest?.('a,button,[role="button"]')) fadeOut();
+        else if (isQuiet(event.target)) fadeOut();
     }, options);
     document.addEventListener('focusin', event => { if (isQuiet(event.target)) fadeOut(); }, options);
     document.addEventListener('keydown', stop, { signal: events.signal });
@@ -482,7 +482,18 @@ function mountPointerEffect(root) {
     document.addEventListener('ais:navigation-state', event => { menuOpen = Boolean(event.detail?.open); if (menuOpen) stop(); }, { signal: events.signal });
     document.addEventListener('livewire:navigating', cleanup, { signal: events.signal });
     window.addEventListener('blur', fadeOut, options);
-    window.addEventListener('scroll', () => { stop(); lastLabelRefresh = 0; }, options);
+    window.addEventListener('scroll', () => {
+        lastLabelRefresh = 0;
+        const target = circleMode && inputPointer ? document.elementFromPoint(inputPointer.x, inputPointer.y) : null;
+        const overHeader = Boolean(target && header?.contains(target));
+        const control = target?.closest(overHeader ? headerLabels : buttonLabels);
+        if (!dismissalTimer && canvas.dataset.pointerState === 'active' && hoveredControl?.isConnected
+            && control === hoveredControl && permitted(true) && (!activeModal || activeModal.matches(':modal'))) {
+            headerMode = overHeader;
+            refreshHeaderLabels();
+            if (!frame) frame = requestAnimationFrame(draw);
+        } else stop();
+    }, options);
     document.addEventListener('toggle', refreshHeaderLabels, { signal: events.signal, capture: true });
     document.addEventListener('close', () => { if (activeModal && !activeModal.matches(':modal')) stop(); }, { signal: events.signal, capture: true });
     window.addEventListener('resize', () => {
