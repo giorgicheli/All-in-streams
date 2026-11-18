@@ -1,14 +1,12 @@
 .hero-mobile-description { display: none; }
 
 @media (max-width: 700px) {
-    .site-redesign .theme-white .hero-stage { min-height: 0; }
     .site-redesign .theme-white .hero-copy > .hero-desktop-description { display: none; }
     .site-redesign .theme-white .hero-copy > .hero-mobile-description { display: block; }
-    .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { flex: 0 0 auto; align-items: flex-start; justify-content: flex-start; padding: 18px 0 22px; }
-    .site-redesign .theme-white .hero-stage > .geo-strip { margin-top: 0; }
+    .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { flex: 1 0 auto; align-items: center; justify-content: center; padding: 26px 0 24px; }
     .site-redesign .theme-white .hero-reference .hero-grid--orbit { display: flow-root; min-height: 0; }
     .site-redesign .theme-white .hero-grid--orbit .hero-copy { display: contents; padding: 0; }
-    .site-redesign .theme-white .hero-grid--orbit .hero-copy h1 { position: relative; z-index: 2; width: calc(57% - 6px); max-width: none; margin: 0 0 18px; padding-top: 18px; font-size: clamp(40px, 12.8vw, 60px); letter-spacing: -.075em; line-height: 1.06; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy h1 { position: relative; z-index: 2; width: calc(57% - 6px); max-width: none; margin: 0 0 18px; padding-top: 38px; font-size: clamp(40px, 12.8vw, 60px); letter-spacing: -.075em; line-height: 1.06; }
     .site-redesign .theme-white .hero-grid--orbit .hero-headline-visual { min-height: 2.12em; }
     .site-redesign .theme-white .hero-grid--orbit .hero-copy > .hero-mobile-description { max-width: none; margin: 0; font-size: clamp(16px, 4.35vw, 18.5px); line-height: 1.75; color: #606b83; }
     .site-redesign .theme-white .hero-grid--orbit .hero-buttons { clear: both; display: flex; flex-wrap: nowrap; margin: 22px 0 0; gap: 10px; }
@@ -57,5 +55,7 @@
 }
 
 @media (max-width: 700px) and (max-height: 700px) {
-    .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { padding-block: 16px 20px; }
+    .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { padding-block: 16px 18px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy h1 { padding-top: 28px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy > .hero-mobile-description { line-height: 1.6; }
 }
