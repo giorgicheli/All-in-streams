@@ -48,5 +48,5 @@
 
 @media (max-width: 700px) and (max-height: 700px) {
     .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { padding-block: 16px 20px; }
-    .site-redesign .theme-white .hero-reference .hero-grid--orbit { row-gap: 20px; }
+    .site-redesign .theme-white .hero-reference .hero-grid--orbit { row-gap: 28px; }
 }
