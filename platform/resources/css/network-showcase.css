@@ -62,9 +62,11 @@
 }
 .network-showcase-track::-webkit-scrollbar { display: none; }
 .network-showcase-slide {
-    --network-divider: 8px;
+    --network-cut: 46px;
+    --network-divider: 6px;
+    --network-radius: 16px;
     display: flex;
-    gap: var(--network-divider);
+    gap: 0;
     flex: 0 0 100%;
     height: clamp(200px, 19.5vw, 280px);
     min-width: 0;
@@ -78,20 +80,23 @@
     position: relative;
     flex: 1 1 auto;
     min-width: 0;
+    margin-left: calc(var(--network-divider) - var(--network-cut));
     overflow: hidden;
-    border-radius: 16px;
     background: #e1e6f1;
+    clip-path: var(--network-panel-clip);
     isolation: isolate;
 }
 .network-showcase-panel:first-child {
-    flex: 0 0 calc(56% - var(--network-divider));
+    flex: 0 0 60%;
+    margin-left: 0;
 }
 .network-showcase-slide--3 .network-showcase-panel:nth-child(2) {
-    flex: 0 0 calc(22% - var(--network-divider));
+    flex: 0 0 26%;
 }
-.network-showcase-slide--2 .network-showcase-panel:first-child { flex-basis: calc(67% - var(--network-divider)); }
+.network-showcase-slide--2 .network-showcase-panel:first-child { flex-basis: 67%; }
 .network-showcase-slide--1 .network-showcase-panel {
     flex-basis: 100%;
+    margin-left: 0;
 }
 .network-showcase-panel > :is(img, video) {
     position: absolute;
@@ -172,8 +177,7 @@
     .site-redesign .theme-white .network-showcase-header h2 { font-size: clamp(27px, 7.1vw, 34px); line-height: 1.1; }
     .network-showcase-controls { gap: 7px; padding-top: 1px; }
     .network-showcase-nav { width: 35px; height: 35px; border-radius: 10px; }
-    .network-showcase-slide { --network-divider: 6px; height: clamp(156px, 43vw, 220px); border-radius: 12px; }
-    .network-showcase-panel { border-radius: 12px; }
+    .network-showcase-slide { --network-cut: 18px; --network-divider: 4px; --network-radius: 12px; height: clamp(156px, 43vw, 220px); border-radius: 12px; }
     .network-showcase-track { gap: 12px; border-radius: 12px; }
     .network-showcase-toggle { width: 32px; height: 32px; left: 12px; bottom: 12px; }
     .network-showcase-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px 0; margin-top: 25px; }

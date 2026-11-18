@@ -1,3 +1,5 @@
+import { roundedNetworkPanelPath } from './network-panel-clip';
+
 const instances = new WeakMap();
 const autoSlideInterval = 11;
 const crossfadeDuration = .72;
@@ -35,6 +37,7 @@ function mountShowcase(section) {
     const states = slides.flatMap((slide, slideIndex) => [...slide.querySelectorAll('[data-network-panel]')].map((element, panelIndex) => ({
         element, slideIndex, videos: [...element.querySelectorAll('[data-network-video]')],
         poster: element.querySelector('[data-network-poster]'), link: element.querySelector('[data-network-link]'),
+        clipPath: element.querySelector('[data-network-clip-path]'),
         clipIndex: (Number(element.dataset.networkIndex) || panelIndex) % clips.length,
         activeSlot: 0, incomingSlot: null, pendingIndex: null, blendRemaining: null,
         token: 0, loading: false, rendered: false, elapsed: 0, interval: nextClipInterval(),
@@ -72,6 +75,19 @@ function mountShowcase(section) {
     const carouselClockRunning = () => clipClockRunning() && !hovering && !focused && performance.now() >= resumeAt;
     const activeStates = () => states.filter(state => state.slideIndex === activeIndex && state.rendered);
     const valid = (state, token) => !disposed && token === state.token && state.slideIndex === activeIndex && state.rendered && playing();
+
+    function updatePanelClips() {
+        states.forEach(state => {
+            if (!state.clipPath) return;
+            const bounds = state.element.getBoundingClientRect();
+            const style = getComputedStyle(state.element);
+            const cut = Number.parseFloat(style.getPropertyValue('--network-cut'));
+            const radius = Number.parseFloat(style.getPropertyValue('--network-radius'));
+            const path = roundedNetworkPanelPath(bounds.width, bounds.height,
+                Number.isFinite(cut) ? cut : 46, Number.isFinite(radius) ? radius : 16, state.element.dataset.networkShape);
+            if (path) state.clipPath.setAttribute('d', path);
+        });
+    }
 
     function measureOffsets() {
         const first = slides[0].offsetLeft;
@@ -436,7 +452,9 @@ function mountShowcase(section) {
     observer?.observe(track);
     if (!observer) visible = true;
     const resize = typeof ResizeObserver === 'function' ? new ResizeObserver(() => {
-        if (disposed || track.clientWidth === trackWidth) return;
+        if (disposed) return;
+        updatePanelClips();
+        if (track.clientWidth === trackWidth) return;
         trackWidth = track.clientWidth;
         requestedIndex = activeIndex;
         track.scrollTo({ left: measureOffsets()[activeIndex], behavior: 'instant' });
@@ -444,6 +462,8 @@ function mountShowcase(section) {
         sync();
     }) : null;
     resize?.observe(track);
+    states.forEach(state => resize?.observe(state.element));
+    if (!resize) window.addEventListener('resize', updatePanelClips, options);
     document.addEventListener('visibilitychange', sync, options);
     document.addEventListener('ais:navigation-state', event => { menuOpen = Boolean(event.detail?.open); if (menuOpen) touching = false; sync(); }, options);
     reduced.addEventListener('change', sync, options);
@@ -457,6 +477,7 @@ function mountShowcase(section) {
         slide.setAttribute('aria-hidden', String(index !== activeIndex));
     });
     states.forEach(updatePanel);
+    updatePanelClips();
     track.setAttribute('aria-label', `Creator video previews, slide 1 of ${slides.length}. Swipe or use the arrow keys to explore.`);
     section.dataset.networkReady = 'true';
     section.dataset.networkClipCount = String(clips.length);

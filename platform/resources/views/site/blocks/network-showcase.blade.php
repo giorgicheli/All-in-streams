@@ -10,6 +10,13 @@
         ];
     })->all() : [];
     $networkSlides = array_chunk($networkClips, 3);
+    $networkClipPrefix = 'network-clip-'.Illuminate\Support\Str::uuid();
+    $networkClipFallbacks = [
+        'first' => 'M0 .04 Q0 0 .04 0 H.96 Q1 0 .997 .04 L.923 .96 Q.92 1 .88 1 H.04 Q0 1 0 .96 Z',
+        'middle' => 'M.173 .04 Q.18 0 .22 0 H.96 Q1 0 .993 .04 L.827 .96 Q.82 1 .78 1 H.04 Q0 1 .007 .96 Z',
+        'last' => 'M.173 .04 Q.18 0 .22 0 H.96 Q1 0 1 .04 V.96 Q1 1 .96 1 H.04 Q0 1 .007 .96 Z',
+        'single' => 'M.04 0 H.96 Q1 0 1 .04 V.96 Q1 1 .96 1 H.04 Q0 1 0 .96 V.04 Q0 0 .04 0 Z',
+    ];
 @endphp
 @if($showNetworkVideos || count($networkStats))
     <section class="network-showcase" id="network" data-network-showcase data-network-paused="false" aria-labelledby="network-showcase-title">
@@ -30,7 +37,12 @@
                             @foreach($networkSlides as $slideIndex => $slide)
                                 <div class="network-showcase-slide network-showcase-slide--{{ count($slide) }}" data-network-slide="{{ $slideIndex }}" role="group" aria-roledescription="slide" aria-label="{{ $slideIndex + 1 }} of {{ count($networkSlides) }}">
                                     @foreach($slide as $clip)
-                                        <div class="network-showcase-panel" data-network-panel data-network-index="{{ $clip['position'] - 1 }}" data-network-position="{{ $clip['position'] }}" role="group" aria-label="{{ $clip['title'] }}">
+                                        @php
+                                            $networkPanelShape = count($slide) === 1 ? 'single' : ($loop->first ? 'first' : ($loop->last ? 'last' : 'middle'));
+                                            $networkPanelClipId = $networkClipPrefix.'-'.$slideIndex.'-'.$loop->index;
+                                        @endphp
+                                        <div class="network-showcase-panel" data-network-panel data-network-shape="{{ $networkPanelShape }}" data-network-index="{{ $clip['position'] - 1 }}" data-network-position="{{ $clip['position'] }}" style="--network-panel-clip:url(#{{ $networkPanelClipId }})" role="group" aria-label="{{ $clip['title'] }}">
+                                            <svg class="network-showcase-clip-definitions" width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="{{ $networkPanelClipId }}" clipPathUnits="objectBoundingBox"><path data-network-clip-path d="{{ $networkClipFallbacks[$networkPanelShape] }}"/></clipPath></defs></svg>
                                             <img data-network-poster src="{{ $clip['poster'] }}" alt="" width="640" height="360" loading="lazy" decoding="async" draggable="false">
                                             @for($buffer = 0; $buffer < 2; $buffer++)
                                                 <video data-network-video poster="{{ $clip['poster'] }}" muted loop playsinline preload="none" width="640" height="360" aria-hidden="true" disablepictureinpicture></video>
