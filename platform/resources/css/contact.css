@@ -1,0 +1,47 @@
+.site-redesign .theme-white .contact-page { flex:1; padding:76px 0 90px; }
+.contact-grid { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); align-items:start; gap:clamp(36px,6vw,88px); }
+.contact-intro { padding-top:15px; }
+.site-redesign .theme-white .contact-intro h1 { margin:0; color:#191c1f; font-family:'Inter Variable',sans-serif; font-size:clamp(46px,4.6vw,64px); line-height:1.06; font-weight:650; letter-spacing:-.06em; }
+.contact-description { max-width:390px; margin-top:25px; color:#636b84; font-size:17px; line-height:1.85; }
+.contact-method { display:flex; align-items:center; gap:17px; margin-top:38px; min-width:0; }
+.contact-mail-icon { display:flex; align-items:center; justify-content:center; width:52px; height:52px; flex-shrink:0; border-radius:16px; background:#e9eefb; color:#0a5cff; }
+.contact-method>div { min-width:0; }
+.contact-method p { color:#636b84; font-size:13px; margin-bottom:6px; }
+.contact-method a { color:#191c1f; font-size:17px; font-weight:500; text-underline-offset:5px; overflow-wrap:anywhere; }
+.contact-method a:hover { text-decoration:underline; }
+.contact-form-panel { padding:clamp(26px,3vw,40px); border-radius:26px; background:#fff; min-width:0; }
+.site-redesign .theme-white .contact-form-panel h2 { margin:0 0 30px; color:#191c1f; font-size:28px; font-weight:600; line-height:1.2; letter-spacing:-.04em; }
+.contact-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 20px; }
+.contact-field-wide { grid-column:1/-1; }
+.contact-field { min-width:0; }
+.contact-field label { display:block; margin-bottom:10px; font-size:14px; font-weight:500; color:#343e54; }
+.site-redesign .theme-white .contact-field :is(input,textarea) { display:block; width:100%; min-width:0; min-height:52px; padding:13px 15px; border:1px solid #dce2ed; border-radius:11px; background:#f9fafd; color:#191c1f; font-size:16px; line-height:1.6; transition:border-color 180ms ease; }
+.site-redesign .theme-white .contact-field textarea { min-height:174px; resize:vertical; }
+.site-redesign .theme-white .contact-field :is(input,textarea):focus { border-color:#0a5cff; outline:0; box-shadow:none; }
+.site-redesign .theme-white .contact-field [aria-invalid=true] { border-color:#b64a40; }
+.contact-field-error { margin-top:8px; color:#a53b32; font-size:13px; line-height:1.65; }
+.contact-submit-row { display:flex; justify-content:space-between; align-items:center; gap:24px; margin-top:27px; }
+.contact-submit-row>p { max-width:240px; color:#636b84; font-size:12px; line-height:1.8; }
+.contact-submit-row .btn { min-height:52px; flex-shrink:0; font-size:14px; }
+.contact-notice,.contact-errors { margin-bottom:26px; padding:16px 18px; border-radius:12px; font-size:14px; line-height:1.8; }
+.contact-notice { display:flex; align-items:flex-start; gap:10px; background:#ecf4ee; color:#245a3b; }
+.contact-notice .icon { flex-shrink:0; margin-top:3px; }
+.contact-errors { color:#96382e; background:#fcf0ed; }
+.contact-errors ul { list-style:disc; padding-left:19px; margin-top:7px; }
+.contact-trap { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+@media(max-width:1000px) { .contact-grid { grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr); gap:32px; } .contact-submit-row { align-items:flex-start; flex-direction:column; gap:20px; } .contact-submit-row>p { max-width:none; } }
+@media(max-width:700px) {
+    .site-redesign .theme-white .contact-page { padding:38px 0 52px; }
+    .contact-grid { grid-template-columns:minmax(0,1fr); gap:32px; }
+    .contact-intro { padding-top:0; }
+    .site-redesign .theme-white .contact-intro h1 { font-size:44px; }
+    .contact-description { margin-top:20px; font-size:16px; line-height:1.8; }
+    .contact-method { margin-top:25px; }
+    .contact-method a { font-size:16px; }
+    .contact-form-panel { padding:26px 22px; border-radius:22px; }
+    .site-redesign .theme-white .contact-form-panel h2 { font-size:25px; margin-bottom:26px; }
+    .contact-form-grid { grid-template-columns:minmax(0,1fr); gap:21px; }
+    .contact-field label { font-size:14px; }
+    .contact-submit-row .btn { width:100%; justify-content:space-between; }
+}
+@media(prefers-reduced-motion:reduce) { .contact-field :is(input,textarea) { transition:none; } }

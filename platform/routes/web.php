@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AgencyPortalController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ProviderDeliveryController;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
 Route::get('/white', [WebsiteController::class, 'white'])->name('home.white');
+Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:contact-message')->name('contact.store');
 Route::get('/talk-to-us', [PartnerEnquiryController::class, 'create'])->middleware('guest')->name('enquiries.create');
 Route::post('/talk-to-us', [PartnerEnquiryController::class, 'store'])->middleware(['guest', 'throttle:10,1'])->name('enquiries.store');
 Route::get('/privacy-policy', [WebsiteController::class, 'privacy'])->name('privacy');

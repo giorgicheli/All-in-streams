@@ -131,7 +131,16 @@ class SiteContentDefaults
                 ['label' => 'For creators', 'description' => 'Join our creator network', 'url' => '/talk-to-us?type=creator'],
             ],
             'header' => ['sign_in_label' => 'Sign in', 'workspace_label' => 'Your workspace', 'cta_label' => 'Register', 'cta_url' => '/talk-to-us'],
-            'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Sign in', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
+            'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Sign in', 'contact_label' => 'Contact', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
+            'contact' => [
+                'page_title' => 'Contact', 'title' => 'Let’s talk.',
+                'description' => 'Have a question about working together? Send us a message and our team will get back to you.',
+                'email' => 'info@streams.com', 'email_label' => 'Email us', 'form_title' => 'Send a message',
+                'name_label' => 'Your name', 'email_field_label' => 'Email address',
+                'subject_label' => 'Subject', 'message_label' => 'Your message',
+                'submit_label' => 'Send message', 'privacy_note' => 'Your message is shared with the All In Streams team.',
+                'success_message' => 'Thank you. Your message has been received.',
+            ],
             'network_stats' => [
                 'enabled' => true, 'eyebrow' => 'THE NETWORK BEHIND THE STREAM',
                 'title' => 'Be part of a growing network.',

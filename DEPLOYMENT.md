@@ -143,6 +143,12 @@ The public `/login` page uses the shared navigation and black footer around a ce
 
 The `/talk-to-us` role chooser, each brand/agency/creator form and the legacy `/register` page also use the shared header and footer. The enquiry pages omit their duplicate logo and floating close link and fit their content between the shared chrome. Role selection, conditional fields, audience selection, proof uploads, account creation and administrator approval retain their existing behavior.
 
+## Contact inbox
+
+`/contact` is linked from the larger footer navigation and uses the shared header/footer. Website editor > Site settings > Contact page controls its text and public email; `info@streams.com` is the owner's test address. The form saves messages to Administration > Website > Contact messages (`/admin/contact-messages`), independently of SMTP. It creates no account and sends no automatic email. Only administrators can read, review or delete messages. Submitted name, email, subject and message stay immutable; staff can update status and private notes, search messages, and filter by status or received date.
+
+Migration `2026_11_18_000001` adds `contact_messages`. Submissions require CSRF and a session-bound encrypted challenge aged three seconds to two hours, plus an empty honeypot. Invalid/expired challenges and too-fast attempts retain entered fields for retry; valid challenges keep their original age across validation errors. Unique hashed challenge keys make concurrent retries idempotent. Limits are eight attempts per IP per ten minutes and four per email per hour, using hashed cache keys without storing raw IPs. The contact page is private/no-store; public and staff text stays escaped. CAPTCHA or an external bot service is not required for these local protections.
+
 ## Email password recovery
 
 The public and administrator login pages link to `/forgot-password`. All account roles, including pending partners, can request a reset by email. Recovery uses Laravel's existing password broker and `password_reset_tokens` table: tokens are hashed, expire after sixty minutes and are single-use. Requests are limited by normalized email and IP; redemption is also limited by IP. Resetting a password rotates the remember token, deletes the account's database sessions and returns to sign-in. It preserves roles and administrator verification states and does not automatically sign in or verify an account.

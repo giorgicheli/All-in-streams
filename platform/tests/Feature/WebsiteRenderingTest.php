@@ -129,7 +129,7 @@ class WebsiteRenderingTest extends TestCase
             '/talk-to-us?type=creator&creator_type=influencer',
             '/talk-to-us?type=creator&creator_type=both',
             '/forgot-password', '/reset-password/'.str_repeat('a', 64).'?email=qa@example.test',
-            '/privacy-policy', '/terms-and-conditions'];
+            '/privacy-policy', '/terms-and-conditions', '/contact'];
 
         foreach ($routes as $route) {
             $document = new \DOMDocument();

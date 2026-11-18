@@ -284,6 +284,11 @@ class WebsiteEditor extends Page
                 $fields[] = Select::make($name)->label('Country flag')->options(fn () => Countries::options())->required()->searchable()->default($value);
                 continue;
             }
+            if ($prefix === 'contact.' && $key === 'email') {
+                $fields[] = TextInput::make($name)->label('Public contact email')->email()->maxLength(254)
+                    ->default($value)->helperText('Shown on the Contact page. Form messages arrive in Contact messages in the admin panel.');
+                continue;
+            }
             $long = in_array($key, ['body', 'mobile_body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true);
             $field = $long ? Textarea::make($name)->rows(3)->columnSpanFull() : TextInput::make($name);
             $field->label($key === 'mobile_body' ? 'Mobile matching description' : $label)->default($value)->maxLength(5000);
@@ -307,7 +312,7 @@ class WebsiteEditor extends Page
     {
         return [
             'seo' => 'Search & sharing', 'brand_name' => 'Brand name', 'brand_tagline' => 'Brand tagline',
-            'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer', 'network_stats' => 'Network statistics', 'count' => 'Displayed count', 'is_demo' => 'Show sample-data label',
+            'navigation' => 'Main navigation', 'header' => 'Header buttons', 'footer' => 'Footer', 'contact' => 'Contact page', 'network_stats' => 'Network statistics', 'count' => 'Displayed count', 'is_demo' => 'Show sample-data label',
             'creator_reels' => 'Creator video showcase', 'clips' => 'Public preview clips', 'format' => 'Format caption',
             'creator_orbit' => 'Creator connections visual',
             'site_intro' => 'First-visit introduction',

@@ -199,8 +199,9 @@
 .site-redesign .theme-white .site-footer .brand > span,.site-redesign .theme-white .site-footer .brand b { color:#f7f8fc; }
 .site-redesign .theme-white .site-footer .brand small { color:#98a3bc; }
 .site-redesign .theme-white .site-footer .text-link { border-radius:100px; padding:13px 21px; background:#1b2231; color:#dfe7ff; font-size:12px; }
-.site-redesign .theme-white .site-footer .footer-bottom { margin-top:29px; padding-top:24px; color:#98a3bc; font-size:10px; border:0; }
-.site-redesign .theme-white .site-footer .footer-legal { gap:27px; font-size:10px; }
+.site-redesign .theme-white .site-footer .footer-bottom { margin-top:29px; padding-top:24px; color:#98a3bc; font-size:14px; line-height:1.7; border:0; }
+.site-redesign .theme-white .site-footer .footer-legal { gap:27px; font-size:14px; }
+.site-redesign .theme-white .site-footer .footer-legal a { display:inline-flex; align-items:center; min-height:44px; }
 .site-redesign .theme-white .site-footer .footer-legal a { color:#aab4cb; }
 .site-redesign .theme-white .site-footer .footer-legal a:hover { color:#ffffff; }
 .site-redesign .theme-white .legal-page { padding:85px 0 115px; }
@@ -330,8 +331,8 @@
     .site-redesign .theme-white .site-footer .brand > span { font-size:20px; }
     .site-redesign .theme-white .site-footer .brand > svg { width:29px; }
     .site-redesign .theme-white .site-footer .text-link { font-size:11px; gap:10px; padding:12px 17px; }
-    .site-redesign .theme-white .site-footer .footer-bottom { gap:18px; margin-top:29px; padding-top:17px; font-size:9px; }
-    .site-redesign .theme-white .site-footer .footer-legal { margin:0; justify-content:flex-start; gap:23px; font-size:10px; }
+    .site-redesign .theme-white .site-footer .footer-bottom { gap:12px; margin-top:29px; padding-top:17px; font-size:13px; }
+    .site-redesign .theme-white .site-footer .footer-legal { margin:0; justify-content:flex-start; gap:10px 22px; font-size:14px; }
     .site-redesign .theme-white .legal-page { padding:55px 0 75px; }
     .site-redesign .theme-white .legal-header h1 { font-size:46px; }
 }

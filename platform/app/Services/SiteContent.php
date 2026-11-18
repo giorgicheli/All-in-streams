@@ -79,6 +79,7 @@ class SiteContent
         $content = $this->normalizeContent($slug, $content);
         if ($slug === 'settings') {
             $this->objectRules($defaults, '', $rules);
+            $rules['contact.email'] = ['present', 'nullable', 'string', 'email:rfc', 'max:254'];
         } elseif (in_array($slug, ['privacy', 'terms'], true)) {
             $this->objectRules(['seo' => $defaults['seo'], 'title' => $defaults['title']], '', $rules);
             $rules['seo.title'][] = 'max:200';

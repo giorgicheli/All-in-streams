@@ -29,6 +29,15 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('password-email-ip', fn (Request $request) => Limit::perMinutes(10, 10)->by($request->ip()));
         RateLimiter::for('password-update-ip', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
+        RateLimiter::for('contact-message', function (Request $request): array {
+            $email = $request->input('email');
+            $email = is_string($email) ? mb_strtolower(trim(mb_substr($email, 0, 1024))) : '';
+
+            return [
+                Limit::perMinutes(10, 8)->by('contact-ip:'.hash('sha256', (string) $request->ip())),
+                Limit::perHour(4)->by('contact-email:'.hash('sha256', $email !== '' ? $email : (string) $request->ip())),
+            ];
+        });
         Livewire::addPersistentMiddleware([\App\Http\Middleware\EnsurePartnerVerified::class]);
         View::composer(['components.brand', 'components.layout', 'components.auth-story', 'auth.login', 'auth.register', 'auth.forgot-password', 'auth.reset-password', 'site.talk-to-us'], function ($view): void {
             $view->with('site', request()->attributes->get('website.settings') ?? app(SiteContent::class)->getPublished('settings'));
