@@ -216,7 +216,7 @@ class SiteContentDefaults
             ],
             'auth' => [
                 'back_label' => 'Back to All In Streams',
-                'login' => ['page_title' => 'Partner sign in', 'eyebrow' => 'YOUR NEXT MOVE STARTS HERE', 'title' => 'Welcome back.', 'description' => 'Sign in to your partner workspace.', 'submit_label' => 'Sign in', 'remember_label' => 'Keep me signed in', 'register_prompt' => 'New to All In Streams?', 'register_label' => 'Create an account'],
+                'login' => ['page_title' => 'Sign in', 'eyebrow' => 'YOUR NEXT MOVE STARTS HERE', 'title' => 'Sign in', 'description' => 'Sign in to your partner workspace.', 'submit_label' => 'Sign in', 'remember_label' => 'Keep me signed in', 'register_prompt' => 'New to All In Streams?', 'register_label' => 'Create an account'],
                 'register' => ['page_title' => 'Join All In Streams', 'eyebrow' => 'LET’S MAKE YOUR NEXT MOVE', 'title' => 'Let’s go all in.', 'description' => 'A new partnership starts with you.', 'submit_label' => 'Create account', 'login_prompt' => 'Already a partner?', 'login_label' => 'Sign in', 'channel_help' => 'Add at least one channel. Stream on both? Add both links. Your channel details stay private until our team authorizes an introduction.', 'password_help' => 'Use at least 10 characters, including letters and a number.'],
                 'labels' => ['name' => 'Your name', 'company' => 'Company name', 'agency' => 'Agency name', 'email' => 'Email address', 'password' => 'Password', 'password_confirmation' => 'Confirm password', 'twitch' => 'Twitch channel', 'kick' => 'Kick channel', 'company_choice' => 'Company', 'agency_choice' => 'Agency', 'creator_choice' => 'Creator'],
             ],

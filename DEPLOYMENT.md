@@ -135,6 +135,8 @@ The owner prefers minimal borders. Public sections, header, GEO strip and footer
 
 Guest navigation pairs Sign in (`/login`) with Register (`/talk-to-us`, followed by the role chooser). Mobile places Register in the header and Sign in inside the full-screen menu. The footer also uses the concise Sign in label. These labels remain editable in site settings. Authenticated visitors retain their Your workspace shortcut.
 
+The public `/login` page uses the shared navigation and black footer around a centered, single-column form with a Sign in heading. The former companion story and back link are absent on this page; registration and password recovery keep their existing layouts. Login credentials, remember-me, error/status messages and recovery/registration links retain their existing behavior. The rollout updates only the two exact legacy login labels in published settings and drafts, preserving unrelated content and publication revisions; future headings remain editable in Website editor.
+
 ## Email password recovery
 
 The public and administrator login pages link to `/forgot-password`. All account roles, including pending partners, can request a reset by email. Recovery uses Laravel's existing password broker and `password_reset_tokens` table: tokens are hashed, expire after sixty minutes and are single-use. Requests are limited by normalized email and IP; redemption is also limited by IP. Resetting a password rotates the remember token, deletes the account's database sessions and returns to sign-in. It preserves roles and administrator verification states and does not automatically sign in or verify an account.

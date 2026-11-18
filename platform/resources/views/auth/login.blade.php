@@ -1,9 +1,10 @@
 @php $copy = $site['auth']['login']; $labels = $site['auth']['labels']; @endphp
 <x-layout :title="$copy['page_title']">
-<div class="auth-page"><x-auth-story/><main class="auth-main">
+<div class="public-auth-layout">
+@include('site.navigation')
+<main class="auth-page auth-page-centered" aria-labelledby="login-title"><div class="auth-main">
     <div class="auth-form" x-data="{email:{{ Js::from(old('email','')) }},password:''}">
-        <a href="/" class="auth-back"><x-ui-icon name="left" size="14"/> {{ $site['auth']['back_label'] }}</a>
-        <span class="eyebrow">{{ $copy['eyebrow'] }}</span><h2>{{ $copy['title'] }}</h2><p class="muted">{{ $copy['description'] }}</p>
+        <header class="auth-form-heading"><h1 id="login-title">{{ $copy['title'] }}</h1><p class="muted">{{ $copy['description'] }}</p></header>
         @if(session('status'))<div class="auth-notice" role="status">{{ session('status') }}</div>@endif
         @if(session('error'))<div class="auth-notice auth-notice-error" role="alert">{{ session('error') }}</div>@endif
         <form method="POST" action="/login">@csrf
@@ -20,5 +21,7 @@
         @endif
         <p class="auth-switch">{{ $copy['register_prompt'] }} <a href="/register">{{ $copy['register_label'] }} ↗</a></p>
     </div>
-</main></div>
+</div></main>
+@include('site.footer')
+</div>
 </x-layout>
