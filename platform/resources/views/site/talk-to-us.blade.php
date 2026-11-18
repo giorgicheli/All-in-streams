@@ -18,10 +18,10 @@
     if ($requestedRegion ?? null) $enquiryContext['region'] = $requestedRegion;
 @endphp
 <x-layout title="Talk to us" description="Create your All In Streams partner account and tell us about your brand, agency or creator profile.">
+    <div class="public-auth-layout">
+    @include('site.navigation')
     <main class="partner-enquiry" data-partner-enquiry data-enquiry-kind="{{ $selectedKind }}" data-enquiry-creator-type="{{ $selectedCreatorType }}">
-        <a href="/" class="enquiry-close" aria-label="Close and return to All In Streams"><x-ui-icon name="close" size="23"/></a>
         <div class="enquiry-shell">
-            <div class="enquiry-brand"><x-brand/></div>
             @if(session('enquiry_submitted'))
                 <section class="enquiry-success" aria-labelledby="enquiry-success-title">
                     <span class="enquiry-success-icon"><x-ui-icon name="check" size="30"/></span>
@@ -228,4 +228,6 @@
             @endif
         </div>
     </main>
+    @include('site.footer')
+    </div>
 </x-layout>

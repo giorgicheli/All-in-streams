@@ -5,14 +5,11 @@
     $kind = $role === 'creator' ? 'creator' : ($role === 'agency' ? 'agency' : old('account_type', 'business'));
 @endphp
 <x-layout :title="$copy['page_title']">
-    <div class="auth-page">
-        <x-auth-story/>
-        <main class="auth-main">
+    <div class="public-auth-layout">
+        @include('site.navigation')
+        <main class="auth-page auth-page-centered" aria-labelledby="registration-title"><div class="auth-main">
             <div class="auth-form" x-data="{kind:{{ Js::from($kind) }}, creatorType:{{ Js::from(old('creator_type', request('creator_type') === 'influencer' ? 'influencer' : 'streamer')) }}}">
-                <a href="/" class="auth-back"><x-ui-icon name="left" size="14"/> {{ $site['auth']['back_label'] }}</a>
-                <span class="eyebrow">{{ $copy['eyebrow'] }}</span>
-                <h2>{{ $copy['title'] }}</h2>
-                <p class="muted">{{ $copy['description'] }}</p>
+                <header class="auth-form-heading"><h1 id="registration-title">{{ $copy['title'] }}</h1><p class="muted">{{ $copy['description'] }}</p></header>
                 <form method="POST" action="/register" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="role" value="{{ $role }}" :value="kind">
@@ -105,6 +102,7 @@
                 </form>
                 <p class="auth-switch">{{ $copy['login_prompt'] }} <a href="/login">{{ $copy['login_label'] }} ↗</a></p>
             </div>
-        </main>
+        </div></main>
+        @include('site.footer')
     </div>
 </x-layout>

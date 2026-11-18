@@ -135,7 +135,9 @@ The owner prefers minimal borders. Public sections, header, GEO strip and footer
 
 Guest navigation pairs Sign in (`/login`) with Register (`/talk-to-us`, followed by the role chooser). Mobile places Register in the header and Sign in inside the full-screen menu. The footer also uses the concise Sign in label. These labels remain editable in site settings. Authenticated visitors retain their Your workspace shortcut.
 
-The public `/login` page uses the shared navigation and black footer around a centered, single-column form with a Sign in heading. The former companion story and back link are absent on this page; registration and password recovery keep their existing layouts. Login credentials, remember-me, error/status messages and recovery/registration links retain their existing behavior. The rollout updates only the two exact legacy login labels in published settings and drafts, preserving unrelated content and publication revisions; future headings remain editable in Website editor.
+The public `/login` page uses the shared navigation and black footer around a centered, single-column form with a Sign in heading. The former companion story and back link are absent on this page; password recovery keeps its existing layout. Login credentials, remember-me, error/status messages and recovery/registration links retain their existing behavior. The rollout updates only the two exact legacy login labels in published settings and drafts, preserving unrelated content and publication revisions; future headings remain editable in Website editor.
+
+The `/talk-to-us` role chooser, each brand/agency/creator form and the legacy `/register` page also use the shared header and footer. The enquiry pages omit their duplicate logo and floating close link and fit their content between the shared chrome. Role selection, conditional fields, audience selection, proof uploads, account creation and administrator approval retain their existing behavior.
 
 ## Email password recovery
 

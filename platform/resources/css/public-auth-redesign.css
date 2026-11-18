@@ -265,9 +265,13 @@
     .site-redesign .theme-white :is(.enquiry-role-card,.auth-form .btn-primary):hover { transform:none; translate:none; }
 }
 
-/* Sign in uses the shared site chrome and a single, centered form. */
+/* Account entry pages use the shared site chrome. */
 .public-auth-layout { display:flex; flex-direction:column; min-height:100svh; }
 .public-auth-layout > :is(.site-header,.site-footer) { flex-shrink:0; }
+.site-redesign .theme-white .public-auth-layout > .partner-enquiry {
+    flex:1; min-height:0; padding-top:64px; padding-bottom:80px;
+}
+.site-redesign .theme-white .public-auth-layout > .partner-enquiry .enquiry-intro { padding-right:0; }
 .site-redesign .theme-white .auth-page.auth-page-centered {
     display:flex; flex:1; min-height:640px; padding:76px 24px 88px;
     align-items:center; justify-content:center;
@@ -285,6 +289,7 @@
     color:var(--form-muted); font-size:14px; line-height:1.8;
 }
 @media(max-width:700px) {
+    .site-redesign .theme-white .public-auth-layout > .partner-enquiry { padding-top:34px; padding-bottom:50px; }
     .site-redesign .theme-white .auth-page.auth-page-centered { min-height:0; padding:50px 22px 64px; }
     .site-redesign .theme-white .auth-page-centered .auth-form-heading { margin-bottom:30px; }
     .site-redesign .theme-white .auth-page-centered .auth-form-heading h1 { font-size:38px; }
