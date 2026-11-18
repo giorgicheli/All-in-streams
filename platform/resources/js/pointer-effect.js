@@ -4,7 +4,8 @@ const headerLabels = '.desktop-site-navigation a, .desktop-site-navigation summa
 const buttonLabels = 'button,.btn,[role="button"],summary,.text-link,.site-footer a:not(.brand)';
 const radii = [11.5, 10.4, 8.8, 7.1, 5.5, 4.1, 2.8, 1.8];
 const simulationStep = 1 / 120;
-const pointerDelay = 85;
+const pointerDelay = 120;
+const lensExitDuration = 320;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -14,6 +15,7 @@ function mountPointerEffect(root) {
     canvas.dataset.pointerEffect = 'ink';
     canvas.dataset.pointerShape = 'connected-ink';
     canvas.dataset.pointerDelayMs = String(pointerDelay);
+    canvas.dataset.pointerExitDurationMs = String(lensExitDuration);
     canvas.dataset.pointerState = 'sleeping';
     const context = canvas.getContext('2d', { alpha: true, desynchronized: false });
     if (!context) return () => {};
@@ -55,6 +57,8 @@ function mountPointerEffect(root) {
     let menuOpen = false;
     let pageSuspended = false;
     let disposed = false;
+    let exitingLens = null;
+    let dismissalTimer = 0;
 
     const isQuiet = element => element instanceof Element && Boolean(element.closest(quietControls));
     const permitted = (overControl = circleMode) => !disposed && !pageSuspended && !menuOpen && !document.hidden && (overControl || !isQuiet(document.activeElement));
@@ -89,6 +93,9 @@ function mountPointerEffect(root) {
     }
 
     function stop() {
+        clearTimeout(dismissalTimer);
+        dismissalTimer = 0;
+        exitingLens = null;
         cancelAnimationFrame(frame);
         frame = previousTime = accumulator = 0;
         pointer = null;
@@ -99,9 +106,70 @@ function mountPointerEffect(root) {
         headerCopy.classList.remove('is-active');
         headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
         headerCopy.dataset.lensRadius = '0';
+        headerCopy.style.removeProperty('opacity');
+        headerCopy.style.removeProperty('transition');
+        delete canvas.dataset.pointerLensFade;
         canvas.dataset.pointerState = 'sleeping';
         clear();
         syncLayer(null);
+    }
+
+    function beginLensExit(now) {
+        const radius = Number(headerCopy.dataset.lensRadius);
+        if (!circleMode || !pointer || !(radius > 0)) return;
+        const ink = inkAt(lens.x, lens.y);
+        exitingLens = {
+            x: lens.x, y: lens.y, radius,
+            ink, labelColor: headerCopy.style.getPropertyValue('--pointer-label-color'),
+            header: headerMode, started: now,
+        };
+        headerCopy.style.transition = 'none';
+    }
+
+    function paintLensExit(now) {
+        if (!exitingLens) return;
+        const progress = clamp((now - exitingLens.started) / lensExitDuration, 0, 1);
+        const alpha = 1 - progress * progress * (3 - 2 * progress);
+        if (progress >= 1) {
+            exitingLens = null;
+            headerCopy.classList.remove('is-active');
+            headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
+            headerCopy.style.removeProperty('opacity');
+            headerCopy.style.removeProperty('transition');
+            headerCopy.dataset.lensRadius = '0';
+            delete canvas.dataset.pointerLensFade;
+            return;
+        }
+        context.save();
+        context.globalAlpha = alpha;
+        context.fillStyle = exitingLens.ink;
+        context.beginPath();
+        context.arc(exitingLens.x, exitingLens.y, exitingLens.radius, 0, Math.PI * 2);
+        context.fill();
+        context.restore();
+        headerCopy.classList.add('is-active');
+        headerCopy.style.opacity = String(alpha);
+        headerCopy.style.setProperty('--pointer-label-color', exitingLens.labelColor);
+        headerCopy.style.clipPath = `circle(${Math.max(0, exitingLens.radius - .75)}px at ${exitingLens.x}px ${exitingLens.y}px)`;
+        canvas.dataset.pointerLensFade = alpha.toFixed(3);
+        if (now - lastLabelRefresh > 100) refreshHeaderLabels();
+    }
+
+    function fadeOut() {
+        if (dismissalTimer) return;
+        if (disposed || pageSuspended || menuOpen || document.hidden || (activeModal && !activeModal.matches(':modal'))) { stop(); return; }
+        cancelAnimationFrame(frame);
+        frame = previousTime = 0;
+        exitingLens = null;
+        delete canvas.dataset.pointerLensFade;
+        // Keep the last painted pixels and their matching clipped glyphs until
+        // both opacity transitions finish; clearing now would bypass the fade.
+        headerCopy.style.transition = `opacity ${lensExitDuration}ms cubic-bezier(.22,.61,.36,1)`;
+        headerCopy.style.opacity = '0';
+        canvas.classList.remove('is-active');
+        headerCopy.classList.remove('is-active');
+        canvas.dataset.pointerState = 'fading';
+        dismissalTimer = setTimeout(stop, lensExitDuration + 30);
     }
 
     // Copy only visible label glyphs and built-in line icons, never controls,
@@ -114,7 +182,7 @@ function mountPointerEffect(root) {
         const icons = [];
         const seen = new Set();
         const typography = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontStretch', 'fontVariant', 'fontFeatureSettings', 'fontVariationSettings', 'fontKerning', 'letterSpacing', 'wordSpacing', 'lineHeight', 'textTransform', 'textRendering'];
-        const labels = headerMode ? [...(header?.querySelectorAll(headerLabels) || [])] : circleMode ? [...(activeModal || root).querySelectorAll(buttonLabels)] : [];
+        const labels = (circleMode ? headerMode : exitingLens?.header) ? [...(header?.querySelectorAll(headerLabels) || [])] : circleMode || exitingLens ? [...(activeModal || root).querySelectorAll(buttonLabels)] : [];
         labels.forEach(label => {
             const bounds = label.getBoundingClientRect();
             if (!bounds.width || !bounds.height || bounds.bottom < 0 || bounds.top > height || bounds.right < 0 || bounds.left > width) return;
@@ -350,6 +418,7 @@ function mountPointerEffect(root) {
             context.arc(bead.x, bead.y, bead.paintRadius, 0, Math.PI * 2);
             context.fill();
         });
+        paintLensExit(now);
         if (scale <= 0) { stop(); return; }
         frame = requestAnimationFrame(draw);
     }
@@ -357,11 +426,20 @@ function mountPointerEffect(root) {
     document.addEventListener('pointermove', event => {
         if (event.pointerType !== 'mouse' || event.isPrimary === false) { stop(); return; }
         const now = performance.now();
+        if (activeModal && !activeModal.matches(':modal')) stop();
         const overHeader = Boolean(header && event.target instanceof Node && header.contains(event.target));
         const control = event.target instanceof Element ? event.target.closest(overHeader ? headerLabels : buttonLabels) : null;
         const inHeader = overHeader && Boolean(control);
         const inCircle = Boolean(control);
-        if (!permitted(inCircle) || isQuiet(event.target)) { stop(); return; }
+        if (!permitted(inCircle) || isQuiet(event.target)) { fadeOut(); return; }
+        clearTimeout(dismissalTimer);
+        dismissalTimer = 0;
+        if (inCircle) {
+            exitingLens = null;
+            headerCopy.style.removeProperty('opacity');
+            headerCopy.style.removeProperty('transition');
+            delete canvas.dataset.pointerLensFade;
+        } else if (circleMode) beginLensExit(now);
         const changedControl = control !== hoveredControl;
         const changedMode = inHeader !== headerMode || inCircle !== circleMode;
         headerMode = inHeader;
@@ -384,9 +462,9 @@ function mountPointerEffect(root) {
         inputPointer = next;
         pointerSamples.push({ ...next, time: now });
         if (pointerSamples.length > 128) pointerSamples.splice(0, pointerSamples.length - 128);
-        headerCopy.classList.toggle('is-active', circleMode);
+        headerCopy.classList.toggle('is-active', circleMode || Boolean(exitingLens));
         if (circleMode && (changedMode || changedControl || now - lastLabelRefresh > 100)) refreshHeaderLabels();
-        if (!circleMode) headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
+        if (!circleMode && !exitingLens) headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
         canvas.dataset.pointerMode = headerMode ? 'header' : circleMode ? 'button' : 'body';
         lastMotion = now;
         canvas.classList.add('is-active');
@@ -394,17 +472,19 @@ function mountPointerEffect(root) {
         if (!frame) frame = requestAnimationFrame(draw);
     }, options);
     document.addEventListener('pointerdown', event => {
-        if (event.pointerType !== 'mouse' || isQuiet(event.target) || event.target.closest?.('a,button,[role="button"]')) stop();
+        if (event.pointerType !== 'mouse') stop();
+        else if (isQuiet(event.target) || event.target.closest?.('a,button,[role="button"]')) fadeOut();
     }, options);
-    document.addEventListener('focusin', event => { if (isQuiet(event.target)) stop(); }, options);
+    document.addEventListener('focusin', event => { if (isQuiet(event.target)) fadeOut(); }, options);
     document.addEventListener('keydown', stop, { signal: events.signal });
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); }, options);
-    document.addEventListener('pointerout', event => { if (!event.relatedTarget) stop(); }, options);
+    document.addEventListener('pointerout', event => { if (!event.relatedTarget) fadeOut(); }, options);
     document.addEventListener('ais:navigation-state', event => { menuOpen = Boolean(event.detail?.open); if (menuOpen) stop(); }, { signal: events.signal });
     document.addEventListener('livewire:navigating', cleanup, { signal: events.signal });
-    window.addEventListener('blur', stop, options);
+    window.addEventListener('blur', fadeOut, options);
     window.addEventListener('scroll', () => { stop(); lastLabelRefresh = 0; }, options);
     document.addEventListener('toggle', refreshHeaderLabels, { signal: events.signal, capture: true });
+    document.addEventListener('close', () => { if (activeModal && !activeModal.matches(':modal')) stop(); }, { signal: events.signal, capture: true });
     window.addEventListener('resize', () => {
         stop();
         cancelAnimationFrame(resizeFrame);
