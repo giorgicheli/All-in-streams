@@ -7,6 +7,7 @@ const simulationStep = 1 / 120;
 const pointerDelay = 120;
 const lensExitHold = 220;
 const lensExitDuration = 480;
+const inkRevealDuration = 160;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -54,6 +55,8 @@ function mountPointerEffect(root) {
     const pointerSamples = [];
     let inputPointer = null;
     let pointer = null;
+    let lensCoordinates = false;
+    let inkRevealStarted = null;
     let width = innerWidth;
     let height = innerHeight;
     let menuOpen = false;
@@ -103,6 +106,8 @@ function mountPointerEffect(root) {
         pointer = null;
         inputPointer = null;
         pointerSamples.length = 0;
+        lensCoordinates = false;
+        inkRevealStarted = null;
         paintedBeads.forEach(bead => { bead.paintRadius = 0; });
         canvas.classList.remove('is-active');
         headerCopy.classList.remove('is-active');
@@ -119,10 +124,8 @@ function mountPointerEffect(root) {
     function beginLensExit(now, resumeDismissal = false) {
         const radius = Number(headerCopy.dataset.lensRadius);
         if (!circleMode || !pointer || !(radius > 0)) return;
-        const ink = inkAt(lens.x, lens.y);
         exitingLens = {
-            x: lens.x, y: lens.y, radius,
-            ink, labelColor: headerCopy.style.getPropertyValue('--pointer-label-color'),
+            radius,
             header: headerMode, started: now - (resumeDismissal ? lensExitHold : 0),
             startAlpha: resumeDismissal ? clamp(Number.parseFloat(getComputedStyle(headerCopy).opacity) || 0, 0, 1) : 1,
         };
@@ -141,21 +144,40 @@ function mountPointerEffect(root) {
             headerCopy.style.removeProperty('transition');
             headerCopy.dataset.lensRadius = '0';
             delete canvas.dataset.pointerLensFade;
-            return;
+            // Switch the shared delayed input history to the ink's small offset
+            // only after the moving circle has completely disappeared.
+            if (lensCoordinates) {
+                pointerSamples.forEach(sample => { sample.x -= 7; sample.y += 10; });
+                inputPointer = { x: inputPointer.x - 7, y: inputPointer.y + 10 };
+                pointer = { x: pointer.x - 7, y: pointer.y + 10 };
+                lensCoordinates = false;
+            }
+            beads.forEach(bead => { bead.x = bead.previousX = pointer.x; bead.y = bead.previousY = pointer.y; });
+            accumulator = previousTime = 0;
+            lastMotion = inkRevealStarted = now;
+            return false;
         }
+        const headerBounds = header?.getBoundingClientRect();
+        const overHeader = Boolean(headerBounds && lens.x >= headerBounds.left && lens.x <= headerBounds.right && lens.y >= headerBounds.top && lens.y <= headerBounds.bottom);
+        if (overHeader !== exitingLens.header) lastLabelRefresh = 0;
+        exitingLens.header = overHeader;
+        const ink = inkAt(lens.x, lens.y);
         context.save();
         context.globalAlpha = alpha;
-        context.fillStyle = exitingLens.ink;
+        context.fillStyle = ink;
         context.beginPath();
-        context.arc(exitingLens.x, exitingLens.y, exitingLens.radius, 0, Math.PI * 2);
+        context.arc(lens.x, lens.y, exitingLens.radius, 0, Math.PI * 2);
         context.fill();
         context.restore();
         headerCopy.classList.add('is-active');
         headerCopy.style.opacity = String(alpha);
-        headerCopy.style.setProperty('--pointer-label-color', exitingLens.labelColor);
-        headerCopy.style.clipPath = `circle(${Math.max(0, exitingLens.radius - .75)}px at ${exitingLens.x}px ${exitingLens.y}px)`;
+        headerCopy.style.clipPath = `circle(${Math.max(0, exitingLens.radius - .75)}px at ${lens.x}px ${lens.y}px)`;
+        headerCopy.dataset.lensX = lens.x.toFixed(2);
+        headerCopy.dataset.lensY = lens.y.toFixed(2);
+        headerCopy.dataset.lensRadius = exitingLens.radius.toFixed(2);
         canvas.dataset.pointerLensFade = alpha.toFixed(3);
         if (now - lastLabelRefresh > 100) refreshHeaderLabels();
+        return true;
     }
 
     function fadeOut() {
@@ -325,7 +347,7 @@ function mountPointerEffect(root) {
 
     function draw(now) {
         frame = 0;
-        if (!permitted() || !pointer || (!circleMode && now - lastMotion > 1180)) { stop(); return; }
+        if (!permitted() || !pointer || (!circleMode && !exitingLens && now - lastMotion > 1180)) { stop(); return; }
         if (activeModal && !activeModal.matches(':modal')) { stop(); return; }
         const target = delayedPointer(now);
         if (Math.hypot(target.x - pointer.x, target.y - pointer.y) > 150) {
@@ -337,9 +359,7 @@ function mountPointerEffect(root) {
         pointer = target;
         const dt = previousTime ? Math.min((now - previousTime) / 1000, 1 / 30) : 1 / 60;
         previousTime = now;
-        const drying = circleMode ? 0 : clamp((now - lastMotion - 150) / 930, 0, 1);
-        const scale = 1 - drying * drying * (3 - 2 * drying);
-        if (circleMode) {
+        if (circleMode || exitingLens) {
             const follow = 1 - Math.exp(-dt * 24);
             lens.x += (pointer.x - lens.x) * follow;
             lens.y += (pointer.y - lens.y) * follow;
@@ -348,24 +368,31 @@ function mountPointerEffect(root) {
                 lens.x = pointer.x + (lens.x - pointer.x) / gap * 32;
                 lens.y = pointer.y + (lens.y - pointer.y) / gap * 32;
             }
-            const radius = 30 * scale;
             clear();
-            context.fillStyle = inkAt(lens.x, lens.y);
-            context.beginPath();
-            context.arc(lens.x, lens.y, radius, 0, Math.PI * 2);
-            context.fill();
-            // Keep contrasting glyph antialiasing inside the opaque lens edge.
-            headerCopy.style.clipPath = `circle(${Math.max(0, radius - .75)}px at ${lens.x}px ${lens.y}px)`;
-            headerCopy.dataset.lensX = lens.x.toFixed(2);
-            headerCopy.dataset.lensY = lens.y.toFixed(2);
-            headerCopy.dataset.lensRadius = radius.toFixed(2);
-            if (now - lastLabelRefresh > 100) refreshHeaderLabels();
-            // A stationary hover remains visible without an idle animation loop.
-            const awaitingInput = now < pointerSamples[pointerSamples.length - 1].time + pointerDelay;
-            if (awaitingInput || Math.hypot(lens.x - pointer.x, lens.y - pointer.y) > .05) frame = requestAnimationFrame(draw);
-            else previousTime = 0;
-            return;
+            if (exitingLens) {
+                if (paintLensExit(now)) { frame = requestAnimationFrame(draw); return; }
+            } else {
+                const radius = 30;
+                context.fillStyle = inkAt(lens.x, lens.y);
+                context.beginPath();
+                context.arc(lens.x, lens.y, radius, 0, Math.PI * 2);
+                context.fill();
+                // Keep contrasting glyph antialiasing inside the opaque lens edge.
+                headerCopy.style.clipPath = `circle(${Math.max(0, radius - .75)}px at ${lens.x}px ${lens.y}px)`;
+                headerCopy.dataset.lensX = lens.x.toFixed(2);
+                headerCopy.dataset.lensY = lens.y.toFixed(2);
+                headerCopy.dataset.lensRadius = radius.toFixed(2);
+                if (now - lastLabelRefresh > 100) refreshHeaderLabels();
+                // A stationary hover remains visible without an idle animation loop.
+                const awaitingInput = now < pointerSamples[pointerSamples.length - 1].time + pointerDelay;
+                if (awaitingInput || Math.hypot(lens.x - pointer.x, lens.y - pointer.y) > .05) frame = requestAnimationFrame(draw);
+                else previousTime = 0;
+                return;
+            }
         }
+        const drying = clamp((now - lastMotion - 150) / 930, 0, 1);
+        const reveal = inkRevealStarted === null ? 1 : clamp((now - inkRevealStarted) / inkRevealDuration, 0, 1);
+        const scale = (1 - drying * drying * (3 - 2 * drying)) * reveal * reveal * (3 - 2 * reveal);
         // The same simulation rate on every display keeps the familiar elastic
         // chain consistent. Interpolation smooths the frames between its steps.
         accumulator = Math.min(accumulator + dt, .05);
@@ -421,8 +448,7 @@ function mountPointerEffect(root) {
             context.arc(bead.x, bead.y, bead.paintRadius, 0, Math.PI * 2);
             context.fill();
         });
-        paintLensExit(now);
-        if (scale <= 0) { stop(); return; }
+        if (drying >= 1) { stop(); return; }
         frame = requestAnimationFrame(draw);
     }
 
@@ -440,6 +466,7 @@ function mountPointerEffect(root) {
         dismissalTimer = 0;
         if (inCircle) {
             exitingLens = null;
+            inkRevealStarted = null;
             headerCopy.style.removeProperty('opacity');
             headerCopy.style.removeProperty('transition');
             delete canvas.dataset.pointerLensFade;
@@ -450,8 +477,9 @@ function mountPointerEffect(root) {
         circleMode = inCircle;
         hoveredControl = control;
         syncLayer(event.target instanceof Element ? event.target.closest('dialog:modal') : null);
-        const next = { x: event.clientX - (circleMode ? 0 : 7), y: event.clientY + (circleMode ? 0 : 10) };
-        if (!inputPointer || changedMode) {
+        const tracksLens = circleMode || Boolean(exitingLens);
+        const next = { x: event.clientX - (tracksLens ? 0 : 7), y: event.clientY + (tracksLens ? 0 : 10) };
+        if (!inputPointer || tracksLens !== lensCoordinates) {
             beads.forEach(bead => { bead.x = bead.previousX = next.x; bead.y = bead.previousY = next.y; });
             lens.x = next.x;
             lens.y = next.y;
@@ -463,6 +491,7 @@ function mountPointerEffect(root) {
             // Do not interpolate a new movement back across stationary time.
             pointerSamples.push({ ...inputPointer, time: now - .001 });
         }
+        lensCoordinates = tracksLens;
         inputPointer = next;
         pointerSamples.push({ ...next, time: now });
         if (pointerSamples.length > 128) pointerSamples.splice(0, pointerSamples.length - 128);
