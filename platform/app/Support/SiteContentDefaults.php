@@ -156,7 +156,7 @@ class SiteContentDefaults
             ],
             'creator_reels' => [
                 'enabled' => true, 'eyebrow' => 'Creator culture',
-                'title' => 'Creator content. In motion.',
+                'title' => 'Our creator network',
                 'description' => 'Live moments. Fresh perspectives. Discover the formats that bring brands and creator communities together.',
                 'label' => 'Explore the network', 'url' => '#creators',
                 'clips' => [

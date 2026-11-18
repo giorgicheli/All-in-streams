@@ -1,0 +1,13 @@
+.hero-stage.has-network-departure .hero-copy > :is(h1, p, .hero-buttons),
+.hero-stage.has-network-departure > .geo-strip {
+    filter: opacity(var(--hero-story-opacity, 1));
+    transition: filter 160ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-stage.has-network-departure .hero-copy > :is(h1, p, .hero-buttons),
+    .hero-stage.has-network-departure > .geo-strip {
+        filter: none;
+        transition: none;
+    }
+}

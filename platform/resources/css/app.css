@@ -30,6 +30,8 @@
 @import './hero-orbit.css';
 @import './mobile-creator-hero.css';
 @import './site-intro.css';
+@import './network-showcase.css';
+@import './network-story-transition.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

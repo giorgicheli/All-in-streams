@@ -13,6 +13,8 @@ import { initializeRopeStatistics } from './rope-statistics';
 import { initializePointerEffect } from './pointer-effect';
 import { initializeCreatorReels } from './creator-reels';
 import { initializeCreatorOrbit } from './creator-orbit';
+import { initializeNetworkShowcase } from './network-showcase';
+import { initializeNetworkStoryTransition } from './network-story-transition';
 import { initializeSiteIntro } from './site-intro';
 
 let cleanup = () => {};
@@ -63,6 +65,8 @@ function initializePage() {
     const disposePointerEffect = initializePointerEffect();
     const disposeCreatorReels = initializeCreatorReels();
     const disposeCreatorOrbit = initializeCreatorOrbit();
+    const disposeNetworkShowcase = initializeNetworkShowcase();
+    const disposeNetworkStoryTransition = initializeNetworkStoryTransition();
     const header = document.querySelector('.site-header');
     if (header) {
         const updateHeader = () => {
@@ -90,6 +94,8 @@ function initializePage() {
         disposePointerEffect();
         disposeCreatorReels();
         disposeCreatorOrbit();
+        disposeNetworkShowcase();
+        disposeNetworkStoryTransition();
     };
 }
 
