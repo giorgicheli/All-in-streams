@@ -1,39 +1,29 @@
-.site-redesign .theme-white .creator-reel-section { padding: 100px 0 108px; background: #f5f6fb; }
-.creator-reel-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 34px; min-width: 0; }
-.creator-reel-header { display: flex; align-items: end; justify-content: space-between; gap: 32px; min-width: 0; }
-.site-redesign .theme-white .creator-reel-header h2 { max-width: 700px; margin: 0; color: #191c24; font-family: 'Inter Variable', sans-serif; font-size: clamp(38px, 4.5vw, 64px); font-weight: 650; letter-spacing: -.065em; line-height: 1.03; text-wrap: balance; }
-.creator-reel-navigation { display: flex; flex: none; gap: 8px; padding-bottom: 3px; }
-.creator-reel-navigation button { display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%; background: #e8ebf3; color: #232938; cursor: pointer; transition: color .2s ease, background .2s ease, opacity .2s ease; }
-.creator-reel-navigation button:hover:not(:disabled) { background: #245bff; color: #fff; }
-.creator-reel-navigation button:disabled { opacity: .35; cursor: default; }
-.creator-reel-navigation button:focus-visible { outline: 2px solid #245bff; outline-offset: 4px; }
-.creator-reel-ribbon { --ribbon-gap: 18px; display: flex; align-items: stretch; gap: var(--ribbon-gap); min-width: 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: 0; scrollbar-width: none; overscroll-behavior-x: contain; border-radius: 19px; -webkit-overflow-scrolling: touch; }
+.site-redesign .theme-white .creator-reel-section { padding: 90px 0 96px; background: #f5f6fb; }
+.creator-reel-layout { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 30px; }
+.site-redesign .theme-white .creator-reel-layout > h2 { max-width: 740px; margin: 0; color: #191c24; font-family: 'Inter Variable', sans-serif; font-size: clamp(38px, 4.5vw, 64px); font-weight: 650; letter-spacing: -.065em; line-height: 1.03; text-wrap: balance; }
+.creator-reel-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; min-width: 0; }
+.creator-reel-ribbon { --reel-gap: 14px; --reel-shift: 0px; display: flex; align-items: stretch; gap: var(--reel-gap); min-width: 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; border-radius: 15px; -webkit-overflow-scrolling: touch; }
 .creator-reel-ribbon::-webkit-scrollbar { display: none; }
-.creator-reel-ribbon:focus-visible { outline: 2px solid #245bff; outline-offset: 6px; }
-.creator-reel-ribbon.is-advancing { scroll-snap-type: none; }
-.creator-reel-ribbon.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
-.creator-reel-panel { position: relative; flex: 0 0 calc((100% - var(--ribbon-gap) * 2) / 3); height: 300px; min-width: 0; overflow: hidden; border-radius: 19px; background: #dce2ed; scroll-snap-align: start; isolation: isolate; }
-.creator-reel-panel > img, .creator-reel-panel > video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
-.creator-reel-panel > video { opacity: 0; transition: opacity .65s cubic-bezier(.4, 0, .2, 1); }
-.creator-reel-panel > video.is-ready { opacity: 1; }
-.creator-reel-panel > img { pointer-events: none; }
+.creator-reel-ribbon:focus-visible { outline: 2px solid #245bff; outline-offset: 5px; }
+.creator-reel-ribbon[data-reel-loop='true'] { scroll-snap-type: none; }
+.creator-reel-ribbon.is-dragging { cursor: grabbing; user-select: none; scroll-snap-type: none; }
+.creator-reel-card { position: relative; flex: 0 0 calc((100% - var(--reel-gap) * 2) / 2.2); height: 170px; min-width: 0; overflow: hidden; border-radius: 15px; background: #dce2ed; scroll-snap-align: start; isolation: isolate; translate: var(--reel-shift) 0; }
+.creator-reel-card[data-reel-clone] { display: none; }
+.creator-reel-ribbon[data-reel-loop='true'] .creator-reel-card[data-reel-clone] { display: block; }
+.creator-reel-card > img, .creator-reel-card > video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.creator-reel-card > video { opacity: 0; transition: opacity .6s cubic-bezier(.4, 0, .2, 1); }
+.creator-reel-card > video.is-ready { opacity: 1; }
+.creator-reel-card > img { pointer-events: none; }
 .creator-reel-card-link { position: absolute; inset: 0; z-index: 2; border-radius: inherit; }
 .creator-reel-card-link:focus-visible { outline: 3px solid #6c98ff; outline-offset: -5px; }
-@media (min-width: 1500px) { .creator-reel-panel { height: 330px; } }
-@media (max-width: 1000px) { .creator-reel-ribbon { --ribbon-gap: 14px; } .creator-reel-panel { height: 270px; } }
-@media (max-width: 760px) {
-    .site-redesign .theme-white .creator-reel-section { padding: 66px 0 72px; }
-    .creator-reel-layout { gap: 26px; }
-    .creator-reel-header { align-items: end; gap: 18px; }
-    .site-redesign .theme-white .creator-reel-header h2 { max-width: 460px; font-size: clamp(34px, 7.5vw, 50px); }
-    .creator-reel-navigation { gap: 5px; padding-bottom: 1px; }
-    .creator-reel-navigation button { width: 42px; height: 44px; }
-    .creator-reel-ribbon { --ribbon-gap: 12px; border-radius: 16px; }
-    .creator-reel-panel { flex-basis: 86%; height: clamp(190px, 58vw, 240px); border-radius: 16px; }
+@media (min-width: 1500px) { .creator-reel-card { height: 180px; } }
+@media (max-width: 1000px) { .creator-reel-card { height: 150px; } }
+@media (max-width: 700px) {
+    .site-redesign .theme-white .creator-reel-section { padding: 60px 0 64px; }
+    .creator-reel-layout { gap: 24px; }
+    .site-redesign .theme-white .creator-reel-layout > h2 { font-size: clamp(34px, 8.1vw, 48px); }
+    .creator-reel-rows { gap: 10px; }
+    .creator-reel-ribbon { --reel-gap: 9px; border-radius: 10px; }
+    .creator-reel-card { height: clamp(88px, 25vw, 100px); border-radius: 10px; }
 }
-@media (max-width: 380px) {
-    .creator-reel-header { align-items: start; gap: 12px; }
-    .site-redesign .theme-white .creator-reel-header h2 { font-size: 32px; }
-    .creator-reel-navigation { flex-direction: column; gap: 4px; }
-}
-@media (prefers-reduced-motion: reduce) { .creator-reel-panel > video, .creator-reel-navigation button { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .creator-reel-card > video { transition: none; } }

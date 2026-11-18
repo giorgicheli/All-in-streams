@@ -22,8 +22,7 @@
 @endphp
 <dialog class="site-intro" data-site-intro data-state="waiting" aria-label="{{ $intro['accessible_label'] }}">
     <div class="site-intro-top">
-        <div class="site-intro-brand" data-site-intro-focus tabindex="-1"><x-brand tabindex="-1"/></div>
-        <button type="button" class="site-intro-skip" data-site-intro-skip>{{ $intro['skip_label'] }}<x-ui-icon name="arrow" size="16"/></button>
+        <button type="button" class="site-intro-skip" data-site-intro-skip data-site-intro-focus>{{ $intro['skip_label'] }}<x-ui-icon name="arrow" size="16"/></button>
     </div>
     <div class="site-intro-orbit" aria-hidden="true"></div>
     <div class="site-intro-deck" aria-hidden="true">

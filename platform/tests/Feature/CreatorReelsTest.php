@@ -124,14 +124,14 @@ class CreatorReelsTest extends TestCase
         $this->assertSame($orderedClips, $published['creator_reels']['clips']);
     }
 
-    public function test_video_markup_starts_with_posters_and_one_ordered_ribbon(): void
+    public function test_video_markup_starts_with_posters_and_two_opposed_rows(): void
     {
         $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => SiteContentDefaults::settings()['creator_reels']]);
         $this->assertStringContainsString('data-reel-ribbon', $html);
         $this->assertStringNotContainsString('data-reel-playlist', $html);
         $this->assertStringContainsString('/images/creator-reels/studio.jpg', $html);
-        $this->assertStringNotContainsString('data-reel-row', $html);
-        $this->assertStringNotContainsString('data-reel-clone', $html);
+        $this->assertStringContainsString('data-reel-row="forward"', $html);
+        $this->assertStringContainsString('data-reel-row="reverse"', $html);
         $this->assertStringNotContainsString('Pause previews', $html);
         $this->assertStringNotContainsString('Creator culture', $html);
         $this->assertDoesNotMatchRegularExpression('/<video\b[^>]*(?<!data-)\ssrc=/', $html);
@@ -141,8 +141,8 @@ class CreatorReelsTest extends TestCase
         $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
         $xpath = new \DOMXPath($document);
         $this->assertSame(9, $xpath->query('//article[@data-reel-panel]')->length);
-        $this->assertSame(9, $xpath->query('//video[@data-reel-video and @data-src]')->length);
-        $this->assertSame(2, $xpath->query('//button')->length);
+        $this->assertSame(9, $xpath->query('//article[@data-reel-panel]//video[@data-reel-video and @data-src]')->length);
+        $this->assertSame(2, $xpath->query('//*[@data-reel-row]')->length);
     }
 
     public function test_disabling_the_showcase_omits_media_and_controls(): void
@@ -236,7 +236,10 @@ class CreatorReelsTest extends TestCase
         $this->assertSame(range(1, 9), $positions);
         $this->assertCount(9, array_unique(array_column($settings['creator_reels']['clips'], 'sample_clip')));
         $this->assertSame($settings['creator_reels']['clips'][0]['link_url'], $xpath->query('//*[@data-reel-link]')->item(0)->getAttribute('href'));
-        $this->assertSame(0, $xpath->query('//*[@data-reel-clone]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-reel-clone and not(@aria-hidden="true")]')->length);
+        foreach ($xpath->query('//*[@data-reel-clone]//a[@data-reel-link]') as $link) {
+            $this->assertSame('-1', $link->getAttribute('tabindex'));
+        }
     }
 
     public function test_brand_spotlight_respects_draft_publication_and_visibility(): void

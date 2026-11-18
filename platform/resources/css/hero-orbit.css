@@ -38,7 +38,7 @@
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-card { min-height: 142px; padding: 21px 18px; border-radius: 17px; }
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-value { font-size: 35px; }
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-top { gap: 8px; }
-    .site-redesign .theme-white .network-after-hero.network-compact .network-stat-card h3 { margin-top: 21px; font-size: 12px; }
+    .site-redesign .theme-white .network-after-hero.network-compact .network-stat-card h3 { margin-top: 21px; font-size: 14px; line-height: 1.45; }
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-icon { width: 30px; height: 32px; border-radius: 9px; }
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-icon .icon { width: 17px; height: 17px; }
 }
@@ -46,7 +46,7 @@
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-card { padding: 20px 14px; }
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-value { font-size: 30px; }
     .site-redesign .theme-white .network-after-hero.network-compact .network-stat-icon { width: 25px; height: 29px; }
-    .site-redesign .theme-white .network-after-hero.network-compact .network-stat-card h3 { font-size: 11px; }
+    .site-redesign .theme-white .network-after-hero.network-compact .network-stat-card h3 { font-size: 13px; }
     .hero-orbit-art .creator-orbit-stage-wrap { aspect-ratio: .98; }
     .hero-orbit-art .creator-orbit-brand-card { top: 48%; }
     .hero-orbit-art .creator-orbit-creator-bottom { top: 85%; }

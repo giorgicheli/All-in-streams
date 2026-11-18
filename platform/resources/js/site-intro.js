@@ -6,6 +6,8 @@ const holdAt = advanceDuration * .68;
 const completeDuration = 350;
 const exitDuration = 1150;
 const reducedDuration = 700;
+const mediaStartDelay = 900;
+const cardRevealDelay = 1100;
 const ease = amount => (1 - Math.cos(Math.PI * Math.max(0, Math.min(1, amount)))) / 2;
 
 export function initializeSiteIntro(root = document) {
@@ -20,6 +22,8 @@ export function initializeSiteIntro(root = document) {
     let ready = false;
     let opened = false;
     let started = false;
+    let mediaStarted = false;
+    let clips = [];
     let frame = 0;
     let lastTime = 0;
     let elapsed = 0;
@@ -123,6 +127,25 @@ export function initializeSiteIntro(root = document) {
         });
     }
 
+    function startMedia() {
+        if (mediaStarted || disposed || leaving || reduced.matches || !running()) return;
+        mediaStarted = true;
+        videos.forEach((video, index) => {
+            const clip = clips[Number(video.dataset.clipIndex) % clips.length];
+            if (!clip || typeof clip.src !== 'string' || typeof clip.poster !== 'string') { settled.add(index); return; }
+            const poster = video.parentElement.querySelector('[data-site-intro-poster]');
+            if (poster) poster.src = clip.poster;
+            if (connection?.saveData) { settled.add(index); return; }
+            video.muted = video.defaultMuted = true;
+            video.poster = clip.poster;
+            video.addEventListener('loadeddata', () => { settled.add(index); video.classList.add('is-ready'); }, { ...options, once: true });
+            video.addEventListener('error', () => { settled.add(index); unload(video); }, { ...options, once: true });
+            video.src = clip.src;
+            video.load();
+        });
+        resumeVideos();
+    }
+
     function leave() {
         if (disposed || leaving) return;
         updateProgress(100);
@@ -156,6 +179,8 @@ export function initializeSiteIntro(root = document) {
                     updateProgress(100 * ease(elapsed / reducedDuration));
                     if (elapsed >= reducedDuration) { leave(); return; }
                 } else {
+                    if (elapsed >= mediaStartDelay) startMedia();
+                    if (elapsed >= cardRevealDelay) dialog.classList.add('is-deck-visible');
                     if (elapsed >= 4500) videos.forEach((_, index) => settled.add(index));
                     const inHold = elapsed >= holdAt && elapsed < holdAt + holdDuration;
                     const advance = elapsed <= holdAt ? elapsed : elapsed < holdAt + holdDuration ? holdAt : elapsed - holdDuration;
@@ -217,7 +242,7 @@ export function initializeSiteIntro(root = document) {
 
     try {
         if (!fill || !count || !bar || !headings.length || typeof dialog.showModal !== 'function') throw new Error('Intro unavailable');
-        const clips = JSON.parse(dialog.querySelector('[data-site-intro-clips]')?.textContent || '[]');
+        clips = JSON.parse(dialog.querySelector('[data-site-intro-clips]')?.textContent || '[]');
         if (!Array.isArray(clips) || !clips.length) throw new Error('Intro clips unavailable');
         dialog.showModal();
         opened = true;
@@ -244,26 +269,12 @@ export function initializeSiteIntro(root = document) {
             if (connection.saveData) videos.forEach(unload);
             else resumeVideos();
         }, options);
-        videos.forEach((video, index) => {
-            const clip = clips[Number(video.dataset.clipIndex) % clips.length];
-            if (!clip || typeof clip.src !== 'string' || typeof clip.poster !== 'string') { settled.add(index); return; }
-            if (reduced.matches) { settled.add(index); return; }
-            const poster = video.parentElement.querySelector('[data-site-intro-poster]');
-            if (poster) poster.src = clip.poster;
-            if (connection?.saveData) { settled.add(index); return; }
-            video.muted = video.defaultMuted = true;
-            video.poster = clip.poster;
-            video.addEventListener('loadeddata', () => { settled.add(index); video.classList.add('is-ready'); }, { ...options, once: true });
-            video.addEventListener('error', () => { settled.add(index); unload(video); }, { ...options, once: true });
-            video.src = clip.src;
-            video.load();
-        });
         observer = new IntersectionObserver(entries => {
             const nextVisible = entries[0].isIntersecting;
             if (nextVisible !== visible) { visible = nextVisible; visibility(); }
         }, { threshold: 0 });
         observer.observe(dialog);
-        // Paint the stacked cards before the reference's spreading animation.
+        // Start the copy and progress before revealing the delayed card deck.
         frame = requestAnimationFrame(() => {
             if (disposed) return;
             frame = requestAnimationFrame(now => {
