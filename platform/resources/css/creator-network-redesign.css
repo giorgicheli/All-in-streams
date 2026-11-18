@@ -124,6 +124,11 @@
     gap: 24px;
 }
 
+.site-redesign .theme-white .creator-network-grid:focus-visible {
+    outline: 2px solid #0a5cff;
+    outline-offset: 4px;
+}
+
 .site-redesign .theme-white .creator-public-card {
     border: 0;
     border-radius: 22px;
@@ -454,8 +459,32 @@
     }
 
     .site-redesign .theme-white .creator-network-grid {
-        grid-template-columns: 1fr;
-        gap: 22px;
+        display: flex;
+        min-width: 0;
+        gap: 14px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 6px 4px 16px;
+        margin-inline: -4px;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 4px;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .site-redesign .theme-white .creator-network-grid::-webkit-scrollbar { display: none; }
+
+    .site-redesign .theme-white .creator-network-grid > .creator-public-card {
+        flex: 0 0 calc(100% - 32px);
+        max-width: 360px;
+        scroll-snap-align: start;
+    }
+
+    .site-redesign .theme-white .creator-network-grid > .creator-public-card:only-child,
+    .site-redesign .theme-white .creator-network-grid > .creator-network-empty {
+        flex: 0 0 100%;
+        max-width: none;
     }
 
     .site-redesign .theme-white .creator-public-image {
@@ -477,11 +506,12 @@
     }
 
     .site-redesign .theme-white .creator-public-platforms {
+        flex-wrap: wrap;
         font-size: 12px;
     }
 
     .site-redesign .theme-white .creator-public-metrics dd {
-        font-size: 33px;
+        font-size: clamp(27px, 8.4vw, 33px);
     }
 
     .site-redesign .theme-white .creator-region-request {

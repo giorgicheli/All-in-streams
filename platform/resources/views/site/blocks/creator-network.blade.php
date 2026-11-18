@@ -19,7 +19,7 @@
         </div>
         @foreach($networkRegions as $region)
             <div class="creator-region-panel" id="creator-region-{{ $loop->index }}" role="tabpanel" aria-labelledby="creator-tab-{{ $loop->index }}" data-creator-panel="{{ $region }}" @unless($loop->first) hidden @endunless>
-                <div class="creator-network-grid" data-motion-group>
+                <div class="creator-network-grid" data-motion-group data-creator-slider role="group" aria-label="Creator profiles in {{ $region }}" tabindex="0">
                     @forelse($networkGroups->get($region, collect()) as $profile)
                         <article class="creator-public-card" @if($loop->parent->first) data-motion-reveal @endif data-public-profile="{{ $profile['public_id'] }}" data-profile-caption="{{ $profile['caption'] }}" data-profile-market="{{ $profile['country'] }}" data-profile-type="{{ $profile['type_label'] }}">
                             <div class="creator-public-image">

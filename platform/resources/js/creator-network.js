@@ -89,6 +89,7 @@ export function initializeCreatorNetwork(root = document) {
         }
 
         function selectRegion(tab, moveFocus = false) {
+            const regionChanged = activeRegion !== tab.dataset.creatorRegion;
             activeRegion = tab.dataset.creatorRegion;
             tabs.forEach(item => {
                 const active = item === tab;
@@ -100,7 +101,9 @@ export function initializeCreatorNetwork(root = document) {
             animations.clear();
             panels.forEach(panel => {
                 panel.hidden = panel.dataset.creatorPanel !== activeRegion;
-                if (panel.hidden || reducedMotion.matches) return;
+                if (panel.hidden) return;
+                if (regionChanged) panel.querySelector('[data-creator-slider]').scrollLeft = 0;
+                if (reducedMotion.matches) return;
                 panel.querySelectorAll('.creator-public-card').forEach((card, index) => {
                     if (typeof card.animate !== 'function') return;
                     const animation = card.animate([{ opacity: 0, transform: 'translateY(9px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 480, delay: index * 65, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards' });
@@ -139,6 +142,18 @@ export function initializeCreatorNetwork(root = document) {
             }
             if (event.target.closest('[data-shortlist-open]')) dialog.showModal();
             if (event.target.closest('[data-shortlist-close]')) dialog.close();
+        }, options);
+
+        gallery.addEventListener('keydown', event => {
+            const slider = event.target.closest('[data-creator-slider]');
+            if (event.target !== slider || !window.matchMedia('(max-width: 767px)').matches) return;
+            const cards = [...slider.querySelectorAll('[data-public-profile]')];
+            if (!cards.length || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+            const offsets = cards.map(card => card.offsetLeft - cards[0].offsetLeft);
+            const current = offsets.reduce((nearest, offset, index) => Math.abs(offset - slider.scrollLeft) < Math.abs(offsets[nearest] - slider.scrollLeft) ? index : nearest, 0);
+            const next = event.key === 'Home' ? 0 : event.key === 'End' ? cards.length - 1 : Math.max(0, Math.min(cards.length - 1, current + (event.key === 'ArrowRight' ? 1 : -1)));
+            event.preventDefault();
+            slider.scrollTo({ left: offsets[next], behavior: reducedMotion.matches ? 'auto' : 'smooth' });
         }, options);
 
         gallery.querySelector('[role="tablist"]').addEventListener('keydown', event => {

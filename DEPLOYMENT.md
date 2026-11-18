@@ -133,6 +133,8 @@ Combined Streamer & influencer profiles retain both channel types, appear in bot
 
 The owner prefers minimal borders. Public sections, header, GEO strip and footer have no separator rules; cards and content panels use contrasting surfaces and spacing instead of outlines. Tabs and secondary controls use soft filled backgrounds. Preserve visible form fields and keyboard focus indicators.
 
+At widths up to 767px, the public creator profiles use a horizontal native scroll-snap slider with a next-card preview. Touch gestures preserve vertical page scrolling, and the focused slider supports Left/Right/Home/End keys. Switching audience regions opens the first card; shortlist buttons retain their existing behavior. Desktop keeps the three-column grid, and empty or single-profile regions fill the available width.
+
 Guest navigation pairs Sign in (`/login`) with Register (`/talk-to-us`, followed by the role chooser). Mobile places Register in the header and Sign in inside the full-screen menu. The footer also uses the concise Sign in label. These labels remain editable in site settings. Authenticated visitors retain their Your workspace shortcut.
 
 The public `/login` page uses the shared navigation and black footer around a centered, single-column form with a Sign in heading. The former companion story and back link are absent on this page; password recovery keeps its existing layout. Login credentials, remember-me, error/status messages and recovery/registration links retain their existing behavior. The rollout updates only the two exact legacy login labels in published settings and drafts, preserving unrelated content and publication revisions; future headings remain editable in Website editor.
