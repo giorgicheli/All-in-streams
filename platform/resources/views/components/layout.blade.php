@@ -15,7 +15,7 @@
     <link rel="icon" href="/favicon-32x32.png?v=2" type="image/png" sizes="32x32">
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180">
-    @if($lightTheme && ! request()->attributes->get('website.preview'))<x-site-intro-gate :eligible="$introEligible"/>@endif
+    @if($lightTheme && ! $sensitive && ! request()->attributes->get('website.preview'))<x-site-intro-gate :eligible="$introEligible"/>@endif
     @vite(['resources/css/app.css','resources/js/app.js'])
     @unless($lightPreview || $sensitive)
         @livewireStyles

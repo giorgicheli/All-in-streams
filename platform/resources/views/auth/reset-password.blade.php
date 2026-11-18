@@ -3,11 +3,13 @@
     $recoveryEmail = is_string($recoveryEmail) ? $recoveryEmail : '';
 @endphp
 <x-layout title="Reset password" :sensitive="true">
-<div class="auth-page password-recovery"><x-auth-story/><main class="auth-main">
+<div class="public-auth-layout">
+@include('site.navigation')
+<main class="auth-page auth-page-centered password-recovery" aria-labelledby="password-reset-title"><div class="auth-main">
     <div class="auth-form password-recovery-form">
-        <a href="{{ route('login') }}" class="auth-back"><x-ui-icon name="left" size="14"/> Back to sign in</a>
-        <span class="eyebrow">A FRESH START</span><h2>Set a new password.</h2>
+        <header class="auth-form-heading"><h1 id="password-reset-title">Set a new password.</h1>
         <p class="muted">Choose a password you haven’t used for this account.</p>
+        </header>
         @if(session('status'))<div class="auth-notice" role="status">{{ session('status') }}</div>@endif
         @if(session('error'))<div class="auth-notice auth-notice-error" role="alert">{{ session('error') }}</div>@endif
         @error('token')<div class="auth-notice auth-notice-error" role="alert">{{ $message }}</div>@enderror
@@ -33,5 +35,7 @@
         </form>
         <p class="auth-switch">Link expired? <a href="{{ route('password.request') }}">Request a new link ↗</a></p>
     </div>
-</main></div>
+</div></main>
+@include('site.footer')
+</div>
 </x-layout>

@@ -22,7 +22,9 @@ class PasswordRecoveryIntegrationTest extends TestCase
         $this->get('/login')->assertOk()->assertSee(route('password.request'));
         $this->get('/admin/login')->assertOk()->assertSee(route('password.request'));
         $this->get('/forgot-password')->assertOk()->assertSee('Send reset link')
-            ->assertSee('name="referrer" content="no-referrer"', false)->assertDontSee('livewire.js');
+            ->assertSee('name="referrer" content="no-referrer"', false)->assertDontSee('livewire.js')
+            ->assertSee('class="site-header"', false)->assertSee('class="site-footer', false)
+            ->assertDontSee('class="auth-story"', false)->assertDontSee('__aisIntroBootstrapped');
     }
 
     public function test_recovery_redirects_and_validation_keep_sensitive_response_headers(): void
@@ -41,6 +43,7 @@ class PasswordRecoveryIntegrationTest extends TestCase
             $this->assertStringContainsString('no-transform', $response->headers->get('Cache-Control'));
             $this->assertStringContainsString("script-src 'self'", $response->headers->get('Content-Security-Policy'));
             $this->assertStringContainsString("connect-src 'self'", $response->headers->get('Content-Security-Policy'));
+            $this->assertStringNotContainsString('__aisIntroBootstrapped', $response->getContent());
         }
         $this->assertSame(['email' => 'test@example.test'], session('_old_input'));
     }
