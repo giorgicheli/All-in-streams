@@ -1,4 +1,8 @@
 /* The supplied creator composition belongs in the opening story. */
+@media (min-width: 701px) {
+    .hero-grid--orbit > .hero-copy { grid-column: 1; grid-row: 1; }
+    .hero-grid--orbit > .hero-orbit-art { grid-column: 2; grid-row: 1; }
+}
 .site-redesign .theme-white .hero-orbit-art {
     position: relative;
     inset: auto;
