@@ -5,18 +5,6 @@
   height:31px;
   flex-shrink:0;
 }
-.creator-orbit-mark:before,.creator-orbit-mark:after {
-  content:'';
-  position:absolute;
-  background:var(--orbit-blue);
-  inset:0;
-  clip-path:polygon(40% 4%,66% 4%,25% 93%,0 93%);
-}
-.creator-orbit-mark:after {
-  clip-path:polygon(48% 42%,100% 93%,65% 93%,36% 67%);
-  background:#3971ff;
-}
-
 .creator-orbit-check {
   width:14px;
   height:14px;
@@ -269,9 +257,7 @@
 .creator-orbit-hub .creator-orbit-mark {
   width:28px;
   height:28px;
-}
-.creator-orbit-hub .creator-orbit-mark:before,.creator-orbit-hub .creator-orbit-mark:after {
-  background:white;
+  color:white;
 }
 .creator-orbit-hub:after {
   content:'';

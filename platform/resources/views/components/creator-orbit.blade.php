@@ -60,7 +60,7 @@
             <div class="creator-orbit-float-anchor creator-orbit-brand-card" data-orbit-anchor="brand" data-orbit-depth="-.4">
                 <div class="creator-orbit-float-card"><div class="creator-orbit-brief-icon" aria-hidden="true"></div><strong>{{ $brand['card_title'] ?? 'Your campaign' }}</strong><p>{{ $brand['card_status'] ?? 'Find your people.' }}</p></div>
             </div>
-            <div class="creator-orbit-hub" data-orbit-hub aria-hidden="true"><span class="creator-orbit-mark"></span></div>
+            <div class="creator-orbit-hub" data-orbit-hub aria-hidden="true"><x-brand-mark class="creator-orbit-mark" /></div>
             <div class="creator-orbit-match-tag"><i aria-hidden="true"></i>{{ $orbitLabels['tag'] }}</div>
         </div>
     </div>
