@@ -43,6 +43,7 @@ function mountPointerEffect(root) {
     const paintedBeads = radii.map(radius => ({ x: 0, y: 0, radius, paintRadius: 0 }));
     let frame = 0;
     let resizeFrame = 0;
+    let scrollFrame = 0;
     let previousTime = 0;
     let accumulator = 0;
     let lastMotion = 0;
@@ -54,6 +55,7 @@ function mountPointerEffect(root) {
     const lens = { x: 0, y: 0 };
     const pointerSamples = [];
     let inputPointer = null;
+    let mousePosition = null;
     let pointer = null;
     let lensCoordinates = false;
     let inkRevealStarted = null;
@@ -97,7 +99,12 @@ function mountPointerEffect(root) {
         context.clearRect(0, 0, width, height);
     }
 
-    function stop() {
+    function stop(preserveMouse = false) {
+        if (preserveMouse !== true) {
+            mousePosition = null;
+            cancelAnimationFrame(scrollFrame);
+            scrollFrame = 0;
+        }
         clearTimeout(dismissalTimer);
         dismissalTimer = 0;
         exitingLens = null;
@@ -194,7 +201,7 @@ function mountPointerEffect(root) {
         canvas.classList.remove('is-active');
         headerCopy.classList.remove('is-active');
         canvas.dataset.pointerState = 'fading';
-        dismissalTimer = setTimeout(stop, lensExitDuration + 30);
+        dismissalTimer = setTimeout(() => stop(true), lensExitDuration + 30);
     }
 
     // Copy only visible label glyphs and built-in line icons, never controls,
@@ -347,7 +354,8 @@ function mountPointerEffect(root) {
 
     function draw(now) {
         frame = 0;
-        if (!permitted() || !pointer || (!circleMode && !exitingLens && now - lastMotion > 1180)) { stop(); return; }
+        if (!permitted() || !pointer) { stop(); return; }
+        if (!circleMode && !exitingLens && now - lastMotion > 1180) { stop(true); return; }
         if (activeModal && !activeModal.matches(':modal')) { stop(); return; }
         const target = delayedPointer(now);
         if (Math.hypot(target.x - pointer.x, target.y - pointer.y) > 150) {
@@ -448,19 +456,19 @@ function mountPointerEffect(root) {
             context.arc(bead.x, bead.y, bead.paintRadius, 0, Math.PI * 2);
             context.fill();
         });
-        if (drying >= 1) { stop(); return; }
+        if (drying >= 1) { stop(true); return; }
         frame = requestAnimationFrame(draw);
     }
 
-    document.addEventListener('pointermove', event => {
-        if (event.pointerType !== 'mouse' || event.isPrimary === false) { stop(); return; }
+    function updatePointer(target, clientX, clientY) {
         const now = performance.now();
         if (activeModal && !activeModal.matches(':modal')) stop();
-        const overHeader = Boolean(header && event.target instanceof Node && header.contains(event.target));
-        const control = event.target instanceof Element ? event.target.closest(overHeader ? headerLabels : buttonLabels) : null;
+        mousePosition = { x: clientX, y: clientY };
+        const overHeader = Boolean(header && target instanceof Node && header.contains(target));
+        const control = target instanceof Element ? target.closest(overHeader ? headerLabels : buttonLabels) : null;
         const inHeader = overHeader && Boolean(control);
         const inCircle = Boolean(control);
-        if (!permitted(inCircle) || isQuiet(event.target)) { fadeOut(); return; }
+        if (!permitted(inCircle) || isQuiet(target)) { fadeOut(); return; }
         const resumeDismissal = Boolean(dismissalTimer);
         clearTimeout(dismissalTimer);
         dismissalTimer = 0;
@@ -476,9 +484,9 @@ function mountPointerEffect(root) {
         headerMode = inHeader;
         circleMode = inCircle;
         hoveredControl = control;
-        syncLayer(event.target instanceof Element ? event.target.closest('dialog:modal') : null);
+        syncLayer(target instanceof Element ? target.closest('dialog:modal') : null);
         const tracksLens = circleMode || Boolean(exitingLens);
-        const next = { x: event.clientX - (tracksLens ? 0 : 7), y: event.clientY + (tracksLens ? 0 : 10) };
+        const next = { x: clientX - (tracksLens ? 0 : 7), y: clientY + (tracksLens ? 0 : 10) };
         if (!inputPointer || tracksLens !== lensCoordinates) {
             beads.forEach(bead => { bead.x = bead.previousX = next.x; bead.y = bead.previousY = next.y; });
             lens.x = next.x;
@@ -496,37 +504,48 @@ function mountPointerEffect(root) {
         pointerSamples.push({ ...next, time: now });
         if (pointerSamples.length > 128) pointerSamples.splice(0, pointerSamples.length - 128);
         headerCopy.classList.toggle('is-active', circleMode || Boolean(exitingLens));
-        if (circleMode && (changedMode || changedControl || now - lastLabelRefresh > 100)) refreshHeaderLabels();
+        if ((circleMode || exitingLens) && (changedMode || changedControl || now - lastLabelRefresh > 100)) refreshHeaderLabels();
         if (!circleMode && !exitingLens) headerCopy.style.clipPath = 'circle(0px at 0px 0px)';
         canvas.dataset.pointerMode = headerMode ? 'header' : circleMode ? 'button' : 'body';
         lastMotion = now;
         canvas.classList.add('is-active');
         canvas.dataset.pointerState = 'active';
         if (!frame) frame = requestAnimationFrame(draw);
+    }
+
+    document.addEventListener('pointermove', event => {
+        if (event.pointerType !== 'mouse' || event.isPrimary === false) { stop(); return; }
+        updatePointer(event.target, event.clientX, event.clientY);
     }, options);
     document.addEventListener('pointerdown', event => {
         if (event.pointerType !== 'mouse') stop();
         else if (isQuiet(event.target)) fadeOut();
     }, options);
     document.addEventListener('focusin', event => { if (isQuiet(event.target)) fadeOut(); }, options);
-    document.addEventListener('keydown', stop, { signal: events.signal });
+    document.addEventListener('keydown', () => stop(), { signal: events.signal });
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); }, options);
-    document.addEventListener('pointerout', event => { if (!event.relatedTarget) fadeOut(); }, options);
+    document.addEventListener('pointerout', event => { if (!event.relatedTarget) { mousePosition = null; fadeOut(); } }, options);
     document.addEventListener('ais:navigation-state', event => { menuOpen = Boolean(event.detail?.open); if (menuOpen) stop(); }, { signal: events.signal });
     document.addEventListener('livewire:navigating', cleanup, { signal: events.signal });
-    window.addEventListener('blur', fadeOut, options);
-    window.addEventListener('scroll', () => {
-        lastLabelRefresh = 0;
-        const target = circleMode && inputPointer ? document.elementFromPoint(inputPointer.x, inputPointer.y) : null;
-        const overHeader = Boolean(target && header?.contains(target));
-        const control = target?.closest(overHeader ? headerLabels : buttonLabels);
-        if (!dismissalTimer && canvas.dataset.pointerState === 'active' && hoveredControl?.isConnected
-            && control === hoveredControl && permitted(true) && (!activeModal || activeModal.matches(':modal'))) {
-            headerMode = overHeader;
-            refreshHeaderLabels();
-            if (!frame) frame = requestAnimationFrame(draw);
-        } else stop();
-    }, options);
+    window.addEventListener('blur', () => { mousePosition = null; fadeOut(); }, options);
+    window.addEventListener('scroll', event => {
+        if (!mousePosition || disposed || pageSuspended || menuOpen || document.hidden) return;
+        // An unrelated auto-playing carousel should not wake the page cursor.
+        const scroller = event.target instanceof Element ? event.target : null;
+        if (scroller && scroller !== document.documentElement && scroller !== document.body) {
+            const target = document.elementFromPoint(mousePosition.x, mousePosition.y);
+            if (!target || !scroller.contains(target)) return;
+        }
+        if (scrollFrame) return;
+        scrollFrame = requestAnimationFrame(() => {
+            scrollFrame = 0;
+            if (!mousePosition || disposed || pageSuspended || menuOpen || document.hidden) return;
+            const target = document.elementFromPoint(mousePosition.x, mousePosition.y);
+            if (!target) { mousePosition = null; fadeOut(); return; }
+            lastLabelRefresh = 0;
+            updatePointer(target, mousePosition.x, mousePosition.y);
+        });
+    }, { ...options, capture: true });
     document.addEventListener('toggle', refreshHeaderLabels, { signal: events.signal, capture: true });
     document.addEventListener('close', () => { if (activeModal && !activeModal.matches(':modal')) stop(); }, { signal: events.signal, capture: true });
     window.addEventListener('resize', () => {

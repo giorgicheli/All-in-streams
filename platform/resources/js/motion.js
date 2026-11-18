@@ -77,6 +77,7 @@ export function initializeMotion(root = document) {
     const listeners = [];
     let disposed = false;
     let refreshFrame = 0;
+    let revealFrame = 0;
     let revealObserver = null;
     let observerInset = -1;
     const queuedRoots = new Set();
@@ -104,6 +105,30 @@ export function initializeMotion(root = document) {
 
     function belongs(element) {
         return element?.isConnected && (root.nodeType === 9 || root === element || root.contains(element));
+    }
+
+    function visibleBounds(element, bounds = element.getBoundingClientRect()) {
+        if (!bounds.width || !bounds.height || !element.getClientRects().length) return null;
+        if (win.getComputedStyle(element).visibility !== 'visible') return null;
+        const visible = {
+            left: Math.max(0, bounds.left), right: Math.min(win.innerWidth, bounds.right),
+            top: Math.max(0, bounds.top), bottom: Math.min(triggerLine() + .5, bounds.bottom),
+        };
+        if (visible.right <= visible.left || visible.bottom < visible.top) return null;
+        // A card can be inside the browser viewport but still clipped by its
+        // horizontal gallery or a closed content container. Reconcile only the
+        // actually exposed area, just as IntersectionObserver does.
+        for (let parent = element.parentElement; parent && parent !== doc.documentElement; parent = parent.parentElement) {
+            const style = win.getComputedStyle(parent);
+            const clipsX = /^(auto|scroll|hidden|clip|overlay)$/.test(style.overflowX);
+            const clipsY = /^(auto|scroll|hidden|clip|overlay)$/.test(style.overflowY);
+            if (!clipsX && !clipsY) continue;
+            const clip = parent.getBoundingClientRect();
+            if (clipsX) { visible.left = Math.max(visible.left, clip.left); visible.right = Math.min(visible.right, clip.right); }
+            if (clipsY) { visible.top = Math.max(visible.top, clip.top); visible.bottom = Math.min(visible.bottom, clip.bottom); }
+            if (visible.right <= visible.left || visible.bottom < visible.top) return null;
+        }
+        return bounds;
     }
 
     function clearReveal(element) {
@@ -144,9 +169,9 @@ export function initializeMotion(root = document) {
         }
     }
 
-    function revealBatch(entries, initial = false) {
-        const entering = entries.filter(entry => entry.isIntersecting && !seen.has(entry.target) && belongs(entry.target));
-        if (!entering.length) return;
+    function revealBatch(entries = null, initial = false) {
+        const entering = entries?.filter(entry => entry.isIntersecting && !seen.has(entry.target) && belongs(entry.target));
+        if (entering && !entering.length) return;
 
         // Measure the complete visible row before starting any animations. This
         // keeps CSS-reordered cards and cards inside separate columns in visual
@@ -155,14 +180,19 @@ export function initializeMotion(root = document) {
         for (const element of targets) {
             if (seen.has(element) || !belongs(element) || !element.getClientRects().length) continue;
             const bounds = element.getBoundingClientRect();
+            if (bounds.width && bounds.height && bounds.bottom <= 0) {
+                seen.add(element);
+                revealObserver?.unobserve(element);
+                clearReveal(element);
+                continue;
+            }
             // Edge contact is intersecting even with a zero-area intersection.
             // Include its rounding epsilon so that target cannot stay armed.
-            if (!bounds.width || !bounds.height || bounds.bottom <= 0 || bounds.top > triggerLine() + 0.5 || bounds.right <= 0 || bounds.left >= win.innerWidth) continue;
-            if (win.getComputedStyle(element).visibility === 'hidden') continue;
+            if (!visibleBounds(element, bounds)) continue;
             candidates.push({ element, bounds, group: element.closest(REVEAL_GROUPS) ?? element.parentElement });
         }
         const schedules = new Map();
-        for (const entry of entering) {
+        for (const entry of entering ?? candidates.map(item => ({ target: item.element }))) {
             const candidate = candidates.find(item => item.element === entry.target);
             if (!candidate) {
                 if (entry.target.getBoundingClientRect().bottom <= 0) {
@@ -197,6 +227,14 @@ export function initializeMotion(root = document) {
         schedules.forEach((delay, element) => reveal(element, delay));
     }
 
+    function reconcileReveals() {
+        if (disposed || reduced.matches || doc.hidden || revealFrame) return;
+        revealFrame = win.requestAnimationFrame(() => {
+            revealFrame = 0;
+            if (!disposed && !reduced.matches && !doc.hidden) revealBatch();
+        });
+    }
+
     function configureRevealObserver() {
         if (!canObserve) return;
         const inset = revealInset();
@@ -204,7 +242,14 @@ export function initializeMotion(root = document) {
         revealObserver?.disconnect();
         observerInset = inset;
         revealObserver = new win.IntersectionObserver(entries => {
-            if (!reduced.matches) revealBatch(entries);
+            if (!reduced.matches) {
+                revealBatch(entries);
+                // Entries describe an earlier layout snapshot. If a target
+                // moved across the trigger line while delivery was pending,
+                // revisit current geometry without waiting for another IO
+                // threshold change that might never arrive.
+                reconcileReveals();
+            }
         }, { threshold: 0, rootMargin: `0px 0px -${inset}px 0px` });
         for (const element of targets) {
             if (!seen.has(element) && belongs(element)) revealObserver.observe(element);
@@ -295,6 +340,8 @@ export function initializeMotion(root = document) {
                 } else if (bounds.width && bounds.height && bounds.top < triggerLine()) {
                     // Start the initial viewport in this same task. Never paint
                     // visible content and hide it in a later observer callback.
+                    element.setAttribute('data-ais-reveal', 'ready');
+                    revealObserver.observe(element);
                     initiallyVisible.push({ target: element, isIntersecting: true });
                 } else {
                     element.setAttribute('data-ais-reveal', 'ready');
@@ -343,6 +390,7 @@ export function initializeMotion(root = document) {
 
     const mutationObserver = typeof win.MutationObserver === 'function' ? new win.MutationObserver(records => {
         for (const record of records) {
+            if (record.type === 'attributes') { reconcileReveals(); continue; }
             if (record.type !== 'childList') continue;
             record.addedNodes.forEach(node => { if (node.nodeType === 1) refresh(node); });
             if (record.removedNodes.length) refresh(root);
@@ -356,6 +404,7 @@ export function initializeMotion(root = document) {
         heroObserver?.disconnect();
         mutationObserver?.disconnect();
         if (refreshFrame) win.cancelAnimationFrame(refreshFrame);
+        if (revealFrame) win.cancelAnimationFrame(revealFrame);
         queuedRoots.clear();
         for (const element of animations.keys()) clearReveal(element);
         targets.forEach(element => element.removeAttribute('data-ais-reveal'));
@@ -394,18 +443,22 @@ export function initializeMotion(root = document) {
     }, { capture: true });
     listen(doc, 'visibilitychange', () => {
         if (doc.hidden) for (const element of animations.keys()) clearReveal(element);
+        else reconcileReveals();
         heroes.forEach(setHeroState);
     });
+    listen(doc, 'scroll', reconcileReveals, { passive: true, capture: true });
+    listen(root, 'toggle', reconcileReveals, { capture: true });
     listen(doc, 'livewire:navigating', cleanup);
     listen(win, 'resize', () => {
         configureRevealObserver();
+        reconcileReveals();
         heroes.forEach(resetTilt);
     }, { passive: true });
     listenMedia(reduced, preferenceChanged);
     listenMedia(desktopPointer, () => heroes.forEach(setHeroState));
     preferenceChanged();
     scan(root);
-    mutationObserver?.observe(root.nodeType === 9 ? doc.documentElement : root, { childList: true, subtree: true });
+    mutationObserver?.observe(root.nodeType === 9 ? doc.documentElement : root, { childList: true, attributes: true, attributeFilter: ['hidden', 'open'], subtree: true });
     waitForLivewire();
     return cleanup;
 }
