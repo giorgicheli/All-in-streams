@@ -10,7 +10,7 @@
                 @if($milestone['reference'])<p class="prose-note mt-3">Your payment reference: {{ $milestone['reference'] }}</p>@endif
             </section>
         @empty
-            <section class="panel empty-state"><x-ui-icon name="wallet"/><h3>No payment milestones yet.</h3><p>Your own fixed-fee and validated CPA milestones will appear when All In Streams records them.</p></section>
+            <section class="panel empty-state"><x-ui-icon name="wallet"/><h2>No payment milestones yet.</h2><p>Your own fixed-fee and validated CPA milestones will appear when All In Streams records them.</p></section>
         @endforelse
     </div>
 </x-portal-layout>

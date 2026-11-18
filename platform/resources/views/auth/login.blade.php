@@ -4,7 +4,7 @@
 @include('site.navigation')
 <main class="auth-page auth-page-centered" aria-labelledby="login-title"><div class="auth-main">
     <div class="auth-form" x-data="{email:{{ Js::from(old('email','')) }},password:''}">
-        <header class="auth-form-heading"><h1 id="login-title">{{ $copy['title'] }}</h1><p class="muted">{{ $copy['description'] }}</p></header>
+        <div class="auth-form-heading"><h1 id="login-title">{{ $copy['title'] }}</h1><p class="muted">{{ $copy['description'] }}</p></div>
         @if(session('status'))<div class="auth-notice" role="status">{{ session('status') }}</div>@endif
         @if(session('error'))<div class="auth-notice auth-notice-error" role="alert">{{ session('error') }}</div>@endif
         <form method="POST" action="/login">@csrf

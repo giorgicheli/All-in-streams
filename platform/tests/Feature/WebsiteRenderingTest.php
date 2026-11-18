@@ -120,4 +120,43 @@ class WebsiteRenderingTest extends TestCase
         }
         $this->get($faq['url'])->assertOk()->assertSee('Brand')->assertSee('Agency')->assertSee('Creator');
     }
+
+    public function test_public_pages_have_one_page_heading_and_one_site_header(): void
+    {
+        $routes = ['/', '/white', '/login', '/register', '/talk-to-us',
+            '/talk-to-us?type=brand', '/talk-to-us?type=agency',
+            '/talk-to-us?type=creator&creator_type=streamer',
+            '/talk-to-us?type=creator&creator_type=influencer',
+            '/talk-to-us?type=creator&creator_type=both',
+            '/forgot-password', '/reset-password/'.str_repeat('a', 64).'?email=qa@example.test',
+            '/privacy-policy', '/terms-and-conditions'];
+
+        foreach ($routes as $route) {
+            $document = new \DOMDocument();
+            $document->loadHTML($this->get($route)->assertOk()->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+            $xpath = new \DOMXPath($document);
+            $this->assertSame(1, $xpath->query('//h1')->length, $route);
+            $this->assertSame(1, $xpath->query('//main//h1')->length, $route);
+            $this->assertSame('h1', $xpath->query('//main//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]')->item(0)?->nodeName, $route);
+            $this->assertSame(1, $xpath->query('//header')->length, $route);
+            $this->assertSame(0, $xpath->query('//main//header')->length, $route);
+
+            $previousLevel = 1;
+            foreach ($xpath->query('//main//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]') as $heading) {
+                $level = (int) substr($heading->nodeName, 1);
+                $this->assertLessThanOrEqual($previousLevel + 1, $level, $route.' skips a heading level: '.$heading->textContent);
+                $previousLevel = $level;
+            }
+        }
+    }
+
+    public function test_hiding_the_hero_keeps_a_single_page_heading(): void
+    {
+        $home = SiteContentDefaults::home();
+        $home['blocks'][0]['data']['enabled'] = false;
+        app(SiteContent::class)->publish(User::factory()->create(['role' => 'admin']), 'home', $home);
+        $document = new \DOMDocument();
+        $document->loadHTML($this->get('/')->assertOk()->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $this->assertSame(1, (new \DOMXPath($document))->query('//main//h1')->length);
+    }
 }

@@ -31,11 +31,11 @@
                     <div class="enquiry-success-actions"><a href="/" class="enquiry-submit">Back to All In Streams <x-ui-icon name="arrow" size="18"/></a><a href="/talk-to-us?type={{ $selectedKind }}" class="enquiry-text-link">Send another request</a></div>
                 </section>
             @else
-                <header class="enquiry-intro">
+                <div class="enquiry-intro">
                     <p class="enquiry-eyebrow" data-enquiry-eyebrow>{{ $isCreator ? 'ONGOING PROJECTS. FIXED PAID DEALS.' : 'LET’S MAKE IT HAPPEN' }}</p>
                     <h1 data-enquiry-title>{{ $isCreator ? 'Join our creator network and keep the deals coming.' : 'Tell us what you have in mind.' }}</h1>
                     <p data-enquiry-description>{{ $isCreator ? 'Get matched with brands for regular paid collaborations. You focus on your content. We bring the projects and handle the deals.' : ($isAgency ? 'Share your requirements so we can find the right streamers for your clients.' : 'Share a few details so we can find your right match.') }}</p>
-                </header>
+                </div>
                 <nav class="enquiry-category-tabs" aria-label="Your partner category">
                     @foreach(['brand' => 'Brand', 'agency' => 'Agency', 'creator' => 'Creator'] as $category => $label)
                         <a href="/talk-to-us?{{ http_build_query(['type' => $category] + $enquiryContext) }}" class="enquiry-choice {{ $selectedKind === $category ? 'is-selected' : '' }}" data-enquiry-category="{{ $category }}" @if($selectedKind === $category) aria-current="page" @endif>{{ $label }}</a>

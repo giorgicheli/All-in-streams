@@ -26,7 +26,7 @@
     @endif
 
     @if(!$profile)
-        <section class="panel empty-state"><x-ui-icon name="spark"/><h3>Share your creator profile.</h3><p>Add your channels, audience, availability and rates for staff review.</p><a href="{{ route('creator.apply') }}" class="btn btn-primary">Complete your profile</a></section>
+        <section class="panel empty-state"><x-ui-icon name="spark"/><h2>Share your creator profile.</h2><p>Add your channels, audience, availability and rates for staff review.</p><a href="{{ route('creator.apply') }}" class="btn btn-primary">Complete your profile</a></section>
     @else
         @if($profile->trashed())
             <div class="privacy-note"><x-ui-icon name="shield"/><span>Your creator profile was archived by staff. Past offers remain available. Contact All In Streams to restore your profile.</span></div>
@@ -39,7 +39,7 @@
             @forelse($invitations as $offer)
                 @include('portal.partials.provider-offer', ['responseRoute' => 'creator.respond'])
             @empty
-                <section class="panel empty-state"><x-ui-icon name="star"/><h3>Your next good match is on its way.</h3><p>Suitable invitations will appear here after staff reviews your profile.</p></section>
+                <section class="panel empty-state"><x-ui-icon name="star"/><h2>Your next good match is on its way.</h2><p>Suitable invitations will appear here after staff reviews your profile.</p></section>
             @endforelse
         </div>
     @endif

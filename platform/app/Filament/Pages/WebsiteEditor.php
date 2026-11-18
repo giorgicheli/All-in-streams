@@ -90,7 +90,7 @@ class WebsiteEditor extends Page
                 RichEditor::make('body')->label('Page content')->json()->minHeight(420)
                     ->toolbarButtons([['bold', 'italic', 'underline', 'strike', 'link', 'clearFormatting'], ['h2', 'h3'], ['bulletList', 'orderedList', 'blockquote'], ['undo', 'redo']])
                     ->linkProtocols(['https', 'mailto', 'tel'])->columnSpanFull()
-                    ->helperText('Add your text, headings, lists and links. Save a draft to preview it, then publish when ready.'),
+                    ->helperText('The page title supplies H1. Use H2 for sections and H3 for subsections. Save a draft to preview it, then publish when ready.'),
             ])->statePath('data');
         }
 

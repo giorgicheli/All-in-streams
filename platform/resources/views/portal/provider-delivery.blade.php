@@ -52,7 +52,7 @@
                 @endif
             </section>
         @empty
-            <section class="panel empty-state"><x-ui-icon name="file"/><h3>Your delivery records will appear here.</h3><p>Evidence can be submitted after All In Streams selects your accepted offer and launches the campaign.</p></section>
+            <section class="panel empty-state"><x-ui-icon name="file"/><h2>Your delivery records will appear here.</h2><p>Evidence can be submitted after All In Streams selects your accepted offer and launches the campaign.</p></section>
         @endforelse
     </div>
 </x-portal-layout>

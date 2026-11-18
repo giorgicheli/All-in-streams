@@ -15,7 +15,7 @@
     <section class="network-showcase" id="network" data-network-showcase data-network-paused="false" aria-labelledby="network-showcase-title">
         <div class="container">
             <div class="network-showcase-card" data-motion-reveal>
-                <header class="network-showcase-header">
+                <div class="network-showcase-header">
                     <h2 id="network-showcase-title">{{ $reels['title'] ?? 'Our creator network' }}</h2>
                     @if($showNetworkVideos)
                         <div class="network-showcase-controls" aria-label="Creator video navigation">
@@ -23,7 +23,7 @@
                             <button type="button" class="network-showcase-nav" data-network-next aria-label="Next creator videos" @disabled(count($networkSlides) < 2)><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
                         </div>
                     @endif
-                </header>
+                </div>
                 @if($showNetworkVideos)
                     <div class="network-showcase-media" id="creator-content">
                         <div class="network-showcase-track" data-network-track tabindex="0" role="group" aria-label="Creator video previews. Swipe or use the arrow keys to browse.">

@@ -4,7 +4,7 @@
     @include('site.navigation')
     <main class="partner-enquiry enquiry-role-page">
         <div class="enquiry-shell">
-            <header class="enquiry-intro"><p class="enquiry-eyebrow">{{ $entry['eyebrow'] }}</p><h1>{{ $entry['title'] }}</h1><p>{{ $entry['description'] }}</p></header>
+            <div class="enquiry-intro"><p class="enquiry-eyebrow">{{ $entry['eyebrow'] }}</p><h1>{{ $entry['title'] }}</h1><p>{{ $entry['description'] }}</p></div>
             <div class="enquiry-role-cards" aria-label="Choose your role">
                 @foreach($entry['cards'] as $card)
                     <a class="enquiry-role-card" href="{{ $card['url'] }}" data-role-choice>

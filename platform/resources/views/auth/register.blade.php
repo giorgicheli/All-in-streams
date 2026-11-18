@@ -9,7 +9,7 @@
         @include('site.navigation')
         <main class="auth-page auth-page-centered" aria-labelledby="registration-title"><div class="auth-main">
             <div class="auth-form" x-data="{kind:{{ Js::from($kind) }}, creatorType:{{ Js::from(old('creator_type', request('creator_type') === 'influencer' ? 'influencer' : 'streamer')) }}}">
-                <header class="auth-form-heading"><h1 id="registration-title">{{ $copy['title'] }}</h1><p class="muted">{{ $copy['description'] }}</p></header>
+                <div class="auth-form-heading"><h1 id="registration-title">{{ $copy['title'] }}</h1><p class="muted">{{ $copy['description'] }}</p></div>
                 <form method="POST" action="/register" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="role" value="{{ $role }}" :value="kind">

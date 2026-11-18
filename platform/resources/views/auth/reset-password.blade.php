@@ -7,9 +7,9 @@
 @include('site.navigation')
 <main class="auth-page auth-page-centered password-recovery" aria-labelledby="password-reset-title"><div class="auth-main">
     <div class="auth-form password-recovery-form">
-        <header class="auth-form-heading"><h1 id="password-reset-title">Set a new password.</h1>
+        <div class="auth-form-heading"><h1 id="password-reset-title">Set a new password.</h1>
         <p class="muted">Choose a password you haven’t used for this account.</p>
-        </header>
+        </div>
         @if(session('status'))<div class="auth-notice" role="status">{{ session('status') }}</div>@endif
         @if(session('error'))<div class="auth-notice auth-notice-error" role="alert">{{ session('error') }}</div>@endif
         @error('token')<div class="auth-notice auth-notice-error" role="alert">{{ $message }}</div>@enderror

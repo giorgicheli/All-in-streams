@@ -1,10 +1,11 @@
 @php
     $visibleBlocks = array_values(array_filter($home['blocks'], fn (array $block) => $block['data']['enabled'] ?? true));
+    $hasHeroHeading = count(array_filter($visibleBlocks, fn (array $block) => $block['type'] === 'hero')) > 0;
     $hasNetworkShowcase = ($site['creator_reels']['enabled'] ?? false) && count($site['creator_reels']['clips'] ?? []) >= 2;
     $hasHeroNetwork = ($site['network_stats']['enabled'] ?? false)
         && ! ($site['creator_orbit']['enabled'] ?? false)
         && ! $hasNetworkShowcase
-        && count(array_filter($visibleBlocks, fn (array $block) => $block['type'] === 'hero')) > 0;
+        && $hasHeroHeading;
     $hasHeroStage = ($visibleBlocks[0]['type'] ?? null) === 'hero'
         && ($visibleBlocks[1]['type'] ?? null) === 'geo_strip';
     $creatorReelAnchor = array_search('geo_strip', array_column($visibleBlocks, 'type'), true);
@@ -13,6 +14,7 @@
 <x-layout :title="$home['seo']['title']" :description="$home['seo']['description']" :light-preview="$lightPreview ?? false">
     @include('site.navigation')
     <main class="home-redesign">
+        @unless($hasHeroHeading)<h1 class="sr-only">{{ $home['seo']['title'] }}</h1>@endunless
         @if($hasHeroStage)
             <div class="hero-stage">
                 @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data'], 'suppressHeroNetwork' => $hasNetworkShowcase])
