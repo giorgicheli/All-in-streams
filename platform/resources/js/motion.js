@@ -88,7 +88,11 @@ export function initializeMotion(root = document) {
         return Math.round(Math.max(64, Math.min(160, win.innerHeight * 0.18)));
     }
 
-    function triggerLine() { return win.innerHeight - revealInset(); }
+    function triggerLine(element) {
+        // An anchor can place the final FAQ row inside the viewport but below
+        // the normal entrance inset. Every visible question must be readable.
+        return element?.matches('.faq-list details') ? win.innerHeight : win.innerHeight - revealInset();
+    }
 
     function listen(target, event, callback, options) {
         target.addEventListener(event, callback, options);
@@ -112,7 +116,7 @@ export function initializeMotion(root = document) {
         if (win.getComputedStyle(element).visibility !== 'visible') return null;
         const visible = {
             left: Math.max(0, bounds.left), right: Math.min(win.innerWidth, bounds.right),
-            top: Math.max(0, bounds.top), bottom: Math.min(triggerLine() + .5, bounds.bottom),
+            top: Math.max(0, bounds.top), bottom: Math.min(triggerLine(element) + .5, bounds.bottom),
         };
         if (visible.right <= visible.left || visible.bottom < visible.top) return null;
         // A card can be inside the browser viewport but still clipped by its
@@ -337,7 +341,7 @@ export function initializeMotion(root = document) {
                 if (bounds.bottom <= 0) {
                     seen.add(element);
                     element.setAttribute('data-ais-reveal', 'done');
-                } else if (bounds.width && bounds.height && bounds.top < triggerLine()) {
+                } else if (bounds.width && bounds.height && bounds.top < triggerLine(element)) {
                     // Start the initial viewport in this same task. Never paint
                     // visible content and hide it in a later observer callback.
                     element.setAttribute('data-ais-reveal', 'ready');
