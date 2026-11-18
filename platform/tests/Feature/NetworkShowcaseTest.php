@@ -63,6 +63,54 @@ class NetworkShowcaseTest extends TestCase
         }
     }
 
+    public function test_random_pane_weights_are_bounded_normalized_and_rotate_the_widest_position(): void
+    {
+        $defaults = SiteContentDefaults::settings()['creator_reels'];
+        $pool = array_merge($defaults['clips'], array_slice($defaults['clips'], 0, 3));
+        foreach ([2, 4, 5, 9, 10, 11, 12] as $clipCount) {
+            $reels = array_replace($defaults, ['clips' => array_slice($pool, 0, $clipCount)]);
+            $html = Blade::render("@include('site.blocks.network-showcase', ['reels' => \$reels, 'stats' => null])", compact('reels'));
+            $xpath = $this->xpath($html);
+            $slides = $xpath->query('//*[@data-network-slide]');
+            $this->assertSame((int) ceil($clipCount / 3), $slides->length);
+            $dominantPositions = [];
+            foreach ($slides as $slideIndex => $slide) {
+                $panels = $xpath->query('./*[@data-network-panel]', $slide);
+                $this->assertSame(min(3, $clipCount - $slideIndex * 3), $panels->length);
+                $weights = [];
+                foreach ($panels as $panel) {
+                    $this->assertSame(1, preg_match('/(?:^|;)--network-panel-weight:(\d+)(?:;|$)/', $panel->getAttribute('style'), $match));
+                    $weights[] = (int) $match[1];
+                    $this->assertSame(1, $xpath->query('.//*[@data-network-clip-path]', $panel)->length);
+                }
+                $this->assertSame(100, array_sum($weights));
+                if (count($weights) === 3) {
+                    $largest = max($weights);
+                    $this->assertGreaterThanOrEqual(46, $largest);
+                    $this->assertLessThanOrEqual(52, $largest);
+                    $this->assertGreaterThanOrEqual(22, min($weights));
+                    $this->assertLessThanOrEqual(25, min($weights));
+                    $other = array_sum($weights) - $largest - min($weights);
+                    $this->assertGreaterThanOrEqual(23, $other);
+                    $this->assertLessThanOrEqual(32, $other);
+                    $dominantPositions[] = array_search($largest, $weights, true);
+                } elseif (count($weights) === 2) {
+                    $this->assertGreaterThanOrEqual(56, max($weights));
+                    $this->assertLessThanOrEqual(64, max($weights));
+                    $this->assertGreaterThanOrEqual(36, min($weights));
+                    $this->assertLessThanOrEqual(44, min($weights));
+                } else {
+                    $this->assertSame([100], $weights);
+                }
+            }
+            if (count($dominantPositions) >= 3) {
+                $firstThree = array_slice($dominantPositions, 0, 3);
+                sort($firstThree);
+                $this->assertSame([0, 1, 2], $firstThree);
+            }
+        }
+    }
+
     public function test_published_title_and_figures_remain_editable_without_exposing_drafts(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

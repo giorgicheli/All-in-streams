@@ -10,6 +10,8 @@
         ];
     })->all() : [];
     $networkSlides = array_chunk($networkClips, 3);
+    $networkDominantSlots = [0, 1, 2];
+    shuffle($networkDominantSlots);
     $networkClipPrefix = 'network-clip-'.Illuminate\Support\Str::uuid();
     $networkClipFallbacks = [
         'first' => 'M0 .04 Q0 0 .04 0 H.96 Q1 0 .997 .04 L.923 .96 Q.92 1 .88 1 H.04 Q0 1 0 .96 Z',
@@ -35,13 +37,27 @@
                     <div class="network-showcase-media" id="creator-content">
                         <div class="network-showcase-track" data-network-track tabindex="0" role="group" aria-label="Creator video previews. Swipe or use the arrow keys to browse.">
                             @foreach($networkSlides as $slideIndex => $slide)
+                                @php
+                                    $networkPanelWeights = [100];
+                                    if (count($slide) === 3) {
+                                        $networkWideWeight = random_int(46, 52);
+                                        $networkSmallWeight = random_int(22, 25);
+                                        $networkPanelWeights = [$networkSmallWeight, 100 - $networkWideWeight - $networkSmallWeight];
+                                        shuffle($networkPanelWeights);
+                                        array_splice($networkPanelWeights, $networkDominantSlots[$slideIndex % 3], 0, [$networkWideWeight]);
+                                    } elseif (count($slide) === 2) {
+                                        $networkWideWeight = random_int(56, 64);
+                                        $networkPanelWeights = [$networkWideWeight, 100 - $networkWideWeight];
+                                        shuffle($networkPanelWeights);
+                                    }
+                                @endphp
                                 <div class="network-showcase-slide network-showcase-slide--{{ count($slide) }}" data-network-slide="{{ $slideIndex }}" role="group" aria-roledescription="slide" aria-label="{{ $slideIndex + 1 }} of {{ count($networkSlides) }}">
                                     @foreach($slide as $clip)
                                         @php
                                             $networkPanelShape = count($slide) === 1 ? 'single' : ($loop->first ? 'first' : ($loop->last ? 'last' : 'middle'));
                                             $networkPanelClipId = $networkClipPrefix.'-'.$slideIndex.'-'.$loop->index;
                                         @endphp
-                                        <div class="network-showcase-panel" data-network-panel data-network-shape="{{ $networkPanelShape }}" data-network-index="{{ $clip['position'] - 1 }}" data-network-position="{{ $clip['position'] }}" style="--network-panel-clip:url(#{{ $networkPanelClipId }})" role="group" aria-label="{{ $clip['title'] }}">
+                                        <div class="network-showcase-panel" data-network-panel data-network-shape="{{ $networkPanelShape }}" data-network-index="{{ $clip['position'] - 1 }}" data-network-position="{{ $clip['position'] }}" style="--network-panel-clip:url(#{{ $networkPanelClipId }});--network-panel-weight:{{ $networkPanelWeights[$loop->index] }}" role="group" aria-label="{{ $clip['title'] }}">
                                             <svg class="network-showcase-clip-definitions" width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="{{ $networkPanelClipId }}" clipPathUnits="objectBoundingBox"><path data-network-clip-path d="{{ $networkClipFallbacks[$networkPanelShape] }}"/></clipPath></defs></svg>
                                             <img data-network-poster src="{{ $clip['poster'] }}" alt="" width="640" height="360" loading="lazy" decoding="async" draggable="false">
                                             @for($buffer = 0; $buffer < 2; $buffer++)
