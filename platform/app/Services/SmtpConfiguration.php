@@ -18,7 +18,7 @@ class SmtpConfiguration
 {
     public const MAILER = 'site_smtp';
 
-    private const FIELDS = ['enabled', 'host', 'port', 'encryption', 'username', 'from_address', 'from_name'];
+    private const FIELDS = ['enabled', 'host', 'port', 'encryption', 'username', 'from_address', 'from_name', 'contact_recipient'];
 
     public function isReady(): bool
     {
@@ -68,6 +68,12 @@ class SmtpConfiguration
         $this->guardAdministrator($actor);
         $setting = MailSetting::current();
         $input = Arr::only($data, [...self::FIELDS, 'password', 'clear_password']);
+        if (! array_key_exists('contact_recipient', $input)) {
+            $input['contact_recipient'] = $setting->contact_recipient;
+        }
+        if (is_string($input['contact_recipient'])) {
+            $input['contact_recipient'] = mb_strtolower(trim($input['contact_recipient'])) ?: null;
+        }
         $input['password'] ??= '';
         $input['clear_password'] ??= false;
         $validated = Validator::make($input, $this->rules())->validate();
@@ -151,6 +157,7 @@ class SmtpConfiguration
             'clear_password' => ['required', 'boolean'],
             'from_address' => ['nullable', 'required_if:enabled,true,1', 'email:rfc', 'max:254'],
             'from_name' => ['required', 'string', 'max:160', $singleLine],
+            'contact_recipient' => ['nullable', 'email:rfc', 'max:254'],
         ];
     }
 }

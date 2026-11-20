@@ -1,0 +1,306 @@
+{
+    "body":  {
+                 "content":  [
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "All In Streams is the controller of personal data covered by this policy. This policy explains how we handle personal data when you visit our website, contact us or submit a brand enquiry, agency brief or creator application.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "1 What we collect",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Enquiries and applications may include your name, company or creator name, business email, Telegram username, website or social profiles, and the information you share about markets, budgets, rates or campaign needs.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Creator applications and campaign follow-up may include audience statistics, screenshots or recordings, and supporting documents such as contracts, where requested. Please remove unrelated personal data, including identifiable player details, before sharing materials.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "When you use the website, technical data may include your IP address, browser and device details, and server logs.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "We may also receive professional contact or profile information from the organisation you represent, a referring partner or public creator channels, where relevant to an enquiry or collaboration.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "2 How we use your data and why",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "We respond to enquiries, review applications and coordinate potential collaborations. Our legitimate interests include managing business enquiries, assessing whether a creator or campaign is a good fit and operating our agency. When you ask us to take steps before entering into a contract with you, or when we need to perform a contract with you, we use the data necessary for those steps.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "We use technical data where necessary to run, troubleshoot and protect the website, based on our legitimate interests in keeping it secure and available. We process data where necessary to meet applicable legal obligations. Where we rely on consent for a specific activity, you can withdraw it at any time.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "You can browse without submitting an application. If you leave out required information, we may be unable to respond or assess your submission.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "3 Who receives your data",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Authorised staff review submissions. Providers supporting hosting, email, forms and file storage may handle data needed to provide their services. Where relevant to a potential or agreed campaign, we share selected professional profile and campaign details with the brands, agencies or creators involved. We may disclose relevant information to advisers or authorities when necessary or legally required.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "If we transfer personal data outside the European Economic Area and GDPR transfer rules apply, we use a transfer mechanism permitted by the GDPR, such as an applicable adequacy decision or standard contractual clauses. Email us to ask whether this applies to your data or to request details and a copy of the relevant safeguards.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "4 Browser storage and cookies",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Your browser settings let you view and clear cookies and other site data. If we introduce optional analytics or similar technologies that require consent, we will explain their purpose and ask for your permission before using them.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "5 How long we keep your data",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "We keep enquiries and applications while they are under review or needed for follow-up. If a collaboration goes ahead, we keep the relevant records while managing it and for any additional period needed for applicable legal, tax or accounting duties or the handling of claims. We keep technical logs for the period needed to investigate and resolve security or operational issues.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "6 Your rights",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Depending on the circumstances, you can request access to, correction or deletion of your data, restriction of processing or a portable copy. You can object to processing based on our legitimate interests. Where processing relies on consent, withdrawing consent does not affect processing that took place before withdrawal.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "To exercise your rights, email us using the contact details below. You can also complain to your competent data protection authority, including Bulgaria’s Commission for Personal Data Protection.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "marks":  [
+                                                                       {
+                                                                           "attrs":  {
+                                                                                         "target":  "_self",
+                                                                                         "href":  "https://cpdp.bg/"
+                                                                                     },
+                                                                           "type":  "link"
+                                                                       }
+                                                                   ],
+                                                         "type":  "text",
+                                                         "text":  "Commission for Personal Data Protection"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "7 Age eligibility",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "This website is intended for business audiences and people aged 18 or older. We do not knowingly collect personal data from anyone under 18.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "8 Contact the controller",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "All In Streams · Registered in Bulgaria",
+                                                         "type":  "text"
+                                                     },
+                                                     {
+                                                         "type":  "hardBreak"
+                                                     },
+                                                     {
+                                                         "text":  "Company registration number 207862525 · VAT number BG207862525",
+                                                         "type":  "text"
+                                                     },
+                                                     {
+                                                         "type":  "hardBreak"
+                                                     },
+                                                     {
+                                                         "text":  "Registered address: r. Malinova dolina, bl. 29, ent. In, ap. 49, 1700 Sofia, Bulgaria",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Email us at ",
+                                                         "type":  "text"
+                                                     },
+                                                     {
+                                                         "marks":  [
+                                                                       {
+                                                                           "attrs":  {
+                                                                                         "target":  "_self",
+                                                                                         "href":  "mailto:info@streams.com"
+                                                                                     },
+                                                                           "type":  "link"
+                                                                       }
+                                                                   ],
+                                                         "type":  "text",
+                                                         "text":  "info@streams.com"
+                                                     },
+                                                     {
+                                                         "text":  ".",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 }
+                             ],
+                 "type":  "doc"
+             },
+    "title":  "All In Streams Privacy Policy"
+}

@@ -286,10 +286,10 @@ class WebsiteEditor extends Page
             }
             if ($prefix === 'contact.' && $key === 'email') {
                 $fields[] = TextInput::make($name)->label('Public contact email')->email()->maxLength(254)
-                    ->default($value)->helperText('Shown on the Contact page. Form messages arrive in Contact messages in the admin panel.');
+                    ->default($value)->helperText('Shown on the Contact page. Form messages are saved in Contact messages; configure their email notifications in Email settings.');
                 continue;
             }
-            $long = in_array($key, ['body', 'mobile_body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true);
+            $long = in_array($key, ['body', 'mobile_body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true) || ($prefix === 'contact.' && $key === 'title');
             $field = $long ? Textarea::make($name)->rows(3)->columnSpanFull() : TextInput::make($name);
             $field->label($key === 'mobile_body' ? 'Mobile matching description' : $label)->default($value)->maxLength(5000);
             if ($value !== '' && $value !== null && $key !== 'suffix') $field->required();

@@ -1,0 +1,246 @@
+{
+    "body":  {
+                 "content":  [
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "These terms apply to your use of the All In Streams website. By using the site, you agree to these terms. If you act for an organisation, you must have authority to submit information on its behalf.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "1 Who we are",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "All In Streams is a creator and influencer agency for iGaming and gaming brands. We arrange and manage campaigns. We do not operate gambling services, accept bets or process gambling payments.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "2 Using the website",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "You must be at least 18 and meet any higher applicable minimum age. Provide accurate information and share only materials you have the right to submit. Do not upload unlawful content, malware or identifiable player information, impersonate others, attempt unauthorised access, disrupt the site or scrape it without permission. We may remove submissions or restrict access to address misuse, security risks or legal requirements.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "3 Applications and campaigns",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Submitting an enquiry or application creates no booking or commitment. Campaign scope, prices, reporting, KPIs and remedies are governed by the applicable signed agreement. Case studies reflect past results, and future results may vary. Project-specific commitments apply only as agreed in writing.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "4 Content and intellectual property",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "All In Streams and its licensors retain their rights in the site, branding and content. You retain your rights in submitted materials and allow us to use them to review your submission and discuss a potential collaboration. Separate written permission or another lawful basis is required for wider reuse.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "5 External links",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Third-party channels and sites are governed by their own terms and privacy policies. Their operators control their content and availability.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "6 Responsible gambling",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Campaigns target adults. Brands must confirm they are authorised to operate and advertise in each target market. All parties must follow applicable laws and platform rules for their activities. Gambling involves risk. If it causes harm, contact a gambling support service in your country.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "7 Website availability and liability",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "The website is provided as available. To the extent permitted by law, All In Streams excludes liability for indirect losses arising from use of the site or reliance on its content. Mandatory rights and liabilities that cannot lawfully be excluded are preserved.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "8 Changes to these terms",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "We may update these terms by posting a revised version. The revised terms apply to subsequent use of the website. Any governing law, jurisdiction or other terms in a signed campaign agreement apply to that agreement.",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "9 Contact",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "attrs":  {
+                                                   "level":  2
+                                               },
+                                     "type":  "heading"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "All In Streams · Registered in Bulgaria",
+                                                         "type":  "text"
+                                                     },
+                                                     {
+                                                         "type":  "hardBreak"
+                                                     },
+                                                     {
+                                                         "text":  "Company registration number 207862525 · VAT number BG207862525",
+                                                         "type":  "text"
+                                                     },
+                                                     {
+                                                         "type":  "hardBreak"
+                                                     },
+                                                     {
+                                                         "text":  "Registered address: r. Malinova dolina, bl. 29, ent. In, ap. 49, 1700 Sofia, Bulgaria",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 },
+                                 {
+                                     "content":  [
+                                                     {
+                                                         "text":  "Email us at ",
+                                                         "type":  "text"
+                                                     },
+                                                     {
+                                                         "marks":  [
+                                                                       {
+                                                                           "attrs":  {
+                                                                                         "target":  "_self",
+                                                                                         "href":  "mailto:info@streams.com"
+                                                                                     },
+                                                                           "type":  "link"
+                                                                       }
+                                                                   ],
+                                                         "type":  "text",
+                                                         "text":  "info@streams.com"
+                                                     },
+                                                     {
+                                                         "text":  ".",
+                                                         "type":  "text"
+                                                     }
+                                                 ],
+                                     "type":  "paragraph"
+                                 }
+                             ],
+                 "type":  "doc"
+             },
+    "title":  "All In Streams Terms of Service"
+}

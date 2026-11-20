@@ -13,6 +13,7 @@ import { initializeRopeStatistics } from './rope-statistics';
 import { initializePointerEffect } from './pointer-effect';
 import { initializeCreatorReels } from './creator-reels';
 import { initializeCreatorOrbit } from './creator-orbit';
+import { initializeMotionGraphics } from './motion-graphic';
 import { initializeNetworkShowcase } from './network-showcase';
 import { initializeNetworkStoryTransition } from './network-story-transition';
 import { initializeSiteIntro } from './site-intro';
@@ -65,6 +66,7 @@ function initializePage() {
     const disposePointerEffect = initializePointerEffect();
     const disposeCreatorReels = initializeCreatorReels();
     const disposeCreatorOrbit = initializeCreatorOrbit();
+    const disposeMotionGraphics = initializeMotionGraphics();
     const disposeNetworkShowcase = initializeNetworkShowcase();
     const disposeNetworkStoryTransition = initializeNetworkStoryTransition();
     const header = document.querySelector('.site-header');
@@ -94,6 +96,7 @@ function initializePage() {
         disposePointerEffect();
         disposeCreatorReels();
         disposeCreatorOrbit();
+        disposeMotionGraphics();
         disposeNetworkShowcase();
         disposeNetworkStoryTransition();
     };

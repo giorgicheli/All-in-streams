@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactMessageRequest;
 use App\Models\ContactMessage;
 use App\Services\ContactFormChallenge;
+use App\Services\ContactMessageNotification;
 use App\Services\SiteContent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,14 +27,17 @@ class ContactController extends Controller
         ])->header('Cache-Control', 'no-store, private');
     }
 
-    public function store(StoreContactMessageRequest $request, SiteContent $content): RedirectResponse
+    public function store(StoreContactMessageRequest $request, SiteContent $content, ContactMessageNotification $notifications): RedirectResponse
     {
         if (($submissionKey = $request->submissionKey()) !== null) {
             // Unique challenge keys also make retries safe across concurrent requests.
-            ContactMessage::firstOrCreate(
+            $message = ContactMessage::firstOrCreate(
                 ['submission_key' => $submissionKey],
                 $request->safe()->only(['name', 'email', 'subject', 'message']),
             );
+            if ($message->wasRecentlyCreated) {
+                $notifications->send($message);
+            }
         }
 
         $site = $content->getPublished('settings');

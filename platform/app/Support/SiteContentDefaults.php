@@ -133,12 +133,12 @@ class SiteContentDefaults
             'header' => ['sign_in_label' => 'Sign in', 'workspace_label' => 'Your workspace', 'cta_label' => 'Register', 'cta_url' => '/talk-to-us'],
             'footer' => ['tagline' => 'Creator partnerships. Managed end to end.', 'copyright' => 'All rights reserved.', 'sign_in_label' => 'Sign in', 'contact_label' => 'Contact', 'privacy_label' => 'Privacy policy', 'terms_label' => 'Terms & conditions'],
             'contact' => [
-                'page_title' => 'Contact', 'title' => 'Let’s talk.',
-                'description' => 'Have a question about working together? Send us a message and our team will get back to you.',
+                'page_title' => 'Contact', 'eyebrow' => 'LET’S BUILD TOGETHER', 'title' => "Ready to scale\nyour iGaming brand?",
+                'description' => 'Tell us about your goals and our team will get back to you shortly.',
                 'email' => 'info@streams.com', 'email_label' => 'Email us', 'form_title' => 'Send a message',
-                'name_label' => 'Your name', 'email_field_label' => 'Email address',
+                'name_label' => 'Your name', 'email_field_label' => 'Business email',
                 'subject_label' => 'Subject', 'message_label' => 'Your message',
-                'submit_label' => 'Send message', 'privacy_note' => 'Your message is shared with the All In Streams team.',
+                'submit_label' => 'Get in touch', 'privacy_note' => 'Your message is shared with the All In Streams team.',
                 'success_message' => 'Thank you. Your message has been received.',
             ],
             'network_stats' => [

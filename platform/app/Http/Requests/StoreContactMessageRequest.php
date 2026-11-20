@@ -23,6 +23,9 @@ class StoreContactMessageRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $changes = [];
+        if (! $this->exists('subject')) {
+            $changes['subject'] = 'Website enquiry';
+        }
         foreach (['name', 'email', 'subject', 'message'] as $field) {
             if (is_string($this->input($field))) {
                 $changes[$field] = trim($this->input($field));

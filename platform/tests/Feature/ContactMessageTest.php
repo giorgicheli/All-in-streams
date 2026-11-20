@@ -3,12 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\ContactMessage;
+use App\Models\MailSetting;
 use App\Models\User;
+use App\Mail\ContactMessageReceived;
 use App\Services\ContactFormChallenge;
+use App\Services\SmtpConfiguration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Tests\TestCase;
 
 class ContactMessageTest extends TestCase
@@ -44,6 +49,97 @@ class ContactMessageTest extends TestCase
             'subject' => 'A creator campaign', 'message' => 'We would like to discuss our next creator campaign.',
             'contact_challenge' => $this->challenge(), 'website' => '',
         ], $changes);
+    }
+
+    private function enableSmtp(?string $recipient = null): User
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_demo' => false, 'email' => 'administrator@example.test']);
+        app(SmtpConfiguration::class)->save($admin, [
+            'enabled' => true, 'host' => 'smtp.example.test', 'port' => 587, 'encryption' => 'tls',
+            'username' => 'smtp-user', 'password' => 'isolated-smtp-secret', 'clear_password' => false,
+            'from_address' => 'sender@example.test', 'from_name' => 'All In Streams', 'contact_recipient' => $recipient,
+        ]);
+
+        return $admin;
+    }
+
+    public function test_three_field_contact_form_gets_a_server_side_subject_without_weakening_validation(): void
+    {
+        $data = $this->submission();
+        unset($data['subject']);
+        $this->post('/contact', $data)->assertRedirect('/contact')->assertSessionHas('contact_status');
+        $this->assertSame('Website enquiry', ContactMessage::sole()->subject);
+        $this->from('/contact')->post('/contact', $this->submission(['subject' => '']))->assertSessionHasErrors('subject');
+        $this->assertDatabaseCount('contact_messages', 1);
+    }
+
+    public function test_new_message_notifies_only_real_administrators_once_through_saved_smtp(): void
+    {
+        $admin = $this->enableSmtp();
+        User::factory()->create(['role' => 'admin', 'is_demo' => true, 'email' => 'demo-admin@example.test']);
+        User::factory()->create(['role' => 'business', 'is_demo' => false, 'email' => 'business@example.test']);
+        $data = $this->submission(['name' => 'Alex & Partners', 'message' => 'Our campaign needs streamers & creators.']);
+        $this->post('/contact', $data)->assertRedirect('/contact')->assertSessionHas('contact_status');
+        $stored = ContactMessage::sole();
+        Mail::assertSent(ContactMessageReceived::class, function (ContactMessageReceived $mail) use ($admin, $stored): bool {
+            $mail->assertFrom('sender@example.test', 'All In Streams');
+            $this->assertTrue($mail->hasReplyTo($stored->email, $stored->name));
+            $mail->assertSeeInText('Alex & Partners');
+            $mail->assertSeeInText('Our campaign needs streamers & creators.');
+            $mail->assertSeeInText('/admin/contact-messages');
+            $this->assertSame(SmtpConfiguration::MAILER, $mail->mailer);
+            $this->assertCount(1, $mail->to);
+
+            return $mail->hasTo($admin->email) && $mail->contactMessage->is($stored);
+        });
+        $this->post('/contact', $data)->assertRedirect('/contact');
+        $this->assertDatabaseCount('contact_messages', 1);
+        Mail::assertSentCount(1);
+    }
+
+    public function test_configured_contact_recipient_overrides_administrator_addresses(): void
+    {
+        $this->enableSmtp('inbox@example.test');
+        $this->post('/contact', $this->submission())->assertRedirect('/contact');
+        Mail::assertSent(ContactMessageReceived::class, function (ContactMessageReceived $mail): bool {
+            $this->assertCount(1, $mail->to);
+
+            return $mail->hasTo('inbox@example.test') && ! $mail->hasTo('administrator@example.test');
+        });
+    }
+
+    public function test_smtp_failure_preserves_the_enquiry_and_never_exposes_or_logs_transport_details(): void
+    {
+        $this->enableSmtp();
+        $this->mock(SmtpConfiguration::class, function ($mock): void {
+            $mock->shouldReceive('isReady')->once()->andReturnTrue();
+            $mock->shouldReceive('apply')->once()->andThrow(new RuntimeException('smtp://private-user:private-password@smtp-private.example.test'));
+        });
+        Log::shouldReceive('warning')->once()->with(
+            'Contact notification email could not be sent. The message remains in the admin inbox.',
+            ['contact_message_id' => 1],
+        );
+        $this->post('/contact', $this->submission())->assertRedirect('/contact')->assertSessionHas('contact_status');
+        $this->assertDatabaseCount('contact_messages', 1);
+        Mail::assertNothingSent();
+    }
+
+    public function test_enabling_smtp_does_not_send_old_messages_or_honeypot_submissions(): void
+    {
+        $data = $this->submission();
+        $this->post('/contact', $data)->assertRedirect('/contact');
+        Mail::assertNothingSent();
+        $this->enableSmtp();
+        $this->post('/contact', $data)->assertRedirect('/contact');
+        $this->post('/contact', $this->submission(['website' => 'filled-by-a-bot']))->assertRedirect('/contact');
+        $this->assertDatabaseCount('contact_messages', 1);
+        Mail::assertNothingSent();
+        $setting = MailSetting::current();
+        $setting->enabled = false;
+        $setting->save();
+        $this->post('/contact', $this->submission())->assertRedirect('/contact');
+        $this->assertDatabaseCount('contact_messages', 2);
+        Mail::assertNothingSent();
     }
 
     public function test_contact_page_issues_a_private_session_challenge(): void

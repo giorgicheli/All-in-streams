@@ -42,7 +42,7 @@ class MailSettings extends Page
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('SMTP connection')->description('Password recovery uses these saved settings. Email stays unavailable until SMTP is enabled and complete.')->schema([
+            Section::make('SMTP connection')->description('Password recovery and new contact messages use these saved settings. Email stays unavailable until SMTP is enabled and complete.')->schema([
                 Toggle::make('enabled')->label('Enable SMTP email')->columnSpanFull(),
                 TextInput::make('host')->label('SMTP host')->placeholder('smtp.example.com')->maxLength(253),
                 TextInput::make('port')->label('SMTP port')->numeric()->integer()->minValue(1)->maxValue(65535)->required(),
@@ -57,6 +57,10 @@ class MailSettings extends Page
                 TextInput::make('from_address')->label('From email address')->email()->maxLength(254),
                 TextInput::make('from_name')->label('From name')->required()->maxLength(160),
             ])->columns(2),
+            Section::make('Contact notifications')->description('New contact messages always remain in the admin inbox. Email notifications start when SMTP is enabled; older messages are not sent automatically.')->schema([
+                TextInput::make('contact_recipient')->label('Notification recipient')->email()->maxLength(254)
+                    ->helperText('Leave blank to notify the email addresses of administrator accounts, excluding demo accounts.'),
+            ]),
         ])->statePath('data');
     }
 
@@ -90,7 +94,7 @@ class MailSettings extends Page
     private function loadSettings(): void
     {
         $this->form->fill([
-            ...MailSetting::current()->only(['enabled', 'host', 'port', 'encryption', 'username', 'from_address', 'from_name']),
+            ...MailSetting::current()->only(['enabled', 'host', 'port', 'encryption', 'username', 'from_address', 'from_name', 'contact_recipient']),
             'password' => '', 'clear_password' => false,
         ]);
     }

@@ -88,6 +88,24 @@ class MailSettingsTest extends TestCase
         $this->assertDatabaseCount('mail_settings', 1);
     }
 
+    public function test_contact_notification_recipient_is_editable_validated_and_can_be_cleared(): void
+    {
+        $service = app(SmtpConfiguration::class);
+        $admin = $this->administrator();
+        $service->save($admin, $this->settings(['contact_recipient' => '  CONTACT@EXAMPLE.TEST  ']));
+        $this->assertSame('contact@example.test', MailSetting::current()->contact_recipient);
+        Livewire::test(MailSettings::class)->assertSet('data.contact_recipient', 'contact@example.test')
+            ->set('data.contact_recipient', 'new-inbox@example.test')->call('save')->assertHasNoErrors();
+        $this->assertSame('new-inbox@example.test', MailSetting::current()->contact_recipient);
+        // Callers changing connection settings alone retain the recipient.
+        $service->save($admin, $this->settings());
+        $this->assertSame('new-inbox@example.test', MailSetting::current()->contact_recipient);
+        Livewire::test(MailSettings::class)->set('data.contact_recipient', 'not-an-email')->call('save')->assertHasFormErrors(['contact_recipient']);
+        $this->assertSame('new-inbox@example.test', MailSetting::current()->contact_recipient);
+        Livewire::test(MailSettings::class)->set('data.contact_recipient', '')->call('save')->assertHasNoErrors();
+        $this->assertNull(MailSetting::current()->contact_recipient);
+    }
+
     public function test_model_rejects_mass_assignment_and_service_ignores_unapproved_fields(): void
     {
         try {

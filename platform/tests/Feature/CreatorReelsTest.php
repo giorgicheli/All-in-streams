@@ -259,14 +259,16 @@ class CreatorReelsTest extends TestCase
         $this->assertSame(1, $xpath->query('//section[@id="top"]//*[@data-creator-orbit]')->length);
         $this->assertSame(1, $xpath->query('//*[@data-creator-orbit]')->length);
         $this->assertSame(0, $xpath->query('//*[@id="platform"]//*[@data-creator-orbit]')->length);
-        $this->assertSame(1, $xpath->query('//*[@data-brand-spotlight]//img[contains(@class,"brand-spotlight-photo")]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-brand-spotlight]//img[contains(@class,"brand-spotlight-photo")]')->length);
+        $this->assertSame(1, $xpath->query('//*[@id="platform"]//*[@data-motion-graphic]')->length);
+        $this->assertSame(5, $xpath->query('//*[@data-motion-graphic]//*[contains(concat(" ", normalize-space(@class), " "), " mg-scene ")]')->length);
         $this->assertSame(4, $xpath->query('//section[@id="network"]//article[contains(@class,"network-stat-card")]')->length);
         $this->assertSame(1, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " hero-stage ")]/*[contains(concat(" ", normalize-space(@class), " "), " geo-strip ")]')->length);
 
         $settings['creator_orbit']['enabled'] = false;
         app(SiteContent::class)->publish($admin, 'settings', $settings);
-        $this->get('/')->assertOk()->assertSee('/images/brand-spotlight/streamer-portrait.webp')
-            ->assertSee('Partnership example')->assertDontSee('data-creator-orbit')
+        $this->get('/')->assertOk()->assertSee('data-motion-graphic', false)
+            ->assertSee('Bring the brief. We coordinate the campaign.')->assertDontSee('data-creator-orbit')
             ->assertSee('data-network-showcase', false)->assertDontSee('data-rope-statistics', false)->assertDontSee('network-after-hero');
 
         $settings['brand_spotlight']['enabled'] = false;
