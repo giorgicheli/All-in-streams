@@ -1,4 +1,4 @@
-@props(['clips' => [], 'brand' => [], 'data' => []])
+@props(['clips' => [], 'brand' => [], 'data' => [], 'minimal' => false])
 @php
     $orbitLabels = $data + [
         'accessible_label' => 'Brands and creators connected through video',
@@ -27,15 +27,15 @@
         ['type' => 'main', 'depth' => '1', 'label' => $orbitLabels['main_title'], 'subtitle' => $orbitLabels['main_subtitle']],
         ['type' => 'bottom', 'depth' => '.4', 'label' => $orbitLabels['bottom_title'], 'subtitle' => $orbitLabels['bottom_subtitle']],
     ];
+    if ($minimal) $orbitCards = array_slice($orbitCards, 0, 2);
 @endphp
-<section {{ $attributes->class('creator-orbit') }} data-creator-orbit data-orbit-running="false" aria-label="{{ $orbitLabels['accessible_label'] }}">
+<section {{ $attributes->class(['creator-orbit', 'creator-orbit--minimal' => $minimal]) }} data-creator-orbit data-orbit-running="false" aria-label="{{ $orbitLabels['accessible_label'] }}">
     <div class="creator-orbit-stage-wrap">
         <div class="creator-orbit-stage" data-orbit-stage>
             <div class="creator-orbit-orbit" aria-hidden="true"></div>
             <svg class="creator-orbit-routes" data-orbit-routes viewBox="0 0 600 508" aria-hidden="true" focusable="false">
                 @foreach(['M255 269C255 260 198 260 198 250', 'M255 269C255 215 218 215 218 140', 'M255 269C255 238 288 238 288 218', 'M255 269C255 322 294 322 294 376'] as $route)
-                    <path data-orbit-route="{{ $loop->index }}" d="{{ $route }}"/>
-                    <circle data-orbit-flow="{{ $loop->index }}" r="3.2"/>
+                    @if(! $minimal || ! $loop->last)<path data-orbit-route="{{ $loop->index }}" d="{{ $route }}"/><circle data-orbit-flow="{{ $loop->index }}" r="3.2"/>@endif
                 @endforeach
             </svg>
             @foreach($orbitCards as $card)
@@ -46,13 +46,13 @@
                             <img class="creator-orbit-poster" data-orbit-poster src="{{ $initialClip['poster'] }}" alt="" loading="lazy" decoding="async" width="640" height="360">
                             <video data-orbit-video muted loop playsinline preload="none" aria-hidden="true" disablepictureinpicture></video>
                             <video data-orbit-video muted loop playsinline preload="none" aria-hidden="true" disablepictureinpicture></video>
-                            @if($card['type'] === 'main')<span class="creator-orbit-live-pill"><i aria-hidden="true"></i>{{ $orbitLabels['preview_label'] }}</span>@endif
+                            @if($card['type'] === 'main' && ! $minimal)<span class="creator-orbit-live-pill"><i aria-hidden="true"></i>{{ $orbitLabels['preview_label'] }}</span>@endif
                         </div>
                         @if($card['type'] === 'bottom')
                             <div class="creator-orbit-bottom-copy"><strong>{{ $card['label'] }}</strong><p>{{ $card['subtitle'] }}</p></div>
                             <span class="creator-orbit-check" aria-hidden="true">✓</span>
                         @else
-                            <div class="creator-orbit-card-label"><div><strong>{{ $card['label'] }}</strong>@if($card['subtitle'])<p>{{ $card['subtitle'] }}</p>@endif</div><span class="creator-orbit-check" aria-hidden="true">✓</span></div>
+                            <div class="creator-orbit-card-label"><div><strong>{{ $card['label'] }}</strong>@if($card['subtitle'] && ! $minimal)<p>{{ $card['subtitle'] }}</p>@endif</div>@unless($minimal)<span class="creator-orbit-check" aria-hidden="true">✓</span>@endunless</div>
                         @endif
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                 <div class="creator-orbit-float-card"><div class="creator-orbit-brief-icon" aria-hidden="true"></div><strong>{{ $brand['card_title'] ?? 'Your campaign' }}</strong><p>{{ $brand['card_status'] ?? 'Find your people.' }}</p></div>
             </div>
             <div class="creator-orbit-hub" data-orbit-hub aria-hidden="true"><x-brand-mark class="creator-orbit-mark" /></div>
-            <div class="creator-orbit-match-tag"><i aria-hidden="true"></i>{{ $orbitLabels['tag'] }}</div>
+            @unless($minimal)<div class="creator-orbit-match-tag"><i aria-hidden="true"></i>{{ $orbitLabels['tag'] }}</div>@endunless
         </div>
     </div>
     <script type="application/json" data-orbit-clips>{!! json_encode($orbitClips, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) !!}</script>

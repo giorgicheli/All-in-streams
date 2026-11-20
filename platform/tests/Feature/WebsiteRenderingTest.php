@@ -25,13 +25,13 @@ class WebsiteRenderingTest extends TestCase
         $content = SiteContentDefaults::home();
         $content['blocks'][0]['data']['title_line_1'] = 'A private draft headline';
         app(SiteContent::class)->saveDraft($admin, 'home', $content);
-        $this->get('/')->assertOk()->assertSee('Trusted')->assertDontSee('A private draft headline');
+        $this->get('/')->assertOk()->assertSee('Meet your')->assertDontSee('A private draft headline');
         $this->actingAs($admin)->get('/admin/website-preview/home')->assertOk()
             ->assertSee('A private draft headline')->assertHeader('X-Robots-Tag', 'noindex, nofollow')
             ->assertHeader('X-Frame-Options', 'SAMEORIGIN');
 
         app(SiteContent::class)->publish($admin, 'home');
-        $this->get('/')->assertOk()->assertSee('A private draft headline')->assertDontSee('Trusted');
+        $this->get('/')->assertOk()->assertSee('A private draft headline')->assertDontSee('Meet your');
     }
 
     public function test_public_sections_follow_authored_order_and_visibility(): void
@@ -40,7 +40,7 @@ class WebsiteRenderingTest extends TestCase
         $content['blocks'][2]['data']['enabled'] = false;
         [$content['blocks'][0], $content['blocks'][3]] = [$content['blocks'][3], $content['blocks'][0]];
         app(SiteContent::class)->publish(User::factory()->create(['role' => 'admin']), 'home', $content);
-        $this->get('/')->assertOk()->assertSeeInOrder(['Native to your world.', 'Trusted'])
+        $this->get('/')->assertOk()->assertSeeInOrder(['Native to your world.', 'Meet your'])
             ->assertDontSee('Your growth. Our game plan.');
     }
 
@@ -89,7 +89,7 @@ class WebsiteRenderingTest extends TestCase
 
         $this->get('/white')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow')
             ->assertSee('class="theme-white"', false)->assertSee('content="#f5f6fa"', false)
-            ->assertSee('Trusted')->assertSee('site-footer')->assertSee('data-network-count', false)
+            ->assertSee('Meet your')->assertSee('site-footer')->assertSee('data-network-count', false)
             ->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE')->assertDontSee('livewire.js')
             ->assertDontSee('network-stat-index')->assertDontSee('card-number')->assertDontSee('step-number');
         $this->get('/')->assertOk()->assertSee('class="theme-white"', false)

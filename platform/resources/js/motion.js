@@ -89,9 +89,9 @@ export function initializeMotion(root = document) {
     }
 
     function triggerLine(element) {
-        // An anchor can place the final FAQ row inside the viewport but below
-        // the normal entrance inset. Every visible question must be readable.
-        return element?.matches('.faq-list details') ? win.innerHeight : win.innerHeight - revealInset();
+        // Visible FAQ rows and the first network card should not leave a blank
+        // area at the viewport edge while waiting for the usual entrance inset.
+        return element?.matches('.faq-list details, .network-showcase-card') ? win.innerHeight : win.innerHeight - revealInset();
     }
 
     function listen(target, event, callback, options) {
