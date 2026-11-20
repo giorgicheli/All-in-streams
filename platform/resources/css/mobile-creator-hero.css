@@ -1,11 +1,30 @@
 .hero-mobile-description { display: none; }
 
+/* Keep the opening story content-sized, including on unusually tall screens. */
+.site-redesign .theme-white .hero-stage { min-height: 0; }
+.site-redesign .theme-white .hero-stage > .hero-reference { flex: 0 0 auto; padding: 30px 0 40px; }
+.site-redesign .theme-white .hero-stage > .geo-strip { margin-top: 0; }
+.site-redesign .theme-white .hero-reference .hero-grid { min-height: 0; }
+.site-redesign .theme-white .hero-copy > .hero-market-label { max-width: none; margin: 0 0 16px; color: #636b84; font-size: 13px; line-height: 1.5; font-weight: 550; letter-spacing: .08em; }
+.site-redesign .theme-white .hero-benefits { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 22px; margin: 22px 0 0; padding: 0; list-style: none; }
+.site-redesign .theme-white .hero-benefits li { display: flex; align-items: flex-start; gap: 8px; color: #636b84; font-size: 14px; line-height: 1.6; }
+.site-redesign .theme-white .hero-benefits li:last-child { flex-basis: 100%; }
+.site-redesign .theme-white .hero-benefits .icon { width: 16px; height: 16px; flex: none; margin-top: 3px; color: #0a5cff; }
+
+@media (min-width: 701px) {
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy { padding-block: 8px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy h1 { margin-block: 18px 24px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-orbit-art .creator-orbit { max-width: 540px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-buttons { margin-top: 26px; }
+}
+
 @media (max-width: 700px) {
     .site-redesign .theme-white .hero-copy > .hero-desktop-description { display: none; }
     .site-redesign .theme-white .hero-copy > .hero-mobile-description { display: block; }
-    .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { flex: 1 0 auto; align-items: center; justify-content: center; padding: 26px 0 24px; }
-    .site-redesign .theme-white .hero-reference .hero-grid--orbit { display: flow-root; min-height: 0; position: relative; top: -20px; }
+    .site-redesign .theme-white .hero-stage > .hero-reference:has(.hero-grid--orbit) { flex: 0 0 auto; align-items: center; justify-content: flex-start; padding: 24px 0 28px; }
+    .site-redesign .theme-white .hero-reference .hero-grid--orbit { display: flow-root; min-height: 0; position: relative; top: 0; }
     .site-redesign .theme-white .hero-grid--orbit .hero-copy { display: contents; padding: 0; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-copy > .hero-market-label { position: absolute; top: 0; left: 0; width: 100%; margin: 0; font-size: 12px; line-height: 1.5; letter-spacing: .06em; }
     .site-redesign .theme-white .hero-grid--orbit .hero-copy h1 { position: relative; z-index: 2; width: calc(57% - 6px); max-width: none; margin: 0 0 18px; padding-top: 38px; font-size: clamp(40px, 12.8vw, 60px); letter-spacing: -.075em; line-height: 1.06; }
     .site-redesign .theme-white .hero-grid--orbit .hero-headline-visual { min-height: 2.12em; }
     .site-redesign .theme-white .hero-grid--orbit .hero-copy > .hero-mobile-description { max-width: none; margin: 0; font-size: clamp(16px, 4.35vw, 18.5px); line-height: 1.75; color: #606b83; }
@@ -13,6 +32,8 @@
     .site-redesign .theme-white .hero-grid--orbit .hero-mobile-tail-line { display: block; }
     .site-redesign .theme-white .hero-grid--orbit .hero-buttons { clear: both; display: flex; flex-wrap: nowrap; margin: 22px 0 0; gap: 10px; }
     .site-redesign .theme-white .hero-grid--orbit .hero-buttons > .btn { min-width: 0; min-height: 48px; padding: 13px 10px; font-size: 12px; gap: 8px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-benefits { clear: both; margin-top: 20px; gap: 8px 18px; }
+    .site-redesign .theme-white .hero-grid--orbit .hero-benefits li { font-size: 14px; line-height: 1.6; }
     .site-redesign .theme-white .hero-grid--orbit .hero-orbit-art { float: right; position: relative; inset: auto; width: 43%; height: clamp(190px, 56vw, 245px); max-width: none; margin: 56px 0 16px 6px; overflow: visible; }
     .hero-grid--orbit .hero-orbit-art .creator-orbit { width: 100%; height: 100%; max-width: none; padding: 0; }
     .hero-grid--orbit .hero-orbit-art .creator-orbit-stage-wrap { width: 100%; height: 100%; aspect-ratio: auto; }

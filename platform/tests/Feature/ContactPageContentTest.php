@@ -20,19 +20,19 @@ class ContactPageContentTest extends TestCase
         $this->withoutVite();
     }
 
-    public function test_contact_email_and_copy_follow_published_settings_without_exposing_drafts(): void
+    public function test_contact_copy_follows_publication_while_the_email_block_stays_hidden(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $settings = SiteContentDefaults::settings();
         $settings['contact']['title'] = 'A private contact headline';
         $settings['contact']['email'] = 'unpublished@example.test';
         app(SiteContent::class)->saveDraft($admin, 'settings', $settings);
-        $this->get('/contact')->assertOk()->assertSee('info@streams.com')
+        $this->get('/contact')->assertOk()->assertDontSee('info@streams.com')->assertDontSee('Email us')
             ->assertDontSee('A private contact headline')->assertDontSee('unpublished@example.test');
 
         app(SiteContent::class)->publish($admin, 'settings');
         $this->get('/contact')->assertOk()->assertSee('A private contact headline')
-            ->assertSee('mailto:unpublished@example.test', false);
+            ->assertDontSee('mailto:unpublished@example.test', false);
         $this->get('/')->assertOk()->assertSee(route('contact.create'))->assertSee('Contact');
     }
 

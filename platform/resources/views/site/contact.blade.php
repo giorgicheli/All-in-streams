@@ -12,11 +12,6 @@
                     <p class="contact-eyebrow">{{ $contact['eyebrow'] }}</p>
                     <h1 id="contact-title">{{ $contact['title'] }}</h1>
                     <p class="contact-description">{{ $contact['description'] }}</p>
-                    @if($contact['email'])
-                        <div class="contact-method">
-                            <div><p>{{ $contact['email_label'] }}</p><a href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a></div>
-                        </div>
-                    @endif
                 </div>
                 <section class="contact-form-panel" aria-labelledby="contact-form-title">
                     <h2 class="sr-only" id="contact-form-title">{{ $contact['form_title'] }}</h2>

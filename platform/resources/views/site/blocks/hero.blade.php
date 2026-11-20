@@ -41,6 +41,7 @@
                 </div>
             @endif
             <div class="hero-copy">
+                <div class="hero-market-label">{{ $data['market_label'] }}</div>
                 <h1 class="hero-headline" data-hero-headlines>
                     <span class="sr-only">{{ $data['title_line_1'] }} {{ $data['title_line_2'] }}</span>
                     <span class="hero-headline-visual" aria-hidden="true">
@@ -58,6 +59,11 @@
                     <a href="{{ $data['primary_url'] }}" class="btn btn-primary">{{ $data['primary_label'] }}<x-ui-icon name="arrow" size="17"/></a>
                     <a href="{{ $data['secondary_url'] }}" class="btn btn-secondary">{{ $data['secondary_label'] }}<x-ui-icon name="chevron" size="16"/></a>
                 </div>
+                <ul class="hero-benefits" aria-label="Partnership benefits">
+                    @foreach($data['benefits'] as $benefit)
+                        <li><x-ui-icon name="check" size="16"/><span>{{ $benefit['text'] }}</span></li>
+                    @endforeach
+                </ul>
                 <span class="hero-footnote"><x-ui-icon name="check" size="14"/>{{ $data['footnote'] }}</span>
             </div>
             @if(! $hasCreatorOrbit && $hasNetworkArtwork)

@@ -285,8 +285,8 @@ class WebsiteEditor extends Page
                 continue;
             }
             if ($prefix === 'contact.' && $key === 'email') {
-                $fields[] = TextInput::make($name)->label('Public contact email')->email()->maxLength(254)
-                    ->default($value)->helperText('Shown on the Contact page. Form messages are saved in Contact messages; configure their email notifications in Email settings.');
+                $fields[] = TextInput::make($name)->label('Contact email on record')->email()->maxLength(254)
+                    ->default($value)->helperText('Not displayed on the Contact page. Form messages are saved in Contact messages; configure their email notifications in Email settings.');
                 continue;
             }
             $long = in_array($key, ['body', 'mobile_body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true) || ($prefix === 'contact.' && $key === 'title');
@@ -304,6 +304,7 @@ class WebsiteEditor extends Page
     {
         return match ($key) {
             'items', 'countries', 'preview_countries' => 30,
+            'benefits' => 3,
             default => 12,
         };
     }
@@ -320,6 +321,7 @@ class WebsiteEditor extends Page
             'auth_story' => 'Sign-in & registration story', 'auth' => 'Account page copy', 'labels' => 'Form labels',
             'login' => 'Sign-in page', 'register' => 'Registration page', 'eyebrow' => 'Small heading',
             'title_line_1' => 'Headline · first line', 'title_line_2' => 'Headline · second line',
+            'market_label' => 'Hero category label', 'benefits' => 'Hero partnership benefits',
             'primary_label' => 'Primary button text', 'primary_url' => 'Primary button link',
             'secondary_label' => 'Secondary button text', 'secondary_url' => 'Secondary button link',
             'url' => 'Link', 'label' => 'Link text', 'code' => 'Country code', 'name' => 'Name',

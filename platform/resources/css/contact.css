@@ -6,11 +6,6 @@
 .contact-eyebrow { margin:0 0 20px; color:#0a5cff; font-size:12px; font-weight:650; letter-spacing:.15em; line-height:1.5; }
 .site-redesign .theme-white .contact-intro h1 { max-width:490px; margin:0; color:#191c1f; font-family:'Inter Variable',sans-serif; font-size:clamp(38px,3.6vw,49px); line-height:1.04; font-weight:680; letter-spacing:-.065em; white-space:pre-line; }
 .contact-description { max-width:430px; margin-top:24px; color:#636b84; font-size:17px; line-height:1.65; }
-.contact-method { margin-top:22px; min-width:0; }
-.contact-method>div { display:flex; align-items:baseline; flex-wrap:wrap; column-gap:10px; min-width:0; }
-.contact-method p { color:#636b84; font-size:14px; line-height:1.6; }
-.contact-method a { color:#191c1f; font-size:15px; font-weight:500; text-underline-offset:5px; overflow-wrap:anywhere; }
-.contact-method a:hover { text-decoration:underline; }
 .contact-form-panel { min-width:0; }
 .contact-form-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; }
 .contact-field { min-width:0; }
@@ -37,7 +32,6 @@
     .contact-eyebrow { margin-bottom:17px; font-size:12px; }
     .site-redesign .theme-white .contact-intro h1 { font-size:clamp(35px,9.9vw,44px); }
     .contact-description { max-width:430px; margin-top:20px; font-size:16px; }
-    .contact-method { margin-top:18px; }
     .contact-submit-row { margin-top:20px; }
 }
 @media(prefers-reduced-motion:reduce) { .contact-field :is(input,textarea) { transition:none; } }

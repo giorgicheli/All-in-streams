@@ -31,6 +31,12 @@ class SiteContentDefaults
                 ['type' => 'hero', 'data' => [
                     'enabled' => true,
                     'eyebrow' => 'Creator marketplace × full-service agency',
+                    'market_label' => 'Creator Marketplace × iGaming',
+                    'benefits' => [
+                        ['text' => 'Global reach'],
+                        ['text' => 'Verified creators'],
+                        ['text' => 'Build a community that comes back for your brand'],
+                    ],
                     'title_line_1' => 'Trusted', 'title_line_2' => 'creators.',
                     'headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']],
                     'subtitle' => 'Their community.', 'subtitle_accent' => 'Your next big move.',

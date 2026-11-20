@@ -134,7 +134,7 @@ class SiteContent
             $path = $prefix === '' ? $key : $prefix.'.'.$key;
             if (is_array($value)) {
                 if (array_is_list($value)) {
-                    $limit = match ($key) { 'countries', 'preview_countries', 'items' => 30, default => 12 };
+                    $limit = match ($key) { 'countries', 'preview_countries', 'items' => 30, 'benefits' => 3, default => 12 };
                     $rules[$path] = ['required', 'array', 'min:'.($key === 'clips' ? 2 : 1), 'max:'.$limit];
                     if ($value) $this->objectRules($value[0], $path.'.*', $rules);
                 } else $this->objectRules($value, $path, $rules);
@@ -194,6 +194,8 @@ class SiteContent
                     $block['data'] += [
                         'headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']],
                         'mobile_body' => SiteContentDefaults::home()['blocks'][0]['data']['mobile_body'],
+                        'market_label' => SiteContentDefaults::home()['blocks'][0]['data']['market_label'],
+                        'benefits' => SiteContentDefaults::home()['blocks'][0]['data']['benefits'],
                     ];
                 }
             }
