@@ -87,6 +87,9 @@
                         @endforeach
                     </div>
                 @endif
+                @if(isset($geo))
+                    @include('site.blocks.geo_strip', ['data' => $geo, 'embedded' => true])
+                @endif
             </div>
         </div>
     </section>

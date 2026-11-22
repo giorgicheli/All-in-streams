@@ -24,11 +24,13 @@
                     @include('site.blocks.hero-statistics', ['data' => $site['network_stats']])
                 @endif
             </div>
-            @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
             @if($hasNetworkShowcase)
-                @include('site.blocks.network-showcase', ['reels' => $site['creator_reels'], 'stats' => null])
-            @elseif(($site['network_stats']['enabled'] ?? false) && ! $hasHeroNetwork && ! $hasHeroStatistics)
-                @include('site.blocks.network-stats', ['data' => $site['network_stats'], 'compact' => true, 'afterHero' => true])
+                @include('site.blocks.network-showcase', ['reels' => $site['creator_reels'], 'stats' => null, 'geo' => $visibleBlocks[1]['data']])
+            @else
+                @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
+                @if(($site['network_stats']['enabled'] ?? false) && ! $hasHeroNetwork && ! $hasHeroStatistics)
+                    @include('site.blocks.network-stats', ['data' => $site['network_stats'], 'compact' => true, 'afterHero' => true])
+                @endif
             @endif
         @endif
         @foreach($visibleBlocks as $block)

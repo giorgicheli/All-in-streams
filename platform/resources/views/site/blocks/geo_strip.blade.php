@@ -1,4 +1,4 @@
-<div class="geo-strip" data-geo-carousel><div class="container geo-inner">
+<div @class(['geo-strip', 'geo-strip--embedded' => $embedded ?? false]) data-geo-carousel><div class="container geo-inner">
     <strong class="geo-label">{{ $data['label'] }}</strong>
     <div class="geo-viewport" data-geo-viewport data-lenis-prevent tabindex="0" role="region" aria-label="Audience countries" aria-describedby="geo-carousel-help">
         <div class="geo-track"><div class="geo-items">

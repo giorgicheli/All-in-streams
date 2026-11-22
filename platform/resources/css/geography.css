@@ -56,6 +56,15 @@
     text-overflow:clip;
 }
 
+.site-redesign .theme-white .network-showcase-card > [data-geo-carousel].geo-strip--embedded {
+    margin-top:24px;
+    border-radius:14px;
+    padding-inline:16px;
+}
+.site-redesign .theme-white .network-showcase-card > [data-geo-carousel].geo-strip--embedded > .container.geo-inner {
+    width:100%;
+}
+
 @media(min-width:701px) and (max-width:1150px) {
     .site-redesign .theme-white [data-geo-carousel].geo-strip > .container.geo-inner {
         width:calc(100% - 56px);
@@ -64,6 +73,10 @@
 }
 
 @media(max-width:700px) {
+    .site-redesign .theme-white .network-showcase-card > [data-geo-carousel].geo-strip--embedded {
+        margin-top:20px;
+        padding-inline:0;
+    }
     .site-redesign .theme-white [data-geo-carousel].geo-strip > .container.geo-inner {
         width:calc(100% - 40px);
         height:74px;
