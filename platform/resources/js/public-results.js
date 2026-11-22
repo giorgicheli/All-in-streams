@@ -48,9 +48,10 @@ export function initializeNetworkCounters(root = document) {
     const format = new Intl.NumberFormat('en');
     const counters = new Map();
     let observer;
+    let heroObserver;
     root.querySelectorAll('[data-network-count]').forEach(element => {
         const value = Number(element.dataset.networkCount);
-        const card = element.closest('.network-stat-card, [data-rope-node]');
+        const card = element.closest('.hero-stat-card, .network-stat-card, [data-rope-node]');
         if (!card || !Number.isSafeInteger(value) || value < 0) return;
         counters.set(card, { element, value, seen: false, frame: 0 });
     });
@@ -65,6 +66,7 @@ export function initializeNetworkCounters(root = document) {
         if (!item || item.seen) return;
         item.seen = true;
         observer?.unobserve(card);
+        heroObserver?.unobserve(card);
         if (reduced.matches || document.hidden) { finish(item); return; }
         const startTime = performance.now() + 60;
         function tick(now) {
@@ -78,14 +80,18 @@ export function initializeNetworkCounters(root = document) {
     if ('IntersectionObserver' in window && !reduced.matches) {
         const inset = Math.round(Math.max(64, Math.min(160, innerHeight * .18)));
         observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) start(entry.target); }), { rootMargin: `0px 0px -${inset}px 0px`, threshold: 0 });
-        counters.forEach((_, card) => observer.observe(card));
+        // The first-screen statistics must animate in place without waiting
+        // for a scroll past the usual below-the-fold entrance inset.
+        heroObserver = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) start(entry.target); }), { threshold: .1 });
+        counters.forEach((_, card) => card.matches('.hero-stat-card') ? heroObserver.observe(card) : observer.observe(card));
     }
-    function preferenceChanged() { if (reduced.matches) { observer?.disconnect(); counters.forEach(finish); } }
+    function preferenceChanged() { if (reduced.matches) { observer?.disconnect(); heroObserver?.disconnect(); counters.forEach(finish); } }
     function visibilityChanged() { if (document.hidden) counters.forEach(item => { if (item.frame) finish(item); }); }
     reduced.addEventListener('change', preferenceChanged);
     document.addEventListener('visibilitychange', visibilityChanged);
     return () => {
         observer?.disconnect();
+        heroObserver?.disconnect();
         counters.forEach(finish);
         reduced.removeEventListener('change', preferenceChanged);
         document.removeEventListener('visibilitychange', visibilityChanged);

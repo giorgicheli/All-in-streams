@@ -40,7 +40,7 @@ class SiteContentDefaults
                     'title_line_1' => 'Meet your', 'title_line_2' => 'next creator.',
                     'headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']],
                     'subtitle' => 'Their community.', 'subtitle_accent' => 'Your next big move.',
-                    'body' => 'Get matched with streamers and influencers who fit your brand, audience and budget. We handle the partnership from start to finish.',
+                    'body' => 'Find streamers and influencers matched to your brand, audience and budget.',
                     'mobile_body' => 'Get matched with streamers and creators who fit your brand, audience and budget. We handle introductions, campaign delivery and reporting.',
                     'primary_label' => 'Start a campaign', 'primary_url' => '/talk-to-us?type=brand',
                     'secondary_label' => 'Explore creators', 'secondary_url' => '#platform',

@@ -8,6 +8,8 @@
         && $hasHeroHeading;
     $hasHeroStage = ($visibleBlocks[0]['type'] ?? null) === 'hero'
         && ($visibleBlocks[1]['type'] ?? null) === 'geo_strip';
+    $hasHeroStatistics = $hasHeroStage && ($site['network_stats']['enabled'] ?? false)
+        && count($site['network_stats']['cards'] ?? []) > 0;
     $creatorReelAnchor = array_search('geo_strip', array_column($visibleBlocks, 'type'), true);
     $creatorReelAnchor = $creatorReelAnchor === false ? 0 : $creatorReelAnchor;
 @endphp
@@ -17,12 +19,15 @@
         @unless($hasHeroHeading)<h1 class="sr-only">{{ $home['seo']['title'] }}</h1>@endunless
         @if($hasHeroStage)
             <div class="hero-stage">
-                @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data'], 'suppressHeroNetwork' => $hasNetworkShowcase])
-                @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
+                @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data'], 'suppressHeroNetwork' => $hasNetworkShowcase || $hasHeroStatistics])
+                @if($hasHeroStatistics)
+                    @include('site.blocks.hero-statistics', ['data' => $site['network_stats']])
+                @endif
             </div>
+            @include('site.blocks.geo_strip', ['data' => $visibleBlocks[1]['data']])
             @if($hasNetworkShowcase)
-                @include('site.blocks.network-showcase', ['reels' => $site['creator_reels'], 'stats' => ($site['network_stats']['enabled'] ?? false) ? $site['network_stats'] : null])
-            @elseif(($site['network_stats']['enabled'] ?? false) && ! $hasHeroNetwork)
+                @include('site.blocks.network-showcase', ['reels' => $site['creator_reels'], 'stats' => null])
+            @elseif(($site['network_stats']['enabled'] ?? false) && ! $hasHeroNetwork && ! $hasHeroStatistics)
                 @include('site.blocks.network-stats', ['data' => $site['network_stats'], 'compact' => true, 'afterHero' => true])
             @endif
         @endif

@@ -27,14 +27,18 @@ class NetworkShowcaseTest extends TestCase
         return new \DOMXPath($document);
     }
 
-    public function test_home_unifies_public_clips_and_counts_without_duplicate_sections(): void
+    public function test_home_ends_the_hero_with_statistics_then_flags_without_duplicate_counts(): void
     {
         $html = $this->get('/')->assertOk()->assertSee('Our creator network')->getContent();
         $xpath = $this->xpath($html);
         $this->assertSame(1, $xpath->query('//*[@data-network-showcase]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="network"]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="creator-content"]')->length);
-        $this->assertSame(4, $xpath->query('//*[@data-network-showcase]//*[@data-network-count]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-network-showcase]//*[@data-network-count]')->length);
+        $this->assertSame(4, $xpath->query('//*[@data-network-count]')->length);
+        $this->assertSame(4, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " hero-statistics ")]//*[@data-network-count]')->length);
+        $this->assertSame(1, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " hero-stage ")]/*[last()][contains(concat(" ", normalize-space(@class), " "), " hero-statistics ")]')->length);
+        $this->assertSame(1, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " hero-stage ")]/following-sibling::*[1][@data-geo-carousel]')->length);
         $this->assertSame(9, $xpath->query('//*[@data-network-panel]')->length);
         $this->assertSame(3, $xpath->query('//*[@data-network-slide]')->length);
         $this->assertSame(0, $xpath->query('//*[@data-creator-reels]')->length);
