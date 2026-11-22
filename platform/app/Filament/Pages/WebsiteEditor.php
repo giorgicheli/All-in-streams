@@ -239,9 +239,9 @@ class WebsiteEditor extends Page
             }
             if ($key === 'sample_clip') {
                 $fields[] = Select::make($name)->label('Fallback sample footage')->options([
-                    'studio' => 'Poker cards & chips', 'gaming' => 'Slot machines', 'creator' => 'Casino poker table',
-                    'setup' => 'Shuffling cards', 'live' => 'Chips in motion', 'community' => 'Poker bets',
-                    'camera' => 'Playing cards', 'portrait' => 'Casino lights', 'focus' => 'Dice & chips',
+                    'studio' => 'Streamer studio + slots', 'gaming' => 'Streamer reaction + slots', 'creator' => 'Creator stream + slots',
+                    'setup' => 'Streamer close-up + slots', 'live' => 'Live reaction + slots', 'community' => 'Community stream + slots',
+                    'camera' => 'On-camera stream + slots', 'portrait' => 'Streamer portrait + slots', 'focus' => 'Focused streamer + slots',
                 ])->default($value)->required();
                 continue;
             }

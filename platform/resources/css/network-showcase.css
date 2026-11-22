@@ -98,6 +98,7 @@
     object-fit: cover;
 }
 .network-showcase-panel > img { z-index: 0; }
+.network-showcase-panel > :is(img, video)[src*="/igaming-reels/"] { object-position:68% center; }
 .network-showcase-panel > video {
     z-index: 1;
     opacity: 0;
@@ -147,7 +148,8 @@
     .site-redesign .theme-white .network-showcase-header h2 { font-size: clamp(27px, 7.1vw, 34px); line-height: 1.1; }
     .network-showcase-controls { gap: 7px; padding-top: 1px; }
     .network-showcase-nav { width: 35px; height: 35px; border-radius: 10px; }
-    .network-showcase-slide { --network-cut: 18px; --network-divider: 4px; --network-radius: 12px; height: clamp(156px, 43vw, 220px); border-radius: 12px; }
+    .network-showcase-slide { --network-cut: 18px; --network-divider: 4px; --network-radius: 12px; height: auto; aspect-ratio: 16 / 9; border-radius: 12px; }
+    .network-showcase-panel:not(:first-child) { display: none; }
     .network-showcase-track { gap: 12px; border-radius: 12px; }
     .network-showcase-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px 0; margin-top: 25px; }
     .site-redesign .theme-white .network-showcase .network-stat-card { padding-inline: 18px; }

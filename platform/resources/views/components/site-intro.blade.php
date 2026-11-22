@@ -11,13 +11,13 @@
     $introSources = [];
     foreach ($clips as $clip) {
         $preset = in_array($clip['sample_clip'] ?? '', $introPresets, true) ? $clip['sample_clip'] : 'studio';
-        $src = ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/casino-reels/'.$preset.'.mp4');
+        $src = ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/igaming-reels/'.$preset.'.mp4');
         if (isset($introSources[$src])) continue;
         $introSources[$src] = true;
-        $introClips[] = ['src' => $src, 'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/casino-reels/'.$preset.'.jpg'];
+        $introClips[] = ['src' => $src, 'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/igaming-reels/'.$preset.'.jpg'];
     }
     if (! $introClips) {
-        foreach (array_slice($introPresets, 0, 6) as $preset) $introClips[] = ['src' => '/videos/casino-reels/'.$preset.'.mp4', 'poster' => '/images/casino-reels/'.$preset.'.jpg'];
+        foreach (array_slice($introPresets, 0, 6) as $preset) $introClips[] = ['src' => '/videos/igaming-reels/'.$preset.'.mp4', 'poster' => '/images/igaming-reels/'.$preset.'.jpg'];
     }
 @endphp
 <dialog class="site-intro" data-site-intro data-state="waiting" aria-label="{{ $intro['accessible_label'] }}">
