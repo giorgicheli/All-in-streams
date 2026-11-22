@@ -97,7 +97,11 @@
     height:100%;
     aspect-ratio:auto;
 }
+@media (min-width:701px) {
+    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top { left:15%; top:7%; }
+}
 @media (min-width:1500px) and (min-height:950px) {
+    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top { top:13%; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-creator-main { top:54%; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-brand-card { top:68%; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-hub { top:64%; }
@@ -169,56 +173,41 @@
 
 @media (max-width:700px) {
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) > .hero-reference {
-        display:block;
+        display:flex;
         flex:1 1 0;
         min-height:0;
-        padding:clamp(16px,2.6svh,28px) 0 18px;
-    }
-    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) > .hero-reference > .container {
-        height:100%;
+        padding:26px 0 28px;
     }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-grid {
-        height:100%;
-        grid-template-rows:auto auto minmax(0,1fr) auto;
-        align-items:stretch;
+        height:auto;
+        grid-template-rows:repeat(4,auto);
+        align-content:start;
+        align-items:center;
         gap:0;
     }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy h1 {
-        align-self:start;
-        font-size:clamp(38px,min(13vw,7svh),64px);
-        line-height:1.02;
+        font-size:clamp(40px,11.8vw,54px);
+        line-height:1.03;
     }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy > .hero-description {
-        margin-top:14px;
+        margin-top:17px;
         font-size:16px;
-        line-height:1.55;
+        line-height:1.65;
     }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-art {
-        height:auto;
+        height:clamp(166px,50vw,220px);
         min-height:0;
         max-width:420px;
-        margin:12px auto 10px;
+        margin:20px auto 0;
     }
-    .hero-stage:has(> .hero-statistics) .hero-orbit-art .creator-orbit-stage-wrap { height:100%; }
-    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top {
-        left:2%; top:8%; width:44%; height:82%;
-    }
-    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-main {
-        left:50%; top:13%; width:48%; height:84%;
-    }
-    .hero-stage:has(> .hero-statistics) .creator-orbit-float-card { height:100%; }
+    .hero-stage:has(> .hero-statistics) .hero-orbit-art .creator-orbit { max-width:none; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top .creator-orbit-photo,
     .hero-stage:has(> .hero-statistics) .creator-orbit-creator-main .creator-orbit-photo {
-        height:calc(100% - 28px);
-        aspect-ratio:auto;
-    }
-    .hero-stage:has(> .hero-statistics) .creator-orbit-card-label,
-    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top .creator-orbit-card-label {
-        padding:7px 3px 3px;
+        height:auto;
+        aspect-ratio:1.48;
     }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-buttons {
-        align-self:end;
-        margin:10px 0 0;
+        margin:18px 0 0;
     }
     .site-redesign .theme-white .hero-statistics { padding:0 0 18px; }
     .site-redesign .theme-white .hero-statistics-inner { width:calc(100% - 40px); }
@@ -232,10 +221,10 @@
 }
 
 @media (max-width:700px) and (max-height:720px) {
-    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) > .hero-reference { padding:14px 0 12px; }
-    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy h1 { font-size:40px; }
-    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy > .hero-description { margin-top:10px; line-height:1.45; }
-    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-art { margin-block:9px 6px; }
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) > .hero-reference { padding:10px 0; }
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy h1 { font-size:38px; }
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy > .hero-description { margin-top:8px; line-height:1.4; }
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-art { height:174px; margin:6px auto 0; }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-buttons { margin-top:8px; }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-buttons > .btn { min-height:44px; padding-block:11px; }
     .site-redesign .theme-white .hero-statistics { padding-bottom:12px; }
@@ -245,14 +234,15 @@
 }
 
 @media (max-width:700px) and (max-height:620px) {
+    /* Preserve the earlier clip proportions and readable copy on short phones. */
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) { height:auto; min-height:calc(100svh - var(--hero-header-height,96px)); }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) > .hero-reference { padding:10px 0 8px; }
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) > .hero-reference { flex:0 0 auto; }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy h1 { font-size:34px; }
     .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-copy > .hero-description { margin-top:8px; line-height:1.4; }
-    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-art { margin-block:8px 4px; }
+    .site-redesign .theme-white .hero-stage:has(> .hero-statistics) .hero-art { height:148px; margin:6px auto 0; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-creator-card { padding:5px; border-radius:14px; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-photo { border-radius:9px; }
-    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top .creator-orbit-photo,
-    .hero-stage:has(> .hero-statistics) .creator-orbit-creator-main .creator-orbit-photo { height:calc(100% - 22px); }
     .hero-stage:has(> .hero-statistics) .creator-orbit-card-label,
     .hero-stage:has(> .hero-statistics) .creator-orbit-creator-top .creator-orbit-card-label { padding:5px 2px 2px; }
     .hero-stage:has(> .hero-statistics) .creator-orbit-card-label strong,
