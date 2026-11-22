@@ -163,7 +163,7 @@
 
 @media (max-width: 700px) {
     .site-redesign .theme-white .network-showcase { padding: 38px 0 44px; }
-    .network-showcase-card { padding: 22px 20px 24px; border-radius: 22px; }
+    .network-showcase-card { padding: 22px 12px 24px; border-radius: 22px; }
     .network-showcase-header { align-items: flex-start; gap: 12px; margin-bottom: 22px; }
     .site-redesign .theme-white .network-showcase-header h2 { font-size: clamp(27px, 7.1vw, 34px); line-height: 1.1; }
     .network-showcase-controls { gap: 7px; padding-top: 1px; }
@@ -180,7 +180,7 @@
 }
 
 @media (max-width: 360px) {
-    .network-showcase-card { padding-inline: 17px; }
+    .network-showcase-card { padding-inline: 12px; }
     .network-showcase-header { gap: 9px; }
     .site-redesign .theme-white .network-showcase-header h2 { font-size: 25px; }
     .network-showcase-nav { width: 32px; height: 34px; }
