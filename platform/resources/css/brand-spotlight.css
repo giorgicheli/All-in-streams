@@ -208,5 +208,15 @@
 .ais-hero__campaign { max-width: calc(100% - 50px); pointer-events: none; }
 .ais-hero__campaign-card > div { min-width: 0; }
 .ais-hero__campaign-title, .ais-hero__campaign-status { overflow-wrap: anywhere; }
-.ais-hero__visual--motion { aspect-ratio: auto; align-self: center; overflow: hidden; border-radius: 28px; }
+.ais-hero__visual--motion {
+  aspect-ratio: auto;
+  align-self: center;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: clamp(12px, 1.5vw, 22px);
+  background:
+    radial-gradient(ellipse at 0 0, #ffffffb3, transparent 58%),
+    radial-gradient(ellipse at 100% 100%, #d6e3ffb3, transparent 65%),
+    #edf2ff;
+}
 @media (max-width: 820px) { .site-redesign .theme-white .audience-section:has(.ais-hero) { padding-block: 64px 72px; } }

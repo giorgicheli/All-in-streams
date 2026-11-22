@@ -129,7 +129,7 @@ class CreatorReelsTest extends TestCase
         $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => SiteContentDefaults::settings()['creator_reels']]);
         $this->assertStringContainsString('data-reel-ribbon', $html);
         $this->assertStringNotContainsString('data-reel-playlist', $html);
-        $this->assertStringContainsString('/images/creator-reels/studio.jpg', $html);
+        $this->assertStringContainsString('/images/casino-reels/studio.jpg', $html);
         $this->assertStringContainsString('data-reel-row="forward"', $html);
         $this->assertStringContainsString('data-reel-row="reverse"', $html);
         $this->assertStringNotContainsString('Pause previews', $html);

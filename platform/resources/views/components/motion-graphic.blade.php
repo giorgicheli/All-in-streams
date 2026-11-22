@@ -106,5 +106,4 @@
 <div class="mg-bar" data-motion-graphic-progress></div>
 
 </div></div>
-<button class="ais-motion-graphic__control" type="button" data-motion-graphic-control aria-label="Pause animation" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path data-motion-graphic-pause d="M7 5h3v14H7zM14 5h3v14h-3z"/><path data-motion-graphic-play d="m8 5 11 7-11 7z" hidden/></svg><span class="sr-only" data-motion-graphic-control-label>Pause animation</span></button>
 </div>

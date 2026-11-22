@@ -1,9 +1,9 @@
 .ais-motion-graphic { --navy:#0B1A3F; --cb:#1F5BFF; --tint:#EAF0FF; --line:#D9E2F6; --mut:#5A6785; position:relative; width:100%; min-width:0; color:var(--navy); font-family:'Inter Variable',sans-serif; isolation:isolate; }
 .ais-motion-graphic, .ais-motion-graphic * { box-sizing:border-box; }
-.ais-motion-graphic .mg-viewport { position:relative; width:100%; aspect-ratio:1; overflow:hidden; border-radius:28px; background:#fff; }
+.ais-motion-graphic .mg-viewport { position:relative; width:100%; aspect-ratio:1; overflow:hidden; border-radius:20px; background:transparent; }
 .ais-motion-graphic .mg-stage * { margin:0; }
 
-.ais-motion-graphic .mg-stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;background:#fff;transform:translate(-50%,-50%) scale(var(--ais-motion-scale,.4));transform-origin:center;overflow:hidden;color:var(--navy);font-family:"Inter Variable",Inter,sans-serif}
+.ais-motion-graphic .mg-stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;background:transparent;transform:translate(-50%,-50%) scale(var(--ais-motion-scale,.4));transform-origin:center;overflow:hidden;color:var(--navy);font-family:"Inter Variable",Inter,sans-serif}
 .ais-motion-graphic .mg-bar{position:absolute;left:350px;bottom:0;height:6px;background:var(--cb);width:0;z-index:5}
 .ais-motion-graphic .mg-scene{position:absolute;inset:0;opacity:0;transition:opacity .3s}
 .ais-motion-graphic .mg-scene.mg-on{opacity:1}.ais-motion-graphic .mg-scene.mg-out{opacity:0}
@@ -80,10 +80,6 @@
 .ais-motion-graphic[data-motion-graphic-ready="true"] .mg-on .mg-rt{animation:ais-mg-ret 2.4s ease-in-out var(--d,0s) infinite}
 .ais-motion-graphic[data-motion-graphic-ready="true"] .mg-on .mg-pulse{animation:ais-mg-wave 1.6s ease-out var(--d,0s) infinite}
 
-.ais-motion-graphic__control { position:absolute; right:14px; bottom:14px; z-index:6; display:grid; place-items:center; width:40px; height:40px; padding:0; border:0; border-radius:50%; background:#eaf0ff; color:#0b1a3f; cursor:pointer; transition:background .2s; }
-.ais-motion-graphic__control[hidden], .ais-motion-graphic__control [hidden] { display:none; }
-.ais-motion-graphic__control:hover { background:#dce7ff; }
-.ais-motion-graphic__control:focus-visible { outline:2px solid #1f5bff; outline-offset:3px; }
-@media(max-width:820px) { .ais-motion-graphic .mg-viewport { border-radius:23px; } }
+@media(max-width:820px) { .ais-motion-graphic .mg-viewport { border-radius:18px; } }
 @media(prefers-reduced-motion:reduce) { .ais-motion-graphic .mg-on * { animation:none!important; transition:none!important; } .ais-motion-graphic .mg-rt, .ais-motion-graphic .mg-pulse { display:none; } }
 

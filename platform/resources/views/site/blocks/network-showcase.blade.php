@@ -4,8 +4,8 @@
     $networkClips = $showNetworkVideos ? collect($reels['clips'])->take(12)->values()->map(function (array $clip, int $index): array {
         $preset = in_array($clip['sample_clip'] ?? '', ['studio', 'gaming', 'creator', 'setup', 'live', 'community', 'camera', 'portrait', 'focus'], true) ? $clip['sample_clip'] : 'studio';
         return [
-            'src' => ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/creator-reels/'.$preset.'.mp4'),
-            'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/creator-reels/'.$preset.'.jpg',
+            'src' => ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/casino-reels/'.$preset.'.mp4'),
+            'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/casino-reels/'.$preset.'.jpg',
             'title' => $clip['title'] ?? 'Creator preview', 'link' => $clip['link_url'] ?? '', 'position' => $index + 1,
         ];
     })->all() : [];
@@ -69,10 +69,6 @@
                                 </div>
                             @endforeach
                         </div>
-                        <button type="button" class="network-showcase-toggle" data-network-toggle aria-label="Pause video previews" aria-pressed="false">
-                            <svg class="icon network-showcase-pause" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 4h3v12H5zm7 0h3v12h-3z"/></svg>
-                            <svg class="icon network-showcase-play" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m6 3 10 7-10 7z"/></svg>
-                        </button>
                         <span class="sr-only" data-network-status role="status" aria-live="polite"></span>
                     </div>
                     <script type="application/json" data-network-clips>{!! json_encode($networkClips, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) !!}</script>

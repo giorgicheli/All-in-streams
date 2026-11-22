@@ -12,14 +12,14 @@
     foreach ($clips as $clip) {
         $preset = in_array($clip['sample_clip'] ?? '', $orbitPresets, true) ? $clip['sample_clip'] : 'studio';
         $orbitClips[] = [
-            'src' => ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/creator-reels/'.$preset.'.mp4'),
-            'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/creator-reels/'.$preset.'.jpg',
+            'src' => ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/casino-reels/'.$preset.'.mp4'),
+            'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/casino-reels/'.$preset.'.jpg',
             'title' => $clip['title'] ?? $orbitLabels['main_title'],
         ];
     }
     if (! $orbitClips) {
         foreach (array_slice($orbitPresets, 0, 3) as $preset) {
-            $orbitClips[] = ['src' => '/videos/creator-reels/'.$preset.'.mp4', 'poster' => '/images/creator-reels/'.$preset.'.jpg', 'title' => $orbitLabels['main_title']];
+            $orbitClips[] = ['src' => '/videos/casino-reels/'.$preset.'.mp4', 'poster' => '/images/casino-reels/'.$preset.'.jpg', 'title' => $orbitLabels['main_title']];
         }
     }
     $orbitCards = [

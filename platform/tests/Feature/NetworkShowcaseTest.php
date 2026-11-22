@@ -31,6 +31,10 @@ class NetworkShowcaseTest extends TestCase
     {
         $html = $this->get('/')->assertOk()->assertSee('Our creator network')->getContent();
         $xpath = $this->xpath($html);
+        $this->assertStringNotContainsString('data-network-toggle', $html);
+        $this->assertStringNotContainsString('data-motion-graphic-control', $html);
+        $this->assertStringNotContainsString('/videos/creator-reels/', $html);
+        $this->assertStringNotContainsString('/images/creator-reels/', $html);
         $this->assertSame(1, $xpath->query('//*[@data-network-showcase]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="network"]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="creator-content"]')->length);
