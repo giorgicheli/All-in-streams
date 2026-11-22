@@ -6,18 +6,17 @@
         'headlines' => [['line_1' => 'Great', 'line_2' => 'brands.'], ['line_1' => 'Real', 'line_2' => 'creators.'], ['line_1' => 'Better', 'line_2' => 'together.']],
         'card_labels' => [['label' => 'Made for gaming'], ['label' => 'A creator perspective'], ['label' => 'The live moment'], ['label' => 'Community in motion'], ['label' => 'Shared passions'], ['label' => 'Made for connection']],
     ];
-    $introPresets = ['studio', 'gaming', 'creator', 'setup', 'live', 'community', 'camera', 'portrait', 'focus'];
     $introClips = [];
     $introSources = [];
     foreach ($clips as $clip) {
-        $preset = in_array($clip['sample_clip'] ?? '', $introPresets, true) ? $clip['sample_clip'] : 'studio';
-        $src = ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/igaming-reels/'.$preset.'.mp4');
+        $media = \App\Support\CreatorPreviewClips::media($clip);
+        $src = $media['src'];
         if (isset($introSources[$src])) continue;
         $introSources[$src] = true;
-        $introClips[] = ['src' => $src, 'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/igaming-reels/'.$preset.'.jpg'];
+        $introClips[] = $media;
     }
     if (! $introClips) {
-        foreach (array_slice($introPresets, 0, 6) as $preset) $introClips[] = ['src' => '/videos/igaming-reels/'.$preset.'.mp4', 'poster' => '/images/igaming-reels/'.$preset.'.jpg'];
+        foreach (array_slice(\App\Support\CreatorPreviewClips::defaults(), 0, 6) as $clip) $introClips[] = \App\Support\CreatorPreviewClips::media($clip);
     }
 @endphp
 <dialog class="site-intro" data-site-intro data-state="waiting" aria-label="{{ $intro['accessible_label'] }}">

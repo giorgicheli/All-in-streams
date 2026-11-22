@@ -1,0 +1,287 @@
+[
+  {
+    "id": "dragon-slots",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/dragon-slots.mp4",
+    "file": "dragon-slots.mp4",
+    "bytes": 103177,
+    "sha256": "6d73391773263bea0926cbbaeb52571ca4113baf7726948cb131011e2083e03b",
+    "poster_file": "dragon-slots.jpg",
+    "poster_bytes": 23994,
+    "poster_sha256": "f3da2c3b78f3327708f352d4d38c75433f07dda3826370a4c6a8e367419cb065",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "roulette",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/roulette.mp4",
+    "file": "roulette.mp4",
+    "bytes": 131639,
+    "sha256": "8c7c3b0edeeeb764d7eea02395c118acfc6ecbde6325f776d6d07dc8ca05e47b",
+    "poster_file": "roulette.jpg",
+    "poster_bytes": 25244,
+    "poster_sha256": "47de9fbe9effc9a81147f292d21a40fadfcb8994d6f56527f6a4c532a005b0d1",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "blackjack",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/blackjack.mp4",
+    "file": "blackjack.mp4",
+    "bytes": 56021,
+    "sha256": "45d90d001cc799371bd6b749b0520ba051cd034c6297d22e9b24b4e49edf9e2c",
+    "poster_file": "blackjack.jpg",
+    "poster_bytes": 18299,
+    "poster_sha256": "14bbb9bc07fc52cfac8f07ff8e4c91898610af5e5b6aefe5089c23ea9f899efa",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "baccarat",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/baccarat.mp4",
+    "file": "baccarat.mp4",
+    "bytes": 53565,
+    "sha256": "bd5ce9297329dc3a61f43f0bf3ea6a65e01c1c452abc2bee289af62d07fb83d9",
+    "poster_file": "baccarat.jpg",
+    "poster_bytes": 17903,
+    "poster_sha256": "a8a74bed5816242c69e4ac69db159f958af354a0447189a95d580cac06268bf8",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "texas-holdem",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/texas-holdem.mp4",
+    "file": "texas-holdem.mp4",
+    "bytes": 61257,
+    "sha256": "8a92eb5ba30ccc7a468776872aa60c0bbcf9c6b39451a3c27b5e26e2ecd3604c",
+    "poster_file": "texas-holdem.jpg",
+    "poster_bytes": 20357,
+    "poster_sha256": "f6f334c983519d68fa15ac9dfa237810af88f65268ac8ea5cda40a5119dc5b31",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "craps",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/craps.mp4",
+    "file": "craps.mp4",
+    "bytes": 75566,
+    "sha256": "6f70245a6dbbeb319d06a86b40ad63df5ebdf844d031d52c4cd5355f70b891ae",
+    "poster_file": "craps.jpg",
+    "poster_bytes": 24743,
+    "poster_sha256": "e1ecd3b859ed2b9818b78cb765126356e0c123696b3895affdbef8e18fd52029",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "bingo",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/bingo.mp4",
+    "file": "bingo.mp4",
+    "bytes": 79729,
+    "sha256": "17f4c518af6053fa0f1e30c0f147c2cb0b15ea996d6dbc0030f332f553c7a60c",
+    "poster_file": "bingo.jpg",
+    "poster_bytes": 26477,
+    "poster_sha256": "6bbd605fe1e2ebdda4f302f24491c03d2891c7265eed7d4aa41ddd0ec92cc414",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "lottery-draw",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/lottery-draw.mp4",
+    "file": "lottery-draw.mp4",
+    "bytes": 64257,
+    "sha256": "ab3727eaa69d2316f159c2d5f42abb924165cc8c8520be60d7a6fff5da7a3922",
+    "poster_file": "lottery-draw.jpg",
+    "poster_bytes": 21932,
+    "poster_sha256": "754b370b2db5e636e1fb6558053fbf367e972e153717540387675235051efd2a",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "crash-rocket",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/crash-rocket.mp4",
+    "file": "crash-rocket.mp4",
+    "bytes": 49052,
+    "sha256": "02bf46de2f0c7557b54559f5f82a64fb8cf44d76dc0f5363b70b71e76656a0be",
+    "poster_file": "crash-rocket.jpg",
+    "poster_bytes": 16144,
+    "poster_sha256": "98349035b07badf5a09b37b62e4d1f38487dfc5c07f68a4009f382feef186614",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "plinko",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/plinko.mp4",
+    "file": "plinko.mp4",
+    "bytes": 54625,
+    "sha256": "5ed1db014862b7c158add66870dc7ba9cd5cdcb56e823d02370e16ba2c2ccf2e",
+    "poster_file": "plinko.jpg",
+    "poster_bytes": 19429,
+    "poster_sha256": "d9b7fea7389c15c699b8afad138d619434a02e940f5f114add55939af54c95f5",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "mines",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/mines.mp4",
+    "file": "mines.mp4",
+    "bytes": 56344,
+    "sha256": "9fa9602eb447c987326c8b5c25adf90fbfa1bed0f9ebfec8a6a40b8bfe22a729",
+    "poster_file": "mines.jpg",
+    "poster_bytes": 19314,
+    "poster_sha256": "0fe503c4292e74a9da15d5d9d6536d8668de3cca621e99dce0cac15b04124002",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "arcade-fishing",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/arcade-fishing.mp4",
+    "file": "arcade-fishing.mp4",
+    "bytes": 75187,
+    "sha256": "8d9628e9f64c9e8106ce0239d09f30047fc7e19b54bd83ecd3e7714f60238c5c",
+    "poster_file": "arcade-fishing.jpg",
+    "poster_bytes": 24368,
+    "poster_sha256": "cd3018e650006c13f802ae4ebf5ef17dfae03a4a83972ce784044f3be37b98ed",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "candy-slots",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/candy-slots.mp4",
+    "file": "candy-slots.mp4",
+    "bytes": 76626,
+    "sha256": "1d07f938527aa51437c6ebbcff10669fbe2c5ae5303788926ab576cff6105fb6",
+    "poster_file": "candy-slots.jpg",
+    "poster_bytes": 26693,
+    "poster_sha256": "93a9bc08b0fffb99ebf6521cd58d0efe8a748e45378ceefb93e3bc8ef114b5d1",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "prize-wheel",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/prize-wheel.mp4",
+    "file": "prize-wheel.mp4",
+    "bytes": 153669,
+    "sha256": "1e03c514892beb6013b8efc7c482af028a75a48db7e1aa5578af33e35d6d1a0d",
+    "poster_file": "prize-wheel.jpg",
+    "poster_bytes": 28201,
+    "poster_sha256": "5b4a72cf926deb7fc9ae8246696bc00c4af8a4c88fd474226c0c6b7f735aa1d1",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  },
+  {
+    "id": "scratch-card",
+    "source": "User-provided igaming-15-loops.zip",
+    "archive_entry": "MP4/scratch-card.mp4",
+    "file": "scratch-card.mp4",
+    "bytes": 77921,
+    "sha256": "8a9830a5849f917a01ee09581d18d56089f91cc56c0d7c8caf3b1b6e8b78f5a5",
+    "poster_file": "scratch-card.jpg",
+    "poster_bytes": 24783,
+    "poster_sha256": "354f31c30116a0ce55ad2928f698f36612bf1102f893e5348bd63d50baf0a3be",
+    "duration": "00:00:04.00",
+    "dimensions": [
+      384,
+      216
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-22"
+  }
+]

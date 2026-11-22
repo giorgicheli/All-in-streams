@@ -1,11 +1,8 @@
 @php
     $showNetworkVideos = ($reels['enabled'] ?? false) && count($reels['clips'] ?? []) >= 2;
     $networkStats = is_array($stats ?? null) && ($stats['enabled'] ?? true) ? ($stats['cards'] ?? []) : [];
-    $networkClips = $showNetworkVideos ? collect($reels['clips'])->take(12)->values()->map(function (array $clip, int $index): array {
-        $preset = in_array($clip['sample_clip'] ?? '', ['studio', 'gaming', 'creator', 'setup', 'live', 'community', 'camera', 'portrait', 'focus'], true) ? $clip['sample_clip'] : 'studio';
-        return [
-            'src' => ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/igaming-reels/'.$preset.'.mp4'),
-            'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/igaming-reels/'.$preset.'.jpg',
+    $networkClips = $showNetworkVideos ? collect($reels['clips'])->take(\App\Support\CreatorPreviewClips::MAX_CLIPS)->values()->map(function (array $clip, int $index): array {
+        return \App\Support\CreatorPreviewClips::media($clip) + [
             'title' => $clip['title'] ?? 'Creator preview', 'link' => $clip['link_url'] ?? '', 'position' => $index + 1,
         ];
     })->all() : [];

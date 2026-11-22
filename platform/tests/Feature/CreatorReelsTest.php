@@ -90,7 +90,7 @@ class CreatorReelsTest extends TestCase
                 $this->assertArrayHasKey('creator_reels.clips.0.sample_clip', $exception->errors());
             }
         }
-        foreach ([1, 13] as $count) {
+        foreach ([1, 16] as $count) {
             $settings = SiteContentDefaults::settings();
             $settings['creator_reels']['clips'] = array_fill(0, $count, $settings['creator_reels']['clips'][0]);
             try {
@@ -120,8 +120,30 @@ class CreatorReelsTest extends TestCase
         $published = app(SiteContent::class)->getPublished('settings');
         $this->assertFalse($published['creator_reels']['enabled']);
         $this->assertSame('Our public format library', $published['creator_reels']['title']);
-        $this->assertCount(9, $published['creator_reels']['clips']);
+        $this->assertCount(15, $published['creator_reels']['clips']);
         $this->assertSame($orderedClips, $published['creator_reels']['clips']);
+    }
+
+    public function test_legacy_presets_resolve_to_the_uploaded_pack_and_custom_media_keeps_priority(): void
+    {
+        $settings = SiteContentDefaults::settings();
+        $settings['creator_reels']['clips'][0]['sample_clip'] = 'studio';
+        $validated = app(SiteContent::class)->validate('settings', $settings);
+        $this->assertSame('studio', $validated['creator_reels']['clips'][0]['sample_clip']);
+        $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => $validated['creator_reels']]);
+        $this->assertStringContainsString('/videos/igaming-loops/dragon-slots.mp4', $html);
+        $this->assertStringContainsString('/images/igaming-loops/dragon-slots.jpg', $html);
+
+        $clip = $validated['creator_reels']['clips'][0];
+        $clip['video_path'] = 'site-content/reels/custom-upload.mp4';
+        $clip['poster_path'] = 'site-content/reels/custom-poster.webp';
+        $uploaded = \App\Support\CreatorPreviewClips::media($clip);
+        $this->assertStringEndsWith('/storage/site-content/reels/custom-upload.mp4', $uploaded['src']);
+        $this->assertStringEndsWith('/storage/site-content/reels/custom-poster.webp', $uploaded['poster']);
+        $clip['video_source_url'] = 'https://media.example.com/authored-clip.mp4';
+        $external = \App\Support\CreatorPreviewClips::media($clip);
+        $this->assertSame($clip['video_source_url'], $external['src']);
+        $this->assertSame($uploaded['poster'], $external['poster']);
     }
 
     public function test_video_markup_starts_with_posters_and_two_opposed_rows(): void
@@ -129,7 +151,7 @@ class CreatorReelsTest extends TestCase
         $html = Blade::render("@include('site.blocks.creator-reels', ['data' => \$data])", ['data' => SiteContentDefaults::settings()['creator_reels']]);
         $this->assertStringContainsString('data-reel-ribbon', $html);
         $this->assertStringNotContainsString('data-reel-playlist', $html);
-        $this->assertStringContainsString('/images/igaming-reels/studio.jpg', $html);
+        $this->assertStringContainsString('/images/igaming-loops/dragon-slots.jpg', $html);
         $this->assertStringContainsString('data-reel-row="forward"', $html);
         $this->assertStringContainsString('data-reel-row="reverse"', $html);
         $this->assertStringNotContainsString('Pause previews', $html);
@@ -140,8 +162,8 @@ class CreatorReelsTest extends TestCase
         $document = new \DOMDocument();
         $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
         $xpath = new \DOMXPath($document);
-        $this->assertSame(9, $xpath->query('//article[@data-reel-panel]')->length);
-        $this->assertSame(9, $xpath->query('//article[@data-reel-panel]//video[@data-reel-video and @data-src]')->length);
+        $this->assertSame(15, $xpath->query('//article[@data-reel-panel]')->length);
+        $this->assertSame(15, $xpath->query('//article[@data-reel-panel]//video[@data-reel-video and @data-src]')->length);
         $this->assertSame(2, $xpath->query('//*[@data-reel-row]')->length);
     }
 
@@ -222,8 +244,8 @@ class CreatorReelsTest extends TestCase
         $xpath = new \DOMXPath($document);
         $items = $xpath->query('//article[@data-reel-panel]');
         $pool = json_decode($xpath->query('//*[@data-reel-clips]')->item(0)->textContent, true, 512, JSON_THROW_ON_ERROR);
-        $this->assertSame(9, $items->length);
-        $this->assertCount(9, $pool);
+        $this->assertSame(15, $items->length);
+        $this->assertCount(15, $pool);
         $positions = [];
         foreach ($items as $index => $item) {
             $positions[] = (int) $item->getAttribute('data-reel-position');
@@ -233,8 +255,8 @@ class CreatorReelsTest extends TestCase
             $this->assertSame($settings['creator_reels']['clips'][$index]['video_source_url'], $pool[$index]['src']);
             $this->assertSame($settings['creator_reels']['clips'][$index]['link_url'], $pool[$index]['link']);
         }
-        $this->assertSame(range(1, 9), $positions);
-        $this->assertCount(9, array_unique(array_column($settings['creator_reels']['clips'], 'sample_clip')));
+        $this->assertSame(range(1, 15), $positions);
+        $this->assertCount(15, array_unique(array_column($settings['creator_reels']['clips'], 'sample_clip')));
         $this->assertSame($settings['creator_reels']['clips'][0]['link_url'], $xpath->query('//*[@data-reel-link]')->item(0)->getAttribute('href'));
         $this->assertSame(0, $xpath->query('//*[@data-reel-clone and not(@aria-hidden="true")]')->length);
         foreach ($xpath->query('//*[@data-reel-clone]//a[@data-reel-link]') as $link) {

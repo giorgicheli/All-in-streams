@@ -5,7 +5,7 @@
   height:31px;
   flex-shrink:0;
 }
-.creator-orbit-video-reel > :is(img, video)[src*="/igaming-reels/"] { object-position:68% center; }
+.creator-orbit-video-reel > :is(img, video)[src*="/igaming-loops/"] { object-position:90% center; }
 .creator-orbit-check {
   width:14px;
   height:14px;

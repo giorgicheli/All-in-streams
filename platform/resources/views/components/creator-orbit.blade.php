@@ -7,19 +7,15 @@
         'bottom_subtitle' => 'A shared connection.', 'tag' => 'Better together',
         'preview_label' => 'CREATOR PREVIEW', 'pause_label' => 'Pause motion', 'play_label' => 'Play motion',
     ];
-    $orbitPresets = ['studio', 'gaming', 'creator', 'setup', 'live', 'community', 'camera', 'portrait', 'focus'];
     $orbitClips = [];
     foreach ($clips as $clip) {
-        $preset = in_array($clip['sample_clip'] ?? '', $orbitPresets, true) ? $clip['sample_clip'] : 'studio';
-        $orbitClips[] = [
-            'src' => ! empty($clip['video_source_url']) ? $clip['video_source_url'] : (! empty($clip['video_path']) ? Storage::disk('public')->url($clip['video_path']) : '/videos/igaming-reels/'.$preset.'.mp4'),
-            'poster' => ! empty($clip['poster_path']) ? Storage::disk('public')->url($clip['poster_path']) : '/images/igaming-reels/'.$preset.'.jpg',
+        $orbitClips[] = \App\Support\CreatorPreviewClips::media($clip) + [
             'title' => $clip['title'] ?? $orbitLabels['main_title'],
         ];
     }
     if (! $orbitClips) {
-        foreach (array_slice($orbitPresets, 0, 3) as $preset) {
-            $orbitClips[] = ['src' => '/videos/igaming-reels/'.$preset.'.mp4', 'poster' => '/images/igaming-reels/'.$preset.'.jpg', 'title' => $orbitLabels['main_title']];
+        foreach (array_slice(\App\Support\CreatorPreviewClips::defaults(), 0, 3) as $clip) {
+            $orbitClips[] = \App\Support\CreatorPreviewClips::media($clip) + ['title' => $orbitLabels['main_title']];
         }
     }
     $orbitCards = [

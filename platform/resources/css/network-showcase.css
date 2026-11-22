@@ -98,7 +98,7 @@
     object-fit: cover;
 }
 .network-showcase-panel > img { z-index: 0; }
-.network-showcase-panel > :is(img, video)[src*="/igaming-reels/"] { object-position:68% center; }
+.network-showcase-panel > :is(img, video)[src*="/igaming-loops/"] { object-position:90% center; }
 .network-showcase-panel > video {
     z-index: 1;
     opacity: 0;

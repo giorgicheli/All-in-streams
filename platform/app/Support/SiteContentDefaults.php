@@ -174,17 +174,7 @@ class SiteContentDefaults
                 'title' => 'Our creator network',
                 'description' => 'Live moments. Fresh perspectives. Discover the formats that bring brands and creator communities together.',
                 'label' => 'Explore the network', 'url' => '#creators',
-                'clips' => [
-                    ['sample_clip' => 'studio', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Streamer studio and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'gaming', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Streamer reaction and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'creator', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Creator stream and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'setup', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Streamer close-up and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'live', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Live reaction and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'community', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Community stream and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'camera', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'On-camera stream and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'portrait', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Streamer portrait and slots', 'format' => 'Format preview'],
-                    ['sample_clip' => 'focus', 'video_path' => null, 'poster_path' => null, 'video_source_url' => '', 'link_url' => '', 'title' => 'Focused streamer and slots', 'format' => 'Format preview'],
-                ],
+                'clips' => CreatorPreviewClips::defaults(),
             ],
             'brand_spotlight' => [
                 'enabled' => true, 'title_line_1' => 'Brands meet', 'title_line_2' => 'streamers.',

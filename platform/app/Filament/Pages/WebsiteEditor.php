@@ -6,6 +6,7 @@ use App\Models\SitePageRevision;
 use App\Rules\SiteLink;
 use App\Services\SiteContent;
 use App\Support\Countries;
+use App\Support\CreatorPreviewClips;
 use App\Support\SiteContentDefaults;
 use BackedEnum;
 use Filament\Forms\Components\Builder;
@@ -238,11 +239,7 @@ class WebsiteEditor extends Page
                 continue;
             }
             if ($key === 'sample_clip') {
-                $fields[] = Select::make($name)->label('Fallback sample footage')->options([
-                    'studio' => 'Streamer studio + slots', 'gaming' => 'Streamer reaction + slots', 'creator' => 'Creator stream + slots',
-                    'setup' => 'Streamer close-up + slots', 'live' => 'Live reaction + slots', 'community' => 'Community stream + slots',
-                    'camera' => 'On-camera stream + slots', 'portrait' => 'Streamer portrait + slots', 'focus' => 'Focused streamer + slots',
-                ])->default($value)->required();
+                $fields[] = Select::make($name)->label('Fallback sample footage')->options(CreatorPreviewClips::options($value))->default($value)->required();
                 continue;
             }
             if ($key === 'image_path' || $key === 'logo_path') {
@@ -305,6 +302,7 @@ class WebsiteEditor extends Page
         return match ($key) {
             'items', 'countries', 'preview_countries' => 30,
             'benefits' => 3,
+            'clips' => CreatorPreviewClips::MAX_CLIPS,
             default => 12,
         };
     }

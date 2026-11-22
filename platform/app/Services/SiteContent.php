@@ -9,6 +9,7 @@ use App\Rules\SiteLink;
 use App\Rules\PublicVideoSource;
 use App\Rules\LegalRichText;
 use App\Support\SiteContentDefaults;
+use App\Support\CreatorPreviewClips;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
@@ -134,7 +135,7 @@ class SiteContent
             $path = $prefix === '' ? $key : $prefix.'.'.$key;
             if (is_array($value)) {
                 if (array_is_list($value)) {
-                    $limit = match ($key) { 'countries', 'preview_countries', 'items' => 30, 'benefits' => 3, default => 12 };
+                    $limit = match ($key) { 'countries', 'preview_countries', 'items' => 30, 'benefits' => 3, 'clips' => CreatorPreviewClips::MAX_CLIPS, default => 12 };
                     $rules[$path] = ['required', 'array', 'min:'.($key === 'clips' ? 2 : 1), 'max:'.$limit];
                     if ($value) $this->objectRules($value[0], $path.'.*', $rules);
                 } else $this->objectRules($value, $path, $rules);
@@ -160,7 +161,7 @@ class SiteContent
                     if (is_string($text) && (strip_tags($text) !== $text || preg_match('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', $text))) $fail('Use plain text without HTML or executable markup.');
                 }]);
                 if ($key === 'icon') $rules[$path][] = Rule::in(SiteContentDefaults::ICONS);
-                if ($key === 'sample_clip') $rules[$path][] = Rule::in(['studio', 'gaming', 'creator', 'setup', 'live', 'community', 'camera', 'portrait', 'focus']);
+                if ($key === 'sample_clip') $rules[$path][] = Rule::in(CreatorPreviewClips::allowedKeys());
                 if ($key === 'code') $rules[$path][] = 'regex:/^[A-Z]{2}$/D';
                 if ($key === 'url' || str_ends_with($key, '_url')) {
                     $rules[$path][] = 'max:2048';
