@@ -187,7 +187,7 @@ html.site-redesign[data-color-theme] .site-intro::before { background:radial-gra
 html.site-redesign[data-color-theme="dark"] .site-intro :is(.site-intro-skip,.site-intro-progress-label) { color:var(--site-muted); }
 html.site-redesign[data-color-theme="dark"] .site-intro .site-intro-progress-fill { background:var(--site-ink); }
 
-/* A small orbit becomes an eclipse; the page reveal starts from this control. */
+/* A small orbit becomes an eclipse; night rises and daylight descends. */
 html.site-redesign[data-color-theme] .theme-toggle {
     --toggle-surface:var(--site-surface);
     display:inline-grid; place-items:center; position:relative; flex:0 0 auto;
@@ -219,6 +219,8 @@ html[data-theme-transitioning] :is(.site-nav,.hero-stat-card,.network-showcase-c
 ::view-transition-old(root),::view-transition-new(root) { animation:none; mix-blend-mode:normal; }
 ::view-transition-old(root) { z-index:1; }
 ::view-transition-new(root) { z-index:2; }
+.theme-wipe { position:fixed; inset:0; z-index:9998; pointer-events:none; transform-origin:center bottom; will-change:transform,opacity; }
+.theme-wipe[data-direction="down"] { transform-origin:center top; }
 
 @media(max-width:700px) {
     html.site-redesign[data-color-theme] .theme-white [data-geo-carousel].geo-strip { background:transparent; }

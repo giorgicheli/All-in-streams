@@ -11,6 +11,8 @@ export function initializeColorTheme() {
     let desiredTheme = validTheme(root.dataset.colorTheme) ? root.dataset.colorTheme : 'dark';
     let activeTransition;
     let fallbackTimer;
+    let curtain;
+    let curtainAnimation;
     let sequence = 0;
 
     function apply(theme) {
@@ -31,6 +33,9 @@ export function initializeColorTheme() {
         activeTransition?.skipTransition();
         activeTransition = undefined;
         clearTimeout(fallbackTimer);
+        curtainAnimation?.cancel();
+        curtain?.remove();
+        curtain = curtainAnimation = undefined;
         root.removeAttribute('data-theme-transitioning');
         desiredTheme = theme;
         const update = () => { if (generation === sequence) apply(theme); };
@@ -40,34 +45,56 @@ export function initializeColorTheme() {
             activeTransition = undefined;
         };
         if (!button || reducedMotion.matches) { update(); return; }
+        const verticalWipe = () => {
+            if (typeof Element.prototype.animate !== 'function') {
+                root.setAttribute('data-theme-transitioning', '');
+                update();
+                fallbackTimer = setTimeout(finish, 520);
+                return;
+            }
+            const layer = document.createElement('div');
+            layer.className = 'theme-wipe';
+            layer.setAttribute('aria-hidden', 'true');
+            layer.dataset.direction = theme === 'dark' ? 'up' : 'down';
+            layer.style.backgroundColor = theme === 'dark' ? '#090a0c' : '#f5f6fa';
+            document.body.append(layer);
+            curtain = layer;
+            curtainAnimation = layer.animate([{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }], {
+                duration: 540, easing: 'cubic-bezier(.2,.7,.15,1)', fill: 'forwards',
+            });
+            curtainAnimation.finished.then(() => {
+                if (generation !== sequence) return;
+                update();
+                curtainAnimation = layer.animate([{ opacity: 1 }, { opacity: 0 }], {
+                    duration: 220, easing: 'ease-out', fill: 'forwards',
+                });
+                return curtainAnimation.finished;
+            }).catch(() => {}).finally(() => {
+                layer.remove();
+                if (curtain === layer) curtain = curtainAnimation = undefined;
+                finish();
+            });
+        };
         if (typeof document.startViewTransition !== 'function') {
-            root.setAttribute('data-theme-transitioning', '');
-            update();
-            fallbackTimer = setTimeout(finish, 520);
+            verticalWipe();
             return;
         }
         try {
-            const bounds = button.getBoundingClientRect();
-            const x = bounds.left + bounds.width / 2;
-            const y = bounds.top + bounds.height / 2;
-            const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
             const transition = document.startViewTransition(update);
             activeTransition = transition;
             transition.ready.then(() => {
                 if (generation !== sequence) return;
                 return root.animate([
-                    { clipPath: `circle(0px at ${x}px ${y}px)` },
-                    { clipPath: `circle(${radius}px at ${x}px ${y}px)` },
+                    { clipPath: theme === 'dark' ? 'inset(100% 0 0 0)' : 'inset(0 0 100% 0)' },
+                    { clipPath: 'inset(0 0 0 0)' },
                 ], {
-                    duration: 760, easing: 'cubic-bezier(.2,.7,.15,1)',
+                    duration: 820, easing: 'cubic-bezier(.2,.7,.15,1)',
                     pseudoElement: '::view-transition-new(root)',
                 }).finished;
             }).catch(() => {}).finally(finish);
             transition.finished.catch(() => {});
         } catch {
-            root.setAttribute('data-theme-transitioning', '');
-            update();
-            fallbackTimer = setTimeout(finish, 520);
+            verticalWipe();
         }
     }
 
@@ -91,6 +118,8 @@ export function initializeColorTheme() {
         sequence++;
         controller.abort();
         clearTimeout(fallbackTimer);
+        curtainAnimation?.cancel();
+        curtain?.remove();
         activeTransition?.skipTransition();
         root.removeAttribute('data-theme-transitioning');
     };

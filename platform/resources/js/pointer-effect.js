@@ -8,6 +8,7 @@ const pointerDelay = 120;
 const lensExitHold = 220;
 const lensExitDuration = 480;
 const inkRevealDuration = 160;
+const themeGlyphRefreshDuration = 850;
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
 
 function mountPointerEffect(root) {
@@ -48,6 +49,7 @@ function mountPointerEffect(root) {
     let accumulator = 0;
     let lastMotion = 0;
     let lastLabelRefresh = 0;
+    let themeGlyphRefreshUntil = 0;
     let headerMode = false;
     let circleMode = false;
     let hoveredControl = null;
@@ -93,6 +95,7 @@ function mountPointerEffect(root) {
         const ink = lightInk ? '#fff' : '#17191f';
         canvas.dataset.pointerContrast = lightInk ? 'light' : 'dark';
         headerCopy.style.setProperty('--pointer-label-color', lightInk ? '#17191f' : '#fff');
+        headerCopy.style.setProperty('--pointer-lens-color', ink);
         return ink;
     }
 
@@ -109,6 +112,7 @@ function mountPointerEffect(root) {
         clearTimeout(dismissalTimer);
         dismissalTimer = 0;
         exitingLens = null;
+        themeGlyphRefreshUntil = 0;
         cancelAnimationFrame(frame);
         frame = previousTime = accumulator = 0;
         pointer = null;
@@ -184,7 +188,7 @@ function mountPointerEffect(root) {
         headerCopy.dataset.lensY = lens.y.toFixed(2);
         headerCopy.dataset.lensRadius = exitingLens.radius.toFixed(2);
         canvas.dataset.pointerLensFade = alpha.toFixed(3);
-        if (now - lastLabelRefresh > 100) refreshHeaderLabels();
+        if (now - lastLabelRefresh > (now < themeGlyphRefreshUntil ? 0 : 100)) refreshHeaderLabels();
         return true;
     }
 
@@ -194,6 +198,7 @@ function mountPointerEffect(root) {
         cancelAnimationFrame(frame);
         frame = previousTime = 0;
         exitingLens = null;
+        themeGlyphRefreshUntil = 0;
         delete canvas.dataset.pointerLensFade;
         // Keep the last painted pixels and their matching clipped glyphs until
         // both opacity transitions finish; clearing now would bypass the fade.
@@ -205,7 +210,38 @@ function mountPointerEffect(root) {
         dismissalTimer = setTimeout(() => stop(true), lensExitDuration + 30);
     }
 
-    // Copy only visible label glyphs and built-in line icons, never controls,
+    // Sample only the theme control's built-in glyphs. Measured relative
+    // matrices include animated CSS transforms and SVG group coordinates,
+    // without carrying the control's classes, background or accessible name.
+    function copyThemeGlyphs(icon, target, rootMatrix) {
+        const geometry = { g: [], path: ['d'], circle: ['cx', 'cy', 'r'], ellipse: ['cx', 'cy', 'rx', 'ry'] };
+        const presentation = ['opacity', 'fill-opacity', 'stroke-opacity', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-dasharray', 'stroke-dashoffset', 'fill-rule'];
+        let remaining = 24;
+        function sample(source, parent, parentMatrix, depth) {
+            const attributes = geometry[source.localName];
+            if (!attributes || depth > 4 || remaining-- <= 0) return;
+            const style = getComputedStyle(source);
+            const matrix = source.getScreenCTM();
+            if (!matrix || style.display === 'none' || style.visibility !== 'visible') return;
+            let relative;
+            try { relative = parentMatrix.inverse().multiply(matrix); } catch { return; }
+            if (![relative.a, relative.b, relative.c, relative.d, relative.e, relative.f].every(Number.isFinite)) return;
+            const copy = document.createElementNS('http://www.w3.org/2000/svg', source.localName);
+            attributes.forEach(attribute => {
+                const value = source.getAttribute(attribute);
+                if (value !== null) copy.setAttribute(attribute, value);
+            });
+            copy.setAttribute('transform', `matrix(${relative.a} ${relative.b} ${relative.c} ${relative.d} ${relative.e} ${relative.f})`);
+            presentation.forEach(property => { copy.style.setProperty(property, style.getPropertyValue(property)); });
+            copy.style.fill = style.fill === 'none' ? 'none' : source.classList.contains('theme-toggle-mask') ? 'var(--pointer-lens-color)' : 'currentColor';
+            copy.style.stroke = style.stroke === 'none' ? 'none' : 'currentColor';
+            parent.append(copy);
+            if (source.localName === 'g') [...source.children].forEach(child => sample(child, copy, matrix, depth + 1));
+        }
+        [...icon.children].forEach(child => sample(child, target, rootMatrix, 1));
+    }
+
+    // Copy only visible label glyphs and built-in icons, never controls,
     // logos or backgrounds.
     // Their shared circular clip changes only the letter parts under the lens;
     // all original controls and accessible names stay in place.
@@ -219,7 +255,7 @@ function mountPointerEffect(root) {
         labels.forEach(label => {
             const bounds = label.getBoundingClientRect();
             if (!bounds.width || !bounds.height || bounds.bottom < 0 || bounds.top > height || bounds.right < 0 || bounds.left > width) return;
-            label.querySelectorAll('svg.icon').forEach(icon => {
+            label.querySelectorAll('svg.icon, [data-theme-toggle] svg.theme-toggle-icon').forEach(icon => {
                 if (seen.has(icon)) return;
                 seen.add(icon);
                 const rect = icon.getBoundingClientRect();
@@ -241,11 +277,13 @@ function mountPointerEffect(root) {
                 copy.style.top = `${rect.top}px`;
                 copy.style.width = `${rect.width}px`;
                 copy.style.height = `${rect.height}px`;
+                copy.style.opacity = style.opacity;
                 const paths = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                 // Apply the measured screen matrix inside the measured bounds,
                 // so an original icon rotation/scale is never applied twice.
                 paths.setAttribute('transform', `matrix(${matrix.a} ${matrix.b} ${matrix.c} ${matrix.d} ${matrix.e - rect.left} ${matrix.f - rect.top})`);
-                icon.querySelectorAll('path').forEach(path => {
+                if (icon.matches('[data-theme-toggle] svg.theme-toggle-icon')) copyThemeGlyphs(icon, paths, matrix);
+                else icon.querySelectorAll('path').forEach(path => {
                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     line.setAttribute('d', path.getAttribute('d') || '');
                     paths.append(line);
@@ -391,10 +429,10 @@ function mountPointerEffect(root) {
                 headerCopy.dataset.lensX = lens.x.toFixed(2);
                 headerCopy.dataset.lensY = lens.y.toFixed(2);
                 headerCopy.dataset.lensRadius = radius.toFixed(2);
-                if (now - lastLabelRefresh > 100) refreshHeaderLabels();
-                // A stationary hover remains visible without an idle animation loop.
+                if (now - lastLabelRefresh > (now < themeGlyphRefreshUntil ? 0 : 100)) refreshHeaderLabels();
+                // Sample the brief theme morph, then let a stationary hover rest.
                 const awaitingInput = now < pointerSamples[pointerSamples.length - 1].time + pointerDelay;
-                if (awaitingInput || Math.hypot(lens.x - pointer.x, lens.y - pointer.y) > .05) frame = requestAnimationFrame(draw);
+                if (awaitingInput || now < themeGlyphRefreshUntil || Math.hypot(lens.x - pointer.x, lens.y - pointer.y) > .05) frame = requestAnimationFrame(draw);
                 else previousTime = 0;
                 return;
             }
@@ -527,7 +565,12 @@ function mountPointerEffect(root) {
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); }, options);
     document.addEventListener('pointerout', event => { if (!event.relatedTarget) { mousePosition = null; fadeOut(); } }, options);
     document.addEventListener('ais:navigation-state', event => { menuOpen = Boolean(event.detail?.open); if (menuOpen) stop(); }, { signal: events.signal });
-    document.addEventListener('ais:theme-change', () => { lastLabelRefresh = 0; }, { signal: events.signal });
+    document.addEventListener('ais:theme-change', () => {
+        lastLabelRefresh = 0;
+        if (!pointer || !permitted() || dismissalTimer || (!circleMode && !exitingLens)) return;
+        themeGlyphRefreshUntil = performance.now() + themeGlyphRefreshDuration;
+        if (!frame) frame = requestAnimationFrame(draw);
+    }, { signal: events.signal });
     document.addEventListener('livewire:navigating', cleanup, { signal: events.signal });
     window.addEventListener('blur', () => { mousePosition = null; fadeOut(); }, options);
     window.addEventListener('scroll', event => {
