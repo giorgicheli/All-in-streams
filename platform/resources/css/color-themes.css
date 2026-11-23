@@ -145,6 +145,9 @@ html.site-redesign[data-color-theme] .theme-white .audience-picker > summary,
 html.site-redesign[data-color-theme] .theme-white .audience-picker [data-audience-search] { background:var(--site-surface); color:var(--site-ink); border:1px solid var(--site-line); box-shadow:none; }
 html.site-redesign[data-color-theme] .theme-white :is(.enquiry-field,.contact-field,.auth-form .form-field) :is(input,textarea)::placeholder { color:var(--site-muted); opacity:1; }
 html.site-redesign[data-color-theme] .theme-white :is(.enquiry-field,.contact-field,.auth-form .form-field) :is(input,textarea,select):focus { border-color:var(--site-accent); outline:0; box-shadow:none; }
+html.site-redesign[data-color-theme] .theme-white :is(.auth-form,.enquiry-form) input[type=file]::file-selector-button {
+    background:var(--site-accent); color:var(--site-accent-ink); border:0; box-shadow:none;
+}
 html.site-redesign[data-color-theme] .theme-white :is(.enquiry-choice,.enquiry-role-icon,.enquiry-close) { background:var(--site-surface-soft); color:var(--site-ink); border:0; }
 html.site-redesign[data-color-theme] .theme-white :is(.enquiry-choice.is-selected,.enquiry-type-options .enquiry-choice.is-selected,.enquiry-submit,.enquiry-role-card:nth-child(3),.enquiry-success-icon) { background:var(--site-accent); color:var(--site-accent-ink); border:0; }
 html.site-redesign[data-color-theme] .theme-white .enquiry-role-card:nth-child(3) :is(h2,p,.enquiry-role-icon,.enquiry-role-arrow) { color:var(--site-accent-ink); }
