@@ -171,11 +171,12 @@ html.site-redesign[data-color-theme] .theme-white .creator-add-shortlist[aria-pr
 html.site-redesign[data-color-theme] .theme-white .geo-strip { background:var(--site-surface-soft); }
 html.site-redesign[data-color-theme] .theme-white :is(.geo-inner,.geo-inner > strong) { color:var(--site-muted); }
 
-/* The footer is intentionally black in either mode. */
+/* The shared footer uses the dark header's charcoal surface in either mode. */
 html.site-redesign[data-color-theme] .theme-white .site-footer {
     --site-accent:var(--site-accent-dark,#c5f65c); --site-accent-ink:var(--site-accent-dark-ink,#090a0c);
     --lime:var(--site-accent); --stream-green:var(--site-accent); --site-ink:#f3f4f6; --site-muted:#a4abb6;
-    background:#070809; color:var(--site-ink); box-shadow:none;
+    background:#141619; color:var(--site-ink); box-shadow:none;
+    border-radius:36px 36px 0 0; margin-top:24px;
 }
 html.site-redesign[data-color-theme] .theme-white .site-footer :is(.footer-about-title,.brand > span,.brand b) { color:var(--site-ink); }
 html.site-redesign[data-color-theme] .theme-white .site-footer :is(p,.eyebrow,.footer-bottom,.footer-legal a,.brand small) { color:var(--site-muted); }
@@ -223,6 +224,7 @@ html[data-theme-transitioning] :is(.site-nav,.hero-stat-card,.network-showcase-c
 .theme-wipe[data-direction="down"] { transform-origin:center top; }
 
 @media(max-width:700px) {
+    html.site-redesign[data-color-theme] .theme-white .site-footer { border-radius:28px 28px 0 0; margin-top:20px; }
     html.site-redesign[data-color-theme] .theme-white [data-geo-carousel].geo-strip { background:transparent; }
     html.site-redesign[data-color-theme] .theme-toggle { width:40px; height:40px; }
     html.site-redesign[data-color-theme] .theme-white .header-actions { gap:5px; }
