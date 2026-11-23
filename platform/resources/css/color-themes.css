@@ -198,10 +198,9 @@ html.site-redesign[data-color-theme] .theme-toggle {
     width:44px; height:44px; padding:0; border:0; border-radius:50%;
     background:var(--toggle-surface); color:var(--site-ink); cursor:pointer; box-shadow:none;
     -webkit-tap-highlight-color:transparent;
-    transition:background-color 240ms ease,transform 480ms cubic-bezier(.2,.8,.2,1);
+    transition:background-color 240ms ease;
 }
-html.site-redesign[data-color-theme] .theme-toggle:hover { --toggle-surface:var(--site-surface-soft); transform:rotate(-8deg); }
-html.site-redesign[data-color-theme] .theme-toggle:active { transform:scale(.92); }
+html.site-redesign[data-color-theme] .theme-toggle:hover { --toggle-surface:var(--site-surface-soft); }
 html.site-redesign[data-color-theme] .theme-toggle:focus-visible { outline:2px solid var(--site-accent); outline-offset:3px; }
 .theme-toggle-icon { display:block; width:30px; height:30px; overflow:visible; }
 .theme-toggle-orbit { fill:none; stroke:currentColor; stroke-width:1; opacity:.45; transform-origin:16px 16px; transition:transform 800ms cubic-bezier(.2,.75,.2,1),opacity 400ms ease; }
