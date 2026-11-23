@@ -1,0 +1,135 @@
+[
+  {
+    "id": "roulette-host",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "hosts/02-roulette-host.mp4",
+    "file": "roulette-host.mp4",
+    "bytes": 148692,
+    "sha256": "76a19e1ad26317794f95a81a797b4e5de3bedb6f4e5a699c9f3737c8d6812e1e",
+    "poster_file": "roulette-host.jpg",
+    "poster_bytes": 29379,
+    "poster_sha256": "829119abeb222f842391a21d558984f1938a8b6d26e98b982fc3ef4d1f2764a3",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  },
+  {
+    "id": "sugar-win",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "wins/03-sugar-win.mp4",
+    "file": "sugar-win.mp4",
+    "bytes": 235560,
+    "sha256": "16d38fb73c72af634def1789e9a7a9b2249a614486ea6fba51bef7d96bc17cdf",
+    "poster_file": "sugar-win.jpg",
+    "poster_bytes": 40297,
+    "poster_sha256": "056f85b634524c6863e0c4af2360f24f4f4ebe1df64b7524f8246eb7b618b30c",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  },
+  {
+    "id": "wheel-win",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "wins/05-wheel-win.mp4",
+    "file": "wheel-win.mp4",
+    "bytes": 283026,
+    "sha256": "6a7f0fd0b5f23752d8a4118168fd7e94c9f5b3ed99dc1a058eee96dcd625e862",
+    "poster_file": "wheel-win.jpg",
+    "poster_bytes": 45350,
+    "poster_sha256": "9537f58651da412bb8bd007fb46fd66841c8e518810bf8e83d63fc32b007c91e",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  },
+  {
+    "id": "baccarat-host",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "hosts/06-baccarat-host.mp4",
+    "file": "baccarat-host.mp4",
+    "bytes": 166662,
+    "sha256": "1363c8fa2c9867630655c0d24a5de37e67d6d017d14ab25b21c16bc64b114aa5",
+    "poster_file": "baccarat-host.jpg",
+    "poster_bytes": 31585,
+    "poster_sha256": "4c16918de3738c259f24c457170871a04cce6c6731062e2f36bfa553124cde2c",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  },
+  {
+    "id": "poker-host",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "hosts/08-poker-host.mp4",
+    "file": "poker-host.mp4",
+    "bytes": 154069,
+    "sha256": "05c6ab723a3ef9c411fe8421236f426edbc034b38dd353a9fe7b0cf837c1e4cb",
+    "poster_file": "poker-host.jpg",
+    "poster_bytes": 31723,
+    "poster_sha256": "faba6831364f1660e5ac6322c29e69cd9bd666f440afed1c83af91f90b85155b",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  },
+  {
+    "id": "draw-poker-win",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "wins/09-draw-poker-win.mp4",
+    "file": "draw-poker-win.mp4",
+    "bytes": 115670,
+    "sha256": "ddfa8f71a7ef43206162680fc5fdfe82d0c192aec602355306f3afa02cc43d1a",
+    "poster_file": "draw-poker-win.jpg",
+    "poster_bytes": 34334,
+    "poster_sha256": "1790263f5018d6707fe297c0527414c875ac0aa4650116985a1c2d3328d52778",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  },
+  {
+    "id": "keno-host",
+    "source": "User-provided igaming-12-card-videos (4).zip",
+    "archive_entry": "hosts/12-keno-host.mp4",
+    "file": "keno-host.mp4",
+    "bytes": 162492,
+    "sha256": "8c51717ecfdc5fe02f24cf125e8634f43f2751266b82dc47cd1d2430adfea8e1",
+    "poster_file": "keno-host.jpg",
+    "poster_bytes": 47089,
+    "poster_sha256": "64a96f8747c3ac4708afa3d482e5edc73663721733e426ee94c707299ca3ace5",
+    "duration": "00:00:06.00",
+    "dimensions": [
+      504,
+      360
+    ],
+    "has_audio": false,
+    "processing": "Original MP4 preserved unchanged; preview poster extracted at 1 second.",
+    "supplied_on": "2026-11-23"
+  }
+]

@@ -39,6 +39,8 @@ class NetworkShowcaseTest extends TestCase
         $this->assertStringNotContainsString('/images/casino-reels/', $html);
         $this->assertStringNotContainsString('/videos/igaming-reels/', $html);
         $this->assertStringNotContainsString('/images/igaming-reels/', $html);
+        $this->assertStringNotContainsString('/videos/igaming-loops/', $html);
+        $this->assertStringNotContainsString('/images/igaming-loops/', $html);
         $this->assertSame(1, $xpath->query('//*[@data-network-showcase]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="network"]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="creator-content"]')->length);
@@ -48,16 +50,16 @@ class NetworkShowcaseTest extends TestCase
         $this->assertSame(1, $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " hero-stage ")]/*[last()][contains(concat(" ", normalize-space(@class), " "), " hero-statistics ")]')->length);
         $this->assertSame(1, $xpath->query('//*[@data-geo-carousel]')->length);
         $this->assertSame(1, $xpath->query('//*[@data-network-showcase]//*[contains(concat(" ", normalize-space(@class), " "), " network-showcase-card ")]/*[last()][@data-geo-carousel]')->length);
-        $this->assertSame(15, $xpath->query('//*[@data-network-panel]')->length);
-        $this->assertSame(5, $xpath->query('//*[@data-network-slide]')->length);
+        $this->assertSame(7, $xpath->query('//*[@data-network-panel]')->length);
+        $this->assertSame(3, $xpath->query('//*[@data-network-slide]')->length);
         $this->assertSame(0, $xpath->query('//*[@data-creator-reels]')->length);
         $this->assertSame(0, $xpath->query('//video[@data-network-video and (@src or @autoplay)]')->length);
-        $this->assertSame(30, $xpath->query('//video[@data-network-video and @preload="none" and @muted and @playsinline]')->length);
+        $this->assertSame(14, $xpath->query('//video[@data-network-video and @preload="none" and @muted and @playsinline]')->length);
         foreach (['data-network-clips', 'data-orbit-clips', 'data-site-intro-clips'] as $poolAttribute) {
             $pool = json_decode($xpath->query('//script[@'.$poolAttribute.']')->item(0)->textContent, true, flags: JSON_THROW_ON_ERROR);
-            $this->assertCount(15, $pool);
-            $this->assertCount(15, array_unique(array_column($pool, 'src')));
-            $this->assertSame('/videos/igaming-loops/scratch-card.mp4', $pool[14]['src']);
+            $this->assertCount(7, $pool);
+            $this->assertCount(7, array_unique(array_column($pool, 'src')));
+            $this->assertSame('/videos/igaming-cards/keno-host.mp4', $pool[6]['src']);
         }
     }
 
@@ -71,8 +73,8 @@ class NetworkShowcaseTest extends TestCase
         unset($clip);
         $html = Blade::render("@include('site.blocks.network-showcase', ['reels' => \$reels, 'stats' => null])", compact('reels'));
         $xpath = $this->xpath($html);
-        $this->assertSame(5, $xpath->query('//*[@data-network-slide]')->length);
-        $this->assertSame(15, $xpath->query('//*[@data-network-panel]')->length);
+        $this->assertSame(3, $xpath->query('//*[@data-network-slide]')->length);
+        $this->assertSame(7, $xpath->query('//*[@data-network-panel]')->length);
         $pool = json_decode($xpath->query('//script[@data-network-clips]')->item(0)->textContent, true, flags: JSON_THROW_ON_ERROR);
         foreach ($xpath->query('//*[@data-network-panel]') as $index => $panel) {
             $this->assertSame((string) ($index + 1), $panel->getAttribute('data-network-position'));
@@ -84,7 +86,7 @@ class NetworkShowcaseTest extends TestCase
     public function test_random_pane_weights_are_bounded_normalized_and_rotate_the_widest_position(): void
     {
         $defaults = SiteContentDefaults::settings()['creator_reels'];
-        $pool = $defaults['clips'];
+        $pool = array_merge($defaults['clips'], $defaults['clips'], $defaults['clips']);
         foreach ([2, 4, 5, 9, 10, 11, 12, 13, 14, 15] as $clipCount) {
             $reels = array_replace($defaults, ['clips' => array_slice($pool, 0, $clipCount)]);
             $html = Blade::render("@include('site.blocks.network-showcase', ['reels' => \$reels, 'stats' => null])", compact('reels'));
