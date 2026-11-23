@@ -57,6 +57,11 @@ export function initializeColorTheme() {
             layer.setAttribute('aria-hidden', 'true');
             layer.dataset.direction = theme === 'dark' ? 'up' : 'down';
             layer.style.backgroundColor = theme === 'dark' ? '#090a0c' : '#f5f6fa';
+            if (matchMedia('(max-width: 700px)').matches) {
+                const header = document.querySelector('.site-header');
+                const bottom = header?.getBoundingClientRect().bottom ?? 0;
+                layer.style.top = `${Math.max(0, Math.min(innerHeight, bottom))}px`;
+            }
             document.body.append(layer);
             curtain = layer;
             curtainAnimation = layer.animate([{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }], {
