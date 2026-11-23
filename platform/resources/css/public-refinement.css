@@ -54,13 +54,13 @@
 .theme-white .faq-list summary .icon { color:#6b8e51; }
 .theme-white .cta-section { background:#F6F7F0; padding-top:70px; }
 .theme-white .cta-box { background:#e3edd8; border:0; box-shadow:none; }
-.theme-white .cta-box h2 { color:#0B4B3A; }
+.theme-white .cta-box :is(h2,h3) { color:#0B4B3A; }
 .theme-white .cta-box p { color:#6B7970; }
 .theme-white .cta-box .btn { background:#0B4B3A; }
 .theme-white .site-footer { background:#0B4B3A; color:#F6F7F0; border-top:0; padding:38px 0 26px; scroll-margin-top:88px; }
 .theme-white .site-footer-has-intro { padding-top:72px; }
 .footer-intro { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; padding-bottom:52px; margin-bottom:32px; }
-.footer-intro h2 { max-width:510px; font-size:clamp(31px,3.4vw,48px); line-height:1.12; margin-top:18px; color:#F6F7F0; }
+.footer-intro .footer-about-title { max-width:510px; font-size:clamp(31px,3.4vw,48px); line-height:1.12; margin-top:18px; color:#F6F7F0; }
 .theme-white .footer-intro .eyebrow { color:#bdcf9a; }
 .footer-intro > p { max-width:520px; font-size:14px; line-height:1.95; color:#d1dfd4; }
 .theme-white .site-footer .brand { color:#a8cb69; }
@@ -92,7 +92,7 @@
     .theme-white .site-footer { padding-bottom:24px; scroll-margin-top:76px; }
     .theme-white .site-footer-has-intro { padding-top:46px; }
     .footer-intro { grid-template-columns:1fr; gap:23px; padding-bottom:32px; margin-bottom:27px; }
-    .footer-intro h2 { margin-top:15px; max-width:420px; font-size:clamp(31px,8vw,38px); }
+    .footer-intro .footer-about-title { margin-top:15px; max-width:420px; font-size:clamp(31px,8vw,38px); }
     .footer-intro > p { font-size:13px; line-height:1.9; }
     .theme-white .site-footer .footer-top { flex-direction:row; align-items:center; gap:18px; }
     .theme-white .site-footer .brand { gap:8px; }

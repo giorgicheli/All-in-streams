@@ -330,7 +330,7 @@
     backdrop-filter: blur(8px);
 }
 
-.site-redesign .theme-white .creator-shortlist-header h2 {
+.site-redesign .theme-white .creator-shortlist-header :is(h2,h3) {
     color: #191c1f;
     font-size: 30px;
     letter-spacing: -.04em;

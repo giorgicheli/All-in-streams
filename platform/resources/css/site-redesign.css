@@ -18,7 +18,7 @@
 .site-redesign .theme-white :is(a,button,summary):focus-visible { outline:2px solid #0a5cff; outline-offset:5px; }
 .site-redesign .theme-white .text-link { color:var(--stream-green); font-size:13px; font-weight:550; gap:16px; }
 .site-redesign .theme-white .section-heading { align-items:end; gap:60px; margin-bottom:48px; }
-.site-redesign .theme-white .section-heading h2 { font-size:clamp(38px,4.3vw,64px); line-height:1.04; margin-top:21px; max-width:760px; text-wrap:balance; }
+.site-redesign .theme-white .section-heading :is(h2,h3) { font-size:clamp(38px,4.3vw,64px); line-height:1.04; margin-top:21px; max-width:760px; text-wrap:balance; }
 .site-redesign .theme-white .section-heading > p { max-width:370px; color:var(--stream-muted); font-size:14px; line-height:1.85; }
 
 /* The navigation floats as one calm, readable surface. */
@@ -71,7 +71,7 @@
 .site-redesign .theme-white .hero-reference .hero-grid { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:26px; min-height:590px; }
 .site-redesign .theme-white .hero-copy { position:relative; z-index:2; padding:12px 0; }
 .site-redesign .theme-white .hero-copy > .eyebrow { font-size:10px; letter-spacing:.13em; }
-.site-redesign .theme-white .hero-copy h1 { font-size:clamp(68px,7.7vw,112px); font-weight:580; letter-spacing:-.075em; line-height:.98; margin:30px 0; }
+.site-redesign .theme-white .hero-copy .hero-headline { font-size:clamp(68px,7.7vw,112px); font-weight:580; letter-spacing:-.075em; line-height:.98; margin:30px 0; }
 .site-redesign .theme-white .hero-headline-visual { min-height:2.08em; }
 .site-redesign .theme-white .hero-reference .hero-headline-item { background:linear-gradient(100deg,#191c1f 0%,#191c1f 35%,#0a5cff 48%,#191c1f 62%,#191c1f 100%); background-size:280% 100%; background-position:100% 0; -webkit-background-clip:text; background-clip:text; color:transparent; animation:headline-light-pass 8s ease-in-out infinite; }
 .site-redesign .theme-white .hero-reference .hero-headline-line { color:transparent; -webkit-text-fill-color:transparent; }
@@ -99,7 +99,7 @@
 /* Four clear figures, separate from the first-screen story. */
 .site-redesign .theme-white .network-section { background:var(--stream-paper); padding:95px 0 100px; border:0; }
 .site-redesign .theme-white .network-section .section-heading { align-items:start; margin-bottom:35px; }
-.site-redesign .theme-white .network-section .section-heading h2 { font-size:clamp(34px,3.5vw,49px); max-width:600px; }
+.site-redesign .theme-white .network-section .section-heading :is(h2,h3) { font-size:clamp(34px,3.5vw,49px); max-width:600px; }
 .site-redesign .theme-white .network-section .section-heading > p { padding-top:32px; }
 .site-redesign .theme-white .network-stat-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px; }
 .site-redesign .theme-white .network-stat-card { min-width:0; padding:29px 27px; border:0; border-radius:21px; background:#f0f2f8; box-shadow:none; transition:background .35s,transform .4s; }
@@ -108,7 +108,7 @@
 .site-redesign .theme-white .network-stat-suffix { font-size:.65em; margin-left:1px; color:#215ccc; }
 .site-redesign .theme-white .network-stat-icon { width:41px; height:41px; border:0; border-radius:50%; background:#f0f2f8; color:#5e657e; }
 .site-redesign .theme-white .network-stat-icon .icon { width:19px; height:19px; }
-.site-redesign .theme-white .network-stat-card h3 { font-size:17px; margin-top:25px; letter-spacing:-.035em; color:var(--stream-ink); }
+.site-redesign .theme-white .network-stat-card :is(h3,h4) { font-size:17px; margin-top:25px; letter-spacing:-.035em; color:var(--stream-ink); }
 .site-redesign .theme-white .network-stat-description { margin-top:7px; min-height:0; color:#6b728b; font-size:11px; }
 
 .site-redesign .theme-white #platform { background:#ffffff; border-radius:44px 44px 0 0; }
@@ -132,7 +132,7 @@
 .site-redesign .theme-white .industry-card:nth-child(2) { background:#e9edf7; }
 .site-redesign .theme-white .industry-card:nth-child(3) { background:#ececf9; }
 .site-redesign .theme-white .industry-card > .icon { width:37px; height:37px; color:var(--stream-green); margin-bottom:75px; }
-.site-redesign .theme-white .industry-card h3 { font-size:31px; position:relative; }
+.site-redesign .theme-white .industry-card :is(h3,h4) { font-size:31px; position:relative; }
 .site-redesign .theme-white .industry-card p { position:relative; max-width:300px; font-size:13px; line-height:1.8; color:#5e657e; }
 .site-redesign .theme-white .industry-pattern { right:-35px; top:-20px; opacity:.055; rotate:-20deg; color:var(--stream-green); }
 .site-redesign .theme-white .industry-pattern .icon { width:260px; height:260px; }
@@ -142,7 +142,7 @@
 .site-redesign .theme-white #how-it-works { background:#ffffff; border-radius:44px 44px 0 0; }
 .site-redesign .theme-white .how-grid { grid-template-columns:.85fr 1.3fr; gap:90px; align-items:start; }
 .site-redesign .theme-white .how-intro { padding-top:12px; }
-.site-redesign .theme-white .how-intro h2 { font-size:clamp(39px,4.3vw,61px); line-height:1.06; margin:22px 0; }
+.site-redesign .theme-white .how-intro :is(h2,h3) { font-size:clamp(39px,4.3vw,61px); line-height:1.06; margin:22px 0; }
 .site-redesign .theme-white .how-intro > p { max-width:365px; font-size:14px; line-height:1.9; margin-bottom:28px; color:#6b728b; }
 .site-redesign .theme-white .process-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0; background:none; gap:18px; border:0; border-radius:0; }
 .site-redesign .theme-white .process-step { display:flex; flex-direction:column; gap:29px; min-height:234px; padding:25px; border:0; border-radius:20px; background:#f0f2f8; }
@@ -151,7 +151,7 @@
 .process-step-top { display:flex; justify-content:space-between; align-items:center; gap:15px; }
 .site-redesign .theme-white .step-icon { width:43px; height:43px; border:0; border-radius:50%; background:#f0f2f8; color:#215ccc; }
 .site-redesign .theme-white .step-tag { position:static; font-size:8px; letter-spacing:.13em; color:#6b728b; }
-.site-redesign .theme-white .process-step h3 { margin:0 0 11px; font-size:22px; line-height:1.12; letter-spacing:-.045em; }
+.site-redesign .theme-white .process-step :is(h3,h4) { margin:0 0 11px; font-size:22px; line-height:1.12; letter-spacing:-.045em; }
 .site-redesign .theme-white .process-step p { font-size:12px; line-height:1.8; color:#5e657e; }
 
 .site-redesign .theme-white #results { background:#f5f6fa; }
@@ -164,8 +164,8 @@
 .site-redesign .theme-white .result-market { color:#292e3d; }
 .site-redesign .theme-white .result-platform { color:#292e3d; background:#f0f2f8; padding:7px 13px; border:0; font-size:10px; }
 .site-redesign .theme-white .result-badge { margin-top:30px; color:#5e657e; font-size:9px; }
-.site-redesign .theme-white .result-card h3 { font-size:34px; margin-top:15px; color:var(--stream-ink); }
-.site-redesign .theme-white .result-card h3 > span { font-size:20px; color:#5e657e; margin-top:6px; letter-spacing:-.035em; }
+.site-redesign .theme-white .result-card :is(h3,h4) { font-size:34px; margin-top:15px; color:var(--stream-ink); }
+.site-redesign .theme-white .result-card :is(h3,h4) > span { font-size:20px; color:#5e657e; margin-top:6px; letter-spacing:-.035em; }
 .site-redesign .theme-white .result-delivery { color:#292e3d; font-size:12px; margin-top:19px; }
 .site-redesign .theme-white .result-delivery > span:last-child { color:#5e657e; }
 .site-redesign .theme-white .result-metrics { border:0; padding:23px 0 4px; margin-top:19px; gap:15px; align-items:end; }
@@ -177,7 +177,7 @@
 
 .site-redesign .theme-white #faq { background:#ffffff; border-radius:44px 44px 0 0; }
 .site-redesign .theme-white .faq-wrap { grid-template-columns:.85fr 1.3fr; gap:90px; align-items:start; }
-.site-redesign .theme-white .faq-wrap h2 { font-size:clamp(39px,4.5vw,62px); line-height:1.06; margin-top:22px; }
+.site-redesign .theme-white .faq-wrap :is(h2,h3) { font-size:clamp(39px,4.5vw,62px); line-height:1.06; margin-top:22px; }
 .site-redesign .theme-white .faq-contact { margin-top:30px; }
 .site-redesign .theme-white .faq-list { padding:0; border:0; border-radius:0; background:none; display:grid; gap:9px; }
 .site-redesign .theme-white .faq-list details,.site-redesign .theme-white .faq-list details:first-child { padding:24px; background:#f0f2f8; border:0; border-radius:16px; transition:background .3s; }
@@ -192,7 +192,7 @@
 .footer-ambient { position:absolute; z-index:-1; right:-15%; top:-200px; width:850px; height:850px; border-radius:50%; background:radial-gradient(circle at 45% 45%,#84a7f51c,transparent 65%); pointer-events:none; }
 .site-redesign .theme-white .footer-intro { grid-template-columns:1.25fr 1fr; gap:120px; align-items:end; padding:0 0 67px; margin:0; }
 .site-redesign .theme-white .footer-intro .eyebrow { color:#a5b5d8; }
-.site-redesign .theme-white .footer-intro h2 { max-width:700px; font-size:clamp(43px,4.8vw,69px); color:#f7f8fc; line-height:1.04; margin-top:25px; }
+.site-redesign .theme-white .footer-intro .footer-about-title { max-width:700px; font-size:clamp(43px,4.8vw,69px); color:#f7f8fc; line-height:1.04; margin-top:25px; }
 .site-redesign .theme-white .footer-intro > p { color:#b3bccf; max-width:455px; font-size:14px; line-height:1.95; padding-bottom:3px; }
 .site-redesign .theme-white .site-footer .footer-top { padding-top:22px; }
 .site-redesign .theme-white .site-footer .brand { color:#215ccc; }
@@ -218,7 +218,7 @@
     .site-redesign .theme-white .header-actions { gap:14px; }
     .site-redesign .theme-white .brand > span { font-size:19px; }
     .site-redesign .theme-white .hero-reference .hero-grid { min-height:550px; gap:10px; }
-    .site-redesign .theme-white .hero-copy h1 { font-size:clamp(58px,8vw,89px); }
+    .site-redesign .theme-white .hero-copy .hero-headline { font-size:clamp(58px,8vw,89px); }
     .hero-art { height:470px; }
     .site-redesign .theme-white .hero-copy > p { font-size:14px; }
     .site-redesign .theme-white .hero-buttons { flex-wrap:wrap; }
@@ -231,7 +231,7 @@
     .site-redesign .theme-white .audience-card h3 { font-size:25px; }
     .site-redesign .theme-white .how-grid,.site-redesign .theme-white .faq-wrap { gap:45px; grid-template-columns:.85fr 1.25fr; }
     .site-redesign .theme-white .process-step { padding:22px; min-height:245px; }
-    .site-redesign .theme-white .process-step h3 { font-size:20px; }
+    .site-redesign .theme-white .process-step :is(h3,h4) { font-size:20px; }
     .site-redesign .theme-white .footer-intro { gap:70px; }
 }
 @media(min-width:701px) and (max-width:850px) {
@@ -249,7 +249,7 @@
     .site-redesign .container { width:calc(100% - 40px); }
     .site-redesign .theme-white .section { padding:70px 0; }
     .site-redesign .theme-white .section-heading { display:block; margin-bottom:31px; }
-    .site-redesign .theme-white .section-heading h2 { margin-top:16px; font-size:clamp(35px,9.5vw,47px); line-height:1.08; }
+    .site-redesign .theme-white .section-heading :is(h2,h3) { margin-top:16px; font-size:clamp(35px,9.5vw,47px); line-height:1.08; }
     .site-redesign .theme-white .section-heading > p { max-width:450px; margin-top:22px; font-size:14px; line-height:1.85; }
     .site-redesign .theme-white .eyebrow { font-size:9px; letter-spacing:.12em; }
     .site-redesign .theme-white .site-header { height:76px; padding:9px 0 6px; }
@@ -267,7 +267,7 @@
     .site-redesign .theme-white .hero-reference .hero-grid { display:block; min-height:0; position:relative; }
     .site-redesign .theme-white .hero-copy { padding:34px 0 22px; }
     .site-redesign .theme-white .hero-copy > .eyebrow { max-width:280px; font-size:9px; letter-spacing:.1em; line-height:1.7; }
-    .site-redesign .theme-white .hero-copy h1 { max-width:calc(100% - 65px); font-size:clamp(52px,14.5vw,72px); letter-spacing:-.072em; line-height:1.01; margin:30px 0 28px; }
+    .site-redesign .theme-white .hero-copy .hero-headline { max-width:calc(100% - 65px); font-size:clamp(52px,14.5vw,72px); letter-spacing:-.072em; line-height:1.01; margin:30px 0 28px; }
     .site-redesign .theme-white .hero-headline-visual { min-height:2.08em; }
     .site-redesign .theme-white .hero-copy > p { max-width:440px; font-size:15px; line-height:1.85; }
     .site-redesign .theme-white .hero-buttons { margin-top:27px; gap:10px; flex-wrap:nowrap; }
@@ -286,13 +286,13 @@
     .site-redesign .theme-white .geo-item { flex:0 0 83px; width:83px; gap:8px; font-size:10px; }
     .site-redesign .theme-white .network-section { padding:60px 0 70px; }
     .site-redesign .theme-white .network-section .section-heading > p { padding:0; margin-top:18px; }
-    .site-redesign .theme-white .network-section .section-heading h2 { font-size:34px; }
+    .site-redesign .theme-white .network-section .section-heading :is(h2,h3) { font-size:34px; }
     .site-redesign .theme-white .network-stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
     .site-redesign .theme-white .network-stat-card { padding:23px 19px; border-radius:18px; }
     .site-redesign .theme-white .network-stat-value { font-size:42px; }
     .site-redesign .theme-white .network-stat-icon { width:29px; height:29px; }
     .site-redesign .theme-white .network-stat-icon .icon { width:15px; height:15px; }
-    .site-redesign .theme-white .network-stat-card h3 { margin-top:22px; font-size:16px; }
+    .site-redesign .theme-white .network-stat-card :is(h3,h4) { margin-top:22px; font-size:16px; }
     .site-redesign .theme-white .network-stat-description { font-size:10px; line-height:1.65; min-height:0; }
     .site-redesign .theme-white .audience-cards { grid-template-columns:1fr; gap:14px; }
     .site-redesign .theme-white .audience-card { min-height:280px; padding:27px; border-radius:20px; }
@@ -302,30 +302,30 @@
     .site-redesign .theme-white .audience-card .text-link { padding-top:26px; }
     .site-redesign .theme-white .industry-card { min-height:290px; padding:29px; border-radius:20px; }
     .site-redesign .theme-white .industry-card > .icon { margin-bottom:54px; }
-    .site-redesign .theme-white .industry-card h3 { font-size:31px; }
+    .site-redesign .theme-white .industry-card :is(h3,h4) { font-size:31px; }
     .site-redesign .theme-white .industry-card p { max-width:none; font-size:14px; }
     .site-redesign .theme-white .how-grid,.site-redesign .theme-white .faq-wrap { grid-template-columns:1fr; gap:35px; }
     .site-redesign .theme-white .how-intro { padding:0; }
-    .site-redesign .theme-white .how-intro h2 { font-size:42px; margin:18px 0 22px; }
+    .site-redesign .theme-white .how-intro :is(h2,h3) { font-size:42px; margin:18px 0 22px; }
     .site-redesign .theme-white .how-intro > p { max-width:450px; }
     .site-redesign .theme-white .process-list { gap:12px; }
     .site-redesign .theme-white .process-step { min-height:230px; padding:22px 19px; gap:27px; border-radius:18px; }
     .site-redesign .theme-white .step-icon { width:36px; height:36px; }
     .site-redesign .theme-white .step-icon > .icon { width:18px; height:18px; }
     .site-redesign .theme-white .step-tag { font-size:7px; letter-spacing:.08em; }
-    .site-redesign .theme-white .process-step h3 { font-size:20px; line-height:1.16; }
+    .site-redesign .theme-white .process-step :is(h3,h4) { font-size:20px; line-height:1.16; }
     .site-redesign .theme-white .process-step p { font-size:12px; line-height:1.75; }
     .site-redesign .theme-white .result-card { padding:26px; border-radius:20px; }
-    .site-redesign .theme-white .result-card h3 { font-size:33px; }
+    .site-redesign .theme-white .result-card :is(h3,h4) { font-size:33px; }
     .site-redesign .theme-white .result-metrics { gap:10px; }
     .site-redesign .theme-white .result-metrics dd { font-size:25px; }
     .site-redesign .theme-white .result-metrics > div:first-child dd { font-size:31px; }
-    .site-redesign .theme-white .faq-wrap h2 { font-size:43px; margin-top:18px; }
+    .site-redesign .theme-white .faq-wrap :is(h2,h3) { font-size:43px; margin-top:18px; }
     .site-redesign .theme-white .faq-list details,.site-redesign .theme-white .faq-list details:first-child { padding:23px 21px; border-radius:15px; }
     .site-redesign .theme-white .faq-list summary { font-size:14px; }
     .site-redesign .theme-white .site-footer { padding:62px 0 28px; }
     .site-redesign .theme-white .footer-intro { grid-template-columns:1fr; gap:28px; padding-bottom:45px; }
-    .site-redesign .theme-white .footer-intro h2 { max-width:500px; margin-top:20px; font-size:47px; line-height:1.06; }
+    .site-redesign .theme-white .footer-intro .footer-about-title { max-width:500px; margin-top:20px; font-size:47px; line-height:1.06; }
     .site-redesign .theme-white .footer-intro > p { font-size:14px; line-height:1.9; }
     .site-redesign .theme-white .site-footer .footer-top { padding-top:5px; }
     .site-redesign .theme-white .site-footer .brand > span { font-size:20px; }
@@ -340,14 +340,14 @@
     .site-redesign .theme-white .brand > span { font-size:16px; }
     .site-redesign .theme-white .brand small { font-size:5px; }
     .site-redesign .theme-white .header-actions .btn { font-size:12px; padding-inline:12px; }
-    .site-redesign .theme-white .hero-copy h1 { font-size:50px; }
+    .site-redesign .theme-white .hero-copy .hero-headline { font-size:50px; }
     .hero-art { width:108px; right:-20px; top:53px; }
     .site-redesign .theme-white .hero-copy > p { font-size:14px; }
     .site-redesign .theme-white .hero-buttons > .btn { font-size:10px; padding-inline:8px; }
     .site-redesign .theme-white .network-stat-card { padding:20px 16px; }
     .site-redesign .theme-white .network-stat-value { font-size:37px; }
     .site-redesign .theme-white .process-step { padding:20px 16px; }
-    .site-redesign .theme-white .process-step h3 { font-size:18px; }
+    .site-redesign .theme-white .process-step :is(h3,h4) { font-size:18px; }
     .site-redesign .theme-white .result-card { padding:23px; }
     .site-redesign .theme-white .result-metrics dd { font-size:23px; }
     .site-redesign .theme-white .result-metrics > div:first-child dd { font-size:27px; }
@@ -384,7 +384,7 @@
 .site-reading-progress { height:2px; background:linear-gradient(90deg,#0a5cff,#3772dc,#7b72c9); }
 .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { padding-top:20px; }
 .site-redesign .theme-white .hero-reference .hero-grid { grid-template-columns:1.05fr 1fr; gap:36px; min-height:545px; }
-.site-redesign .theme-white .hero-copy h1 { font-family:'Inter Variable',sans-serif; font-weight:700; font-size:clamp(70px,8.25vw,120px); margin:25px 0; line-height:.97; }
+.site-redesign .theme-white .hero-copy .hero-headline { font-family:'Inter Variable',sans-serif; font-weight:700; font-size:clamp(70px,8.25vw,120px); margin:25px 0; line-height:.97; }
 .site-redesign .theme-white .hero-reference .hero-headline-item { background:none; animation:none; color:#191c1f; -webkit-text-fill-color:currentColor; }
 .site-redesign .theme-white .hero-reference .hero-headline-line { color:#191c1f; -webkit-text-fill-color:currentColor; }
 .site-redesign .theme-white .hero-reference .hero-headline-line:last-child { color:#0a5cff; background:linear-gradient(100deg,#4f72df,#0a5cff 35%,#2861db 75%,#426adc); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -395,14 +395,14 @@
 .site-redesign .theme-white .hero-stage > .geo-strip .geo-inner,.site-redesign .theme-white .geo-inner { height:76px; }
 .site-redesign .theme-white .network-stat-value { color:#191c1f; }
 .site-redesign .theme-white .network-stat-card .network-stat-icon { color:#5d76ae; background:none; }
-.site-redesign .theme-white .network-stat-card h3 { color:#30374a; }
+.site-redesign .theme-white .network-stat-card :is(h3,h4) { color:#30374a; }
 .site-redesign .theme-white .network-compact { padding:10px 0 28px; }
 .site-redesign .theme-white .network-compact .network-stat-grid { gap:50px; }
 .site-redesign .theme-white .network-compact .network-stat-card { padding:10px 0; background:none; border-radius:0; }
 .site-redesign .theme-white .network-compact .network-stat-top { gap:18px; }
 .site-redesign .theme-white .network-compact .network-stat-value { font-size:43px; font-weight:500; }
 .site-redesign .theme-white .network-compact .network-stat-icon { width:23px; height:27px; }
-.site-redesign .theme-white .network-compact .network-stat-card h3 { margin-top:7px; color:#6b738c; font-size:11px; font-weight:400; }
+.site-redesign .theme-white .network-compact .network-stat-card :is(h3,h4) { margin-top:7px; color:#6b738c; font-size:11px; font-weight:400; }
 .site-redesign .theme-white .network-compact .network-stat-description { display:none; }
 .site-redesign .theme-white .hero-stage > :is(.hero-reference,.network-compact,.geo-strip) { order:0; }
 .site-redesign .theme-white .audience-card:nth-child(3) { background:#e8eeff; }
@@ -422,7 +422,7 @@
 @media(min-width:701px) and (max-height:800px) {
  .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { padding-top:0; }
  .site-redesign .theme-white .hero-reference .hero-grid { min-height:450px; }
- .site-redesign .theme-white .hero-copy h1 { font-size:clamp(64px,7vw,94px); margin:20px 0; }
+ .site-redesign .theme-white .hero-copy .hero-headline { font-size:clamp(64px,7vw,94px); margin:20px 0; }
  .site-redesign .theme-white .hero-copy > p { font-size:14px; line-height:1.7; }
  .site-redesign .theme-white .hero-buttons { margin-top:22px; }
  .hero-art { height:420px; }
@@ -430,7 +430,7 @@
 }
 @media(min-width:701px) and (max-width:1150px) {
  .site-redesign .theme-white .hero-reference .hero-grid { min-height:485px; gap:15px; }
- .site-redesign .theme-white .hero-copy h1 { font-size:clamp(60px,8vw,89px); }
+ .site-redesign .theme-white .hero-copy .hero-headline { font-size:clamp(60px,8vw,89px); }
  .hero-art { height:435px; }
  .site-redesign .theme-white .network-compact { padding:10px 0 24px; }
  .site-redesign .theme-white .network-compact .network-stat-grid { gap:30px; }
@@ -448,7 +448,7 @@
  .site-redesign .theme-white .hero-reference,.site-redesign .theme-white .hero-stage > .hero-reference { flex:1 0 auto; padding:0; min-height:0; display:flex; justify-content:center; }
  .site-redesign .theme-white .hero-reference .hero-grid { display:block; min-height:0; }
  .site-redesign .theme-white .hero-copy { padding:32px 0 22px; }
- .site-redesign .theme-white .hero-copy h1 { font-size:clamp(52px,14.5vw,72px); margin:24px 0; line-height:1.01; }
+ .site-redesign .theme-white .hero-copy .hero-headline { font-size:clamp(52px,14.5vw,72px); margin:24px 0; line-height:1.01; }
  .site-redesign .theme-white .hero-copy > p { font-size:15px; line-height:1.8; }
  .hero-art { top:41px; height:175px; }
  .site-redesign .theme-white .hero-stage > .geo-strip { flex:0 0 auto; }
@@ -459,10 +459,10 @@
  .site-redesign .theme-white .network-compact .network-stat-value { font-size:29px; }
  .site-redesign .theme-white .network-compact .network-stat-icon { width:14px; height:20px; }
  .site-redesign .theme-white .network-compact .network-stat-icon .icon { width:12px; height:12px; }
- .site-redesign .theme-white .network-compact .network-stat-card h3 { margin-top:5px; font-size:9px; }
+ .site-redesign .theme-white .network-compact .network-stat-card :is(h3,h4) { margin-top:5px; font-size:9px; }
 }
 @media(max-width:360px) {
- .site-redesign .theme-white .hero-copy h1 { font-size:50px; }
+ .site-redesign .theme-white .hero-copy .hero-headline { font-size:50px; }
  .site-redesign .theme-white .hero-copy > p { font-size:14px; }
  .site-redesign .theme-white .network-compact .network-stat-grid { gap:12px; }
  .site-redesign .theme-white .network-compact .network-stat-value { font-size:25px; }
@@ -471,7 +471,7 @@
 }
 @media(max-width:700px) and (max-height:720px) {
  .site-redesign .theme-white .hero-copy { padding-block:23px 16px; }
- .site-redesign .theme-white .hero-copy h1 { font-size:49px; margin-block:20px; }
+ .site-redesign .theme-white .hero-copy .hero-headline { font-size:49px; margin-block:20px; }
  .site-redesign .theme-white .hero-copy > p { font-size:14px; line-height:1.7; }
  .site-redesign .theme-white .hero-buttons { margin-top:22px; }
  .site-redesign .theme-white .network-compact { padding-bottom:17px; }
@@ -497,7 +497,7 @@
 @media(max-width:700px) {
  .site-redesign .theme-white .hero-reference .hero-grid { display:flex; flex-direction:column; gap:0; }
  .site-redesign .theme-white .hero-copy { width:100%; padding:24px 0 18px; }
- .site-redesign .theme-white .hero-copy h1 { max-width:100%; margin:18px 0 20px; }
+ .site-redesign .theme-white .hero-copy .hero-headline { max-width:100%; margin:18px 0 20px; }
  .site-redesign .theme-white .hero-copy > p { font-size:14px; line-height:1.7; }
  .site-redesign .theme-white .hero-buttons { margin-top:22px; }
  .site-redesign .theme-white .hero-network-art {

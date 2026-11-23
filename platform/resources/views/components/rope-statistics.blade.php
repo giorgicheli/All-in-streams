@@ -1,6 +1,6 @@
 @props(['data'])
 <section {{ $attributes->class('rope-statistics') }} id="network" data-rope-statistics aria-labelledby="network-title">
-    <h2 class="sr-only" id="network-title">{{ $data['title'] }}</h2>
+    <h3 class="sr-only" id="network-title">{{ $data['title'] }}</h3>
     <svg class="rope-statistics-ropes" aria-hidden="true" focusable="false">
         @foreach(['anchor-0', 'anchor-1', '0-1', '0-2', '1-3', '2-3'] as $link)
             <path data-rope-link="{{ $link }}"/>

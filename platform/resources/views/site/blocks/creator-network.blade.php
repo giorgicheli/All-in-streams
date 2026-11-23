@@ -44,7 +44,7 @@
         <span class="sr-only" role="status" data-creator-network-status></span>
     </div>
     <dialog class="creator-shortlist-dialog" data-shortlist-dialog aria-labelledby="creator-shortlist-title" data-lenis-prevent>
-        <div class="creator-shortlist-header"><h2 id="creator-shortlist-title">Your shortlist</h2><button type="button" class="creator-shortlist-close" data-shortlist-close aria-label="Close shortlist"><x-ui-icon name="close" size="23"/></button></div>
+        <div class="creator-shortlist-header"><h3 id="creator-shortlist-title">Your shortlist</h3><button type="button" class="creator-shortlist-close" data-shortlist-close aria-label="Close shortlist"><x-ui-icon name="close" size="23"/></button></div>
         <p class="creator-shortlist-intro">Send your selection to All In Streams with your brief.</p>
         <ul class="creator-shortlist-list" data-shortlist-list></ul>
         <p class="creator-shortlist-empty" data-shortlist-empty>No creators selected yet.</p>

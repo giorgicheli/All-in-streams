@@ -1,11 +1,11 @@
-.hero-stage.has-network-departure .hero-copy > :is(h1, p, .hero-buttons, .hero-market-label, .hero-benefits),
+.hero-stage.has-network-departure .hero-copy > :is(.hero-headline, p, .hero-buttons, .hero-market-label, .hero-benefits),
 .hero-stage.has-network-departure > .hero-statistics {
     filter: opacity(var(--hero-story-opacity, 1));
     transition: filter 160ms linear;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .hero-stage.has-network-departure .hero-copy > :is(h1, p, .hero-buttons, .hero-market-label, .hero-benefits),
+    .hero-stage.has-network-departure .hero-copy > :is(.hero-headline, p, .hero-buttons, .hero-market-label, .hero-benefits),
     .hero-stage.has-network-departure > .hero-statistics {
         filter: none;
         transition: none;

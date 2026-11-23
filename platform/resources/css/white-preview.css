@@ -83,7 +83,7 @@ html.light-preview { color-scheme: light; }
 .theme-white .result-market { color: #354e3c; }
 .theme-white .result-platform { color: #49711e; border-color: #d8e6c7; background: #f8fbf2; }
 .theme-white .result-badge, .theme-white .result-badge.is-sample { color: #6b7f50; }
-.theme-white .result-card h3 > span { color: #718267; }
+.theme-white .result-card :is(h3,h4) > span { color: #718267; }
 .theme-white .result-delivery { color: #455f4b; }
 .theme-white .result-delivery > span:last-child { color: #697f6b; }
 .theme-white .result-metrics { border-block-color: #e7eddf; }
@@ -114,7 +114,7 @@ html.light-preview { color-scheme: light; }
 .theme-white .match-bars i { background: #82B536; }
 .theme-white .match-bars i:nth-child(2) { background: #397f69; }
 .theme-white .match-bars i:nth-child(3) { background: #b1c88b; }
-.theme-white .hero-copy h1 span,
+.theme-white .hero-copy .hero-headline span,
 .theme-white .partnership-card h2 span { color: #49752c; }
 .theme-white .legal-content { color: #52695a; }
 .theme-white .legal-content h2,

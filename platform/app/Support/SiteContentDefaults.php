@@ -24,8 +24,8 @@ class SiteContentDefaults
     {
         return [
             'seo' => [
-                'title' => 'Creator partnerships. All in.',
-                'description' => 'All In Streams connects brands with gaming creators. From your first brief to the final campaign report, managed end to end.',
+                'title' => 'iGaming Influencer Marketing Agency',
+                'description' => 'Connect your iGaming brand with streamers and influencers. All In Streams manages creator matching, campaign delivery and reporting across your target markets.',
             ],
             'blocks' => [
                 ['type' => 'hero', 'data' => [
@@ -160,8 +160,8 @@ class SiteContentDefaults
                 ],
             ],
             'about' => [
-                'enabled' => true, 'eyebrow' => 'ALL IN, TOGETHER', 'title' => 'Real people. Shared ambition.',
-                'description' => 'All In Streams connects brands, agencies and creators through one dedicated team. We bring the people, process and performance together, from the first conversation to the final report.',
+                'enabled' => true, 'eyebrow' => 'ALL IN, TOGETHER', 'title' => 'iGaming Influencer Marketing Agency',
+                'description' => 'All In Streams connects iGaming brands with streamers, influencers and agencies. Our team manages creator matching, campaign delivery and reporting across your target markets.',
             ],
             'creator_network' => [
                 'enabled' => true, 'eyebrow' => 'DISCOVER YOUR NEXT MATCH',

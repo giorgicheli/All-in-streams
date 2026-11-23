@@ -1,6 +1,7 @@
 @php
     $visibleBlocks = array_values(array_filter($home['blocks'], fn (array $block) => $block['data']['enabled'] ?? true));
     $hasHeroHeading = count(array_filter($visibleBlocks, fn (array $block) => $block['type'] === 'hero')) > 0;
+    $footerHomepageHeading = (bool) ($site['about']['enabled'] ?? false);
     $hasNetworkShowcase = ($site['creator_reels']['enabled'] ?? false) && count($site['creator_reels']['clips'] ?? []) >= 2;
     $hasHeroNetwork = ($site['network_stats']['enabled'] ?? false)
         && ! ($site['creator_orbit']['enabled'] ?? false)
@@ -16,7 +17,7 @@
 <x-layout :title="$home['seo']['title']" :description="$home['seo']['description']" :light-preview="$lightPreview ?? false">
     @include('site.navigation')
     <main class="home-redesign">
-        @unless($hasHeroHeading)<h1 class="sr-only">{{ $home['seo']['title'] }}</h1>@endunless
+        @unless($footerHomepageHeading)<h1 class="sr-only">{{ $home['seo']['title'] }}</h1>@endunless
         @if($hasHeroStage)
             <div class="hero-stage">
                 @include('site.blocks.hero', ['data' => $visibleBlocks[0]['data'], 'suppressHeroNetwork' => $hasNetworkShowcase || $hasHeroStatistics])
@@ -47,5 +48,5 @@
             @endif
         @endforeach
     </main>
-    @include('site.footer')
+    @include('site.footer', ['footerHomepageHeading' => $footerHomepageHeading])
 </x-layout>

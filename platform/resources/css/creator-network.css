@@ -50,7 +50,7 @@
 .creator-shortlist-dialog { position: fixed; inset: 0; margin: auto; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 30px; overflow-y: auto; overscroll-behavior: contain; border: 0; border-radius: 18px; background: #f6f7f0; color: #0b4b3a; box-shadow: 0 30px 100px #07281c33; }
 .creator-shortlist-dialog::backdrop { background: #09281b80; backdrop-filter: blur(5px); }
 .creator-shortlist-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.creator-shortlist-header h2 { font-size: 27px; margin: 0; }
+.creator-shortlist-header :is(h2,h3) { font-size: 27px; margin: 0; }
 .creator-shortlist-close { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; padding: 0; border: 0; border-radius: 50%; background: #e6ecdf; color: #0b4b3a; cursor: pointer; }
 .creator-shortlist-intro, .creator-shortlist-empty { margin: 16px 0 24px; color: #6b7970; font-size: 13px; line-height: 1.6; }
 .creator-shortlist-list { display: grid; gap: 10px; padding: 0; margin: 0 0 24px; list-style: none; }

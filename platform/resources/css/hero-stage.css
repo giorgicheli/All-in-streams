@@ -13,7 +13,7 @@
 .hero-reference .hero-grid { display: block; }
 .hero-reference .hero-copy { display: block; }
 .hero-reference .hero-copy > .eyebrow { font-size: 9px; letter-spacing: .14em; line-height: 1.5; }
-.hero-reference .hero-copy h1 {
+.hero-reference .hero-copy .hero-headline {
     margin: 30px 0 28px;
     font-size: clamp(56px, 6.3vw, 88px);
     line-height: 1.04;
@@ -44,7 +44,7 @@
 .hero-stage .network-panel > .container { width: 100%; }
 .hero-stage .network-panel .section-heading { display: block; margin-bottom: 26px; }
 .hero-stage .network-panel .eyebrow { color: #c5d9ba; font-size: 8px; letter-spacing: .15em; }
-.hero-stage .network-panel .section-heading h2 {
+.hero-stage .network-panel .section-heading :is(h2,h3) {
     max-width: 410px;
     margin-top: 18px;
     font-size: clamp(27px, 2.7vw, 38px);
@@ -82,27 +82,27 @@
     flex-shrink: 0;
 }
 .hero-stage .network-panel .network-stat-icon .icon { width: 15px; height: 15px; }
-.hero-stage .network-panel .network-stat-card h3 { margin-top: 10px; font-size: 15px; color: #f2f6eb; }
+.hero-stage .network-panel .network-stat-card :is(h3,h4) { margin-top: 10px; font-size: 15px; color: #f2f6eb; }
 .theme-white .hero-stage .network-panel .network-stat-description { margin-top: 6px; min-height: 0; font-size: 9px; line-height: 1.7; color: #c0d0b5; }
 .hero-stage .network-panel .network-stat-line { display: none; }
 @media (max-width: 1150px) and (min-width: 701px) {
     .hero-stage { width: calc(100% - 64px); gap: 36px; padding-top: 38px; }
-    .hero-stage .hero-copy h1 { font-size: clamp(48px, 6.1vw, 70px); }
+    .hero-stage .hero-copy .hero-headline { font-size: clamp(48px, 6.1vw, 70px); }
     .theme-white .hero-stage .network-panel { padding: 26px; }
-    .hero-stage .network-panel .section-heading h2 { font-size: 30px; }
+    .hero-stage .network-panel .section-heading :is(h2,h3) { font-size: 30px; }
     .hero-stage .network-panel .network-stat-card { padding: 17px 13px; }
 }
 @media (max-width: 850px) and (min-width: 701px) {
     .hero-stage { gap: 30px; }
-    .hero-stage .hero-copy h1 { font-size: 48px; }
+    .hero-stage .hero-copy .hero-headline { font-size: 48px; }
     .hero-stage .hero-copy > p { font-size: 12px; }
     .hero-stage .hero-buttons { flex-wrap: wrap; gap: 9px; }
     .hero-stage .hero-buttons .btn { padding: 11px 14px; min-height: 44px; font-size: 11px; }
     .theme-white .hero-stage .network-panel { padding: 20px; }
-    .hero-stage .network-panel .section-heading h2 { font-size: 26px; }
+    .hero-stage .network-panel .section-heading :is(h2,h3) { font-size: 26px; }
     .hero-stage .network-panel .network-stat-value { font-size: 31px; }
     .hero-stage .network-panel .network-stat-icon { width: 24px; height: 24px; }
-    .hero-stage .network-panel .network-stat-card h3 { font-size: 13px; }
+    .hero-stage .network-panel .network-stat-card :is(h3,h4) { font-size: 13px; }
     .hero-stage .network-panel .network-stat-description { font-size: 8px; }
 }
 @media (max-width: 700px) {
@@ -110,7 +110,7 @@
     .hero-stage > .hero-reference { order: 1; min-height: calc(100svh - 154px); justify-content: center; padding: 28px 0; }
     .hero-stage > .hero-reference > .container { width: calc(100% - 40px); }
     .hero-reference .hero-copy > .eyebrow { font-size: 9px; letter-spacing: .1em; }
-    .hero-reference .hero-copy h1 { margin: 24px 0; font-size: clamp(46px, 14.1vw, 64px); line-height: 1.04; overflow-wrap: normal; }
+    .hero-reference .hero-copy .hero-headline { margin: 24px 0; font-size: clamp(46px, 14.1vw, 64px); line-height: 1.04; overflow-wrap: normal; }
     .hero-reference .hero-copy > p { font-size: clamp(14px, 2svh, 16px); line-height: 1.75; }
     .hero-reference .hero-buttons { margin-top: 26px; gap: 10px; }
     .hero-reference .hero-buttons > .btn { flex: 1 1 0; gap: 9px; padding: 12px 10px; font-size: 12px; min-height: 48px; }
@@ -118,16 +118,16 @@
     .hero-stage > .geo-strip { order: 2; width: 100%; }
     .hero-stage > .geo-strip .geo-inner { width: calc(100% - 40px); }
     .theme-white .hero-stage .network-panel { order: 3; margin: 38px 20px 50px; padding: 26px 22px; }
-    .hero-stage .network-panel .section-heading h2 { max-width: 310px; font-size: 32px; }
+    .hero-stage .network-panel .section-heading :is(h2,h3) { max-width: 310px; font-size: 32px; }
     .hero-stage .network-panel .section-heading > p { margin-top: 16px; font-size: 11px; }
     .hero-stage .network-panel .network-stat-grid { gap: 10px; }
     .hero-stage .network-panel .network-stat-card { padding: 17px 13px; }
     .hero-stage .network-panel .network-stat-value { font-size: 33px; }
-    .hero-stage .network-panel .network-stat-card h3 { font-size: 14px; }
+    .hero-stage .network-panel .network-stat-card :is(h3,h4) { font-size: 14px; }
     .hero-stage .network-panel .network-stat-description { font-size: 8px; }
 }
 @media (max-width: 360px) {
-    .hero-reference .hero-copy h1 { font-size: 46px; margin-block: 20px; }
+    .hero-reference .hero-copy .hero-headline { font-size: 46px; margin-block: 20px; }
     .hero-reference .hero-buttons > .btn { font-size: 11px; padding-inline: 9px; }
     .hero-reference .hero-footnote { font-size: 8px; }
     .theme-white .hero-stage .network-panel { padding: 23px 18px; }
@@ -138,5 +138,5 @@
 }
 @media (max-width: 700px) and (max-height: 650px) {
     .hero-stage > .hero-reference { padding-block: 16px; }
-    .hero-reference .hero-copy h1 { margin-block: 18px; }
+    .hero-reference .hero-copy .hero-headline { margin-block: 18px; }
 }

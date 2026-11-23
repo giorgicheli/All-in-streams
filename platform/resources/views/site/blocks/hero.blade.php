@@ -6,7 +6,7 @@
     <div class="container">
         <div class="hero-grid{{ $hasCreatorOrbit ? ' hero-grid--orbit' : '' }}{{ ! $hasCreatorOrbit && ! $hasNetworkArtwork && ! $data['image_path'] ? ' hero-grid--copy-only' : '' }}" data-motion-group>
             <div class="hero-copy">
-                <h1 class="hero-headline"><span class="hero-headline-line">{{ $data['title_line_1'] }}</span> <span class="hero-headline-line">{{ $data['title_line_2'] }}</span></h1>
+                <h2 class="hero-headline"><span class="hero-headline-line">{{ $data['title_line_1'] }}</span> <span class="hero-headline-line">{{ $data['title_line_2'] }}</span></h2>
                 <p class="hero-description">{{ $data['body'] }}</p>
                 <div class="hero-buttons">
                     <a href="{{ $data['primary_url'] }}" class="btn btn-primary">{{ $data['primary_label'] }}<x-ui-icon name="arrow" size="17"/></a>

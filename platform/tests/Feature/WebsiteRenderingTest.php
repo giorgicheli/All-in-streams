@@ -136,8 +136,17 @@ class WebsiteRenderingTest extends TestCase
             $document->loadHTML($this->get($route)->assertOk()->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
             $xpath = new \DOMXPath($document);
             $this->assertSame(1, $xpath->query('//h1')->length, $route);
-            $this->assertSame(1, $xpath->query('//main//h1')->length, $route);
-            $this->assertSame('h1', $xpath->query('//main//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]')->item(0)?->nodeName, $route);
+            $isHome = in_array($route, ['/', '/white'], true);
+            $this->assertSame($isHome ? 0 : 1, $xpath->query('//main//h1')->length, $route);
+            $this->assertSame($isHome ? 'h2' : 'h1', $xpath->query('//main//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]')->item(0)?->nodeName, $route);
+            if ($isHome) {
+                $this->assertSame(1, $xpath->query('//footer//h1[@id="footer-about-title"]')->length, $route);
+                $this->assertSame(SiteContentDefaults::settings()['about']['title'], $xpath->query('//h1')->item(0)->textContent, $route);
+                $this->assertSame(4, $xpath->query('//h2')->length, $route);
+                $this->assertSame(4, $xpath->query('//main//h2')->length, $route);
+            } else {
+                $this->assertSame(0, $xpath->query('//footer//h1')->length, $route);
+            }
             $this->assertSame(1, $xpath->query('//header')->length, $route);
             $this->assertSame(0, $xpath->query('//main//header')->length, $route);
 
@@ -157,6 +166,18 @@ class WebsiteRenderingTest extends TestCase
         app(SiteContent::class)->publish(User::factory()->create(['role' => 'admin']), 'home', $home);
         $document = new \DOMDocument();
         $document->loadHTML($this->get('/')->assertOk()->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
-        $this->assertSame(1, (new \DOMXPath($document))->query('//main//h1')->length);
+        $xpath = new \DOMXPath($document);
+        $this->assertSame(1, $xpath->query('//h1')->length);
+        $this->assertSame(1, $xpath->query('//footer//h1')->length);
+
+        $settings = SiteContentDefaults::settings();
+        $settings['about']['enabled'] = false;
+        app(SiteContent::class)->publish(User::factory()->create(['role' => 'admin']), 'settings', $settings);
+        $document = new \DOMDocument();
+        $document->loadHTML($this->get('/')->assertOk()->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new \DOMXPath($document);
+        $this->assertSame(1, $xpath->query('//h1')->length);
+        $this->assertSame(1, $xpath->query('//main//h1')->length);
+        $this->assertSame(0, $xpath->query('//footer//h1')->length);
     }
 }

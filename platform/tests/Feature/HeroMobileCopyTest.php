@@ -37,8 +37,9 @@ class HeroMobileCopyTest extends TestCase
                 $this->assertSame(1, $paragraphs->length);
                 $this->assertSame($copy, $paragraphs->item(0)->textContent);
                 $this->assertSame(0, $xpath->query('./*', $paragraphs->item(0))->length, 'Authored markup must be escaped.');
-                $this->assertSame(1, $xpath->query('//h1')->length);
-                $headlineLines = $xpath->query('//h1/span');
+                $this->assertSame(0, $xpath->query('//h1')->length);
+                $this->assertSame(1, $xpath->query('//h2[contains(concat(" ", normalize-space(@class), " "), " hero-headline ")]')->length);
+                $headlineLines = $xpath->query('//h2/span');
                 $this->assertSame(2, $headlineLines->length);
                 $this->assertSame($data['title_line_1'], $headlineLines->item(0)->textContent);
                 $this->assertSame($data['title_line_2'], $headlineLines->item(1)->textContent);

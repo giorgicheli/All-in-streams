@@ -7,7 +7,7 @@ let waitingForLivewire = false;
 
 const REVEAL_TARGETS = [
     '[data-motion-reveal]',
-    '.hero-copy > .eyebrow', '.hero-copy h1', '.hero-subtitle', '.hero-copy > p',
+    '.hero-copy > .eyebrow', '.hero-copy .hero-headline', '.hero-subtitle', '.hero-copy > p',
     '.hero-buttons', '.hero-footnote', '.section-heading', '.audience-card',
     '.industry-card', '.network-stat-card', '.result-card', '.how-intro', '.process-step', '.gallery-tabs',
     '.gallery-empty', '.gallery-privacy', '.faq-wrap > div:first-child',

@@ -1,7 +1,7 @@
 <footer class="site-footer{{ ($site['about']['enabled'] ?? false) ? ' site-footer-has-intro' : '' }}" id="about"><div class="footer-ambient" aria-hidden="true"></div><div class="container">
     @if($site['about']['enabled'] ?? false)
         <section class="footer-intro" aria-labelledby="footer-about-title">
-            <div><span class="eyebrow">{{ $site['about']['eyebrow'] }}</span><h2 id="footer-about-title">{{ $site['about']['title'] }}</h2></div>
+            <div><span class="eyebrow">{{ $site['about']['eyebrow'] }}</span>@if($footerHomepageHeading ?? false)<h1 class="footer-about-title" id="footer-about-title">{{ $site['about']['title'] }}</h1>@else<h2 class="footer-about-title" id="footer-about-title">{{ $site['about']['title'] }}</h2>@endif</div>
             <p class="content-lines">{{ $site['about']['description'] }}</p>
         </section>
     @endif

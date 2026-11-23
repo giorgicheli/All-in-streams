@@ -138,12 +138,12 @@
     letter-spacing: -.055em;
 }
 .site-redesign .theme-white .network-showcase .network-stat-suffix { margin-left: 1px; color: #0a5cff; font-size: .59em; font-weight: 500; }
-.site-redesign .theme-white .network-showcase .network-stat-card h3 { margin: 10px 0 0; color: #626d84; font-size: 14px; font-weight: 450; line-height: 1.45; letter-spacing: -.015em; }
+.site-redesign .theme-white .network-showcase .network-stat-card :is(h3,h4) { margin: 10px 0 0; color: #626d84; font-size: 14px; font-weight: 450; line-height: 1.45; letter-spacing: -.015em; }
 
 @media (max-width: 1000px) {
     .network-showcase-card { padding: 28px; }
     .site-redesign .theme-white .network-showcase .network-stat-card { padding-inline: 20px; }
-    .site-redesign .theme-white .network-showcase .network-stat-card h3 { font-size: 13px; }
+    .site-redesign .theme-white .network-showcase .network-stat-card :is(h3,h4) { font-size: 13px; }
 }
 
 @media (max-width: 700px) {
@@ -161,7 +161,7 @@
     .site-redesign .theme-white .network-showcase .network-stat-card:nth-child(odd) { padding-left: 0; }
     .network-showcase-stat:nth-child(odd)::after { display: none; }
     .site-redesign .theme-white .network-showcase .network-stat-value { font-size: clamp(34px, 9.5vw, 42px); }
-    .site-redesign .theme-white .network-showcase .network-stat-card h3 { margin-top: 8px; font-size: 12.5px; }
+    .site-redesign .theme-white .network-showcase .network-stat-card :is(h3,h4) { margin-top: 8px; font-size: 12.5px; }
 }
 
 @media (max-width: 360px) {
@@ -171,7 +171,7 @@
     .network-showcase-nav { width: 32px; height: 34px; }
     .network-showcase-controls { gap: 5px; }
     .site-redesign .theme-white .network-showcase .network-stat-card { padding-right: 12px; }
-    .site-redesign .theme-white .network-showcase .network-stat-card h3 { font-size: 12px; }
+    .site-redesign .theme-white .network-showcase .network-stat-card :is(h3,h4) { font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
