@@ -8,7 +8,7 @@
         <main class="contact-page" aria-labelledby="contact-title">
             <div class="container contact-grid">
                 <div class="contact-intro">
-                    <span class="contact-visual" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" focusable="false"><rect x="22" y="16" width="34" height="36" rx="11" fill="#dfe8ff"/><path d="m38 9 16 33-17-5-12 9L9 13l29-4Z" fill="#191c1f"/><path d="m9 13 28 24 1-28M37 37l17 5" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="m45 27 10-8-3 16" stroke="#0a5cff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="contact-visual" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" focusable="false"><rect x="22" y="16" width="34" height="36" rx="11" fill="var(--site-accent-soft, #dfe8ff)"/><path d="m38 9 16 33-17-5-12 9L9 13l29-4Z" fill="var(--site-ink, #191c1f)"/><path d="m9 13 28 24 1-28M37 37l17 5" stroke="var(--site-page, #fff)" stroke-width="2" stroke-linejoin="round"/><path d="m45 27 10-8-3 16" stroke="var(--site-accent, #0a5cff)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                     <p class="contact-eyebrow">{{ $contact['eyebrow'] }}</p>
                     <h1 id="contact-title">{{ $contact['title'] }}</h1>
                     <p class="contact-description">{{ $contact['description'] }}</p>

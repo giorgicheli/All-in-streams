@@ -1,4 +1,4 @@
-.ais-motion-graphic { --navy:#0B1A3F; --cb:#1F5BFF; --tint:#EAF0FF; --line:#D9E2F6; --mut:#5A6785; position:relative; width:100%; min-width:0; color:var(--navy); font-family:'Inter Variable',sans-serif; isolation:isolate; }
+.ais-motion-graphic { --navy:#0B1A3F; --cb:var(--site-accent, #0a5cff); --tint:#EAF0FF; --line:#D9E2F6; --mut:#5A6785; position:relative; width:100%; min-width:0; color:var(--navy); font-family:'Inter Variable',sans-serif; isolation:isolate; }
 .ais-motion-graphic, .ais-motion-graphic * { box-sizing:border-box; }
 .ais-motion-graphic .mg-viewport { position:relative; width:100%; aspect-ratio:1; overflow:hidden; border-radius:20px; background:transparent; }
 .ais-motion-graphic .mg-stage * { margin:0; }

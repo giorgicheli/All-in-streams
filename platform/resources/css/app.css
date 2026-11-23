@@ -34,6 +34,7 @@
 @import './network-showcase.css';
 @import './network-story-transition.css';
 @import './contact.css';
+@import './color-themes.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

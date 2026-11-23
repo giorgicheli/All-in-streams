@@ -1,6 +1,6 @@
 .site-intro {
     --intro-ink: #181c27;
-    --intro-blue: #245bff;
+    --intro-blue: var(--site-accent, #0a5cff);
     position: fixed;
     inset: 0;
     width: 100%;

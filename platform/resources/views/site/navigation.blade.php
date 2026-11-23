@@ -24,6 +24,7 @@
         </nav>
         <div class="header-actions">
             @auth<a href="/account" class="sign-in">{{ $site['header']['workspace_label'] }}</a>@else<a href="/login" class="sign-in">{{ $site['header']['sign_in_label'] }}</a>@endauth
+            @unless($lightPreview ?? false)<x-theme-toggle :default-theme="\App\Support\SiteAppearance::defaultTheme($site)"/>@endunless
             <a href="{{ $site['header']['cta_url'] }}" class="btn btn-primary btn-small">{{ $site['header']['cta_label'] }} <x-ui-icon name="arrow" size="14"/></a>
             <button type="button" class="icon-button mobile-toggle site-menu-toggle" data-mobile-menu-open aria-controls="site-mobile-menu" aria-expanded="false" aria-label="Open navigation"><span class="site-menu-lines" aria-hidden="true"><i></i><i></i><i></i></span></button>
         </div>

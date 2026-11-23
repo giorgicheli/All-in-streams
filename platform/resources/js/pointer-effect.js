@@ -88,7 +88,8 @@ function mountPointerEffect(root) {
     function inkAt(x, y) {
         const contains = rect => rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
         const overHeader = contains(header?.getBoundingClientRect());
-        const lightInk = !headerMode && !activeModal && !overHeader && contains(footer?.getBoundingClientRect());
+        const lightInk = document.documentElement.dataset.colorTheme === 'dark'
+            || (!headerMode && !activeModal && !overHeader && contains(footer?.getBoundingClientRect()));
         const ink = lightInk ? '#fff' : '#17191f';
         canvas.dataset.pointerContrast = lightInk ? 'light' : 'dark';
         headerCopy.style.setProperty('--pointer-label-color', lightInk ? '#17191f' : '#fff');
@@ -526,6 +527,7 @@ function mountPointerEffect(root) {
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); }, options);
     document.addEventListener('pointerout', event => { if (!event.relatedTarget) { mousePosition = null; fadeOut(); } }, options);
     document.addEventListener('ais:navigation-state', event => { menuOpen = Boolean(event.detail?.open); if (menuOpen) stop(); }, { signal: events.signal });
+    document.addEventListener('ais:theme-change', () => { lastLabelRefresh = 0; }, { signal: events.signal });
     document.addEventListener('livewire:navigating', cleanup, { signal: events.signal });
     window.addEventListener('blur', () => { mousePosition = null; fadeOut(); }, options);
     window.addEventListener('scroll', event => {

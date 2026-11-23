@@ -8,9 +8,11 @@ use App\Services\SiteContent;
 use App\Support\Countries;
 use App\Support\CreatorPreviewClips;
 use App\Support\SiteContentDefaults;
+use App\Support\SiteAppearance;
 use BackedEnum;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -206,6 +208,21 @@ class WebsiteEditor extends Page
         foreach ($defaults as $key => $value) {
             $name = $prefix.$key;
             $label = static::fieldLabel($key);
+            if ($key === 'appearance' && $prefix === '') {
+                $fields[] = Section::make('Main colors')->description('Choose the starting theme and the accent used on each background. Visitors can switch themes.')
+                    ->schema([
+                        Select::make('appearance.default_theme')->label('Default website theme')
+                            ->options(['dark' => 'Dark', 'light' => 'Light'])->required()
+                            ->default(SiteAppearance::DEFAULTS['default_theme'])->in(SiteAppearance::THEMES)->columnSpanFull(),
+                        ColorPicker::make('appearance.light_accent')->label('Light background accent')->hex()->required()
+                            ->default(SiteAppearance::DEFAULTS['light_accent'])->rules(['regex:'.SiteAppearance::HEX_PATTERN])
+                            ->helperText('Accent on light backgrounds. Use a full six-digit hex color, such as #0a5cff.'),
+                        ColorPicker::make('appearance.dark_accent')->label('Dark background accent')->hex()->required()
+                            ->default(SiteAppearance::DEFAULTS['dark_accent'])->rules(['regex:'.SiteAppearance::HEX_PATTERN])
+                            ->helperText('Accent on dark backgrounds. Use a full six-digit hex color, such as #c5f65c.'),
+                    ])->columns(2)->collapsible();
+                continue;
+            }
             if ($key === 'name' && isset($defaults['code'])) $label = 'Country name';
             if ($key === 'label' && count($defaults) === 1) $label = 'Region name';
             if (is_bool($value)) {

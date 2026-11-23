@@ -64,6 +64,57 @@ class SiteContentTest extends TestCase
         $this->assertSame(SiteContentDefaults::settings(), $content->validate('settings', SiteContentDefaults::settings()));
     }
 
+    public function test_legacy_settings_receive_missing_appearance_defaults_without_replacing_authored_colors(): void
+    {
+        $legacy = SiteContentDefaults::settings();
+        unset($legacy['appearance']);
+        $legacy['brand_name'] = 'Existing partner brand';
+        $published = $legacy;
+        $published['appearance'] = ['light_accent' => '#FE5000'];
+        $page = SitePage::create(['slug' => 'settings', 'title' => 'Site settings', 'draft_content' => $legacy, 'published_content' => $published]);
+        $service = app(SiteContent::class);
+
+        $this->assertSame(SiteContentDefaults::settings()['appearance'], $service->getDraft('settings')['appearance']);
+        foreach ([$service->getPublished('settings'), $service->validate('settings', $published)] as $settings) {
+            $this->assertSame('Existing partner brand', $settings['brand_name']);
+            $this->assertSame('#FE5000', $settings['appearance']['light_accent']);
+            $this->assertSame('#c5f65c', $settings['appearance']['dark_accent']);
+            $this->assertSame('dark', $settings['appearance']['default_theme']);
+        }
+        $this->assertSame($legacy, $page->fresh()->draft_content);
+        $this->assertSame($published, $page->fresh()->published_content);
+    }
+
+    #[DataProvider('invalidAppearance')]
+    public function test_invalid_appearance_values_cannot_be_saved(string $field, mixed $value): void
+    {
+        $settings = SiteContentDefaults::settings();
+        data_set($settings, $field, $value);
+        try {
+            app(SiteContent::class)->saveDraft($this->admin(), 'settings', $settings);
+            $this->fail('An invalid appearance value was accepted.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey($field, $exception->errors());
+        }
+        $this->assertDatabaseCount('site_pages', 0);
+    }
+
+    public static function invalidAppearance(): array
+    {
+        return [
+            'unsupported theme' => ['appearance.default_theme', 'system'],
+            'theme is not a string' => ['appearance.default_theme', ['dark']],
+            'named color' => ['appearance.light_accent', 'red'],
+            'short hex' => ['appearance.light_accent', '#abc'],
+            'alpha hex' => ['appearance.dark_accent', '#12345678'],
+            'missing hash' => ['appearance.dark_accent', '123456'],
+            'invalid hex character' => ['appearance.dark_accent', '#12345g'],
+            'CSS injection' => ['appearance.light_accent', '#123456;display:none'],
+            'trailing newline' => ['appearance.dark_accent', "#123456\n"],
+            'null accent' => ['appearance.light_accent', null],
+        ];
+    }
+
     public function test_draft_changes_are_private_until_explicit_publication(): void
     {
         $service = app(SiteContent::class);

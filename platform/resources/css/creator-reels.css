@@ -4,7 +4,7 @@
 .creator-reel-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; min-width: 0; }
 .creator-reel-ribbon { --reel-gap: 14px; --reel-shift: 0px; display: flex; align-items: stretch; gap: var(--reel-gap); min-width: 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; border-radius: 15px; -webkit-overflow-scrolling: touch; }
 .creator-reel-ribbon::-webkit-scrollbar { display: none; }
-.creator-reel-ribbon:focus-visible { outline: 2px solid #245bff; outline-offset: 5px; }
+.creator-reel-ribbon:focus-visible { outline: 2px solid var(--site-accent, #0a5cff); outline-offset: 5px; }
 .creator-reel-ribbon[data-reel-loop='true'] { scroll-snap-type: none; }
 .creator-reel-ribbon.is-dragging { cursor: grabbing; user-select: none; scroll-snap-type: none; }
 .creator-reel-card { position: relative; flex: 0 0 calc((100% - var(--reel-gap) * 2) / 2.2); height: 170px; min-width: 0; overflow: hidden; border-radius: 15px; background: #dce2ed; scroll-snap-align: start; isolation: isolate; translate: var(--reel-shift) 0; }

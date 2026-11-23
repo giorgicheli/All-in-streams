@@ -79,7 +79,7 @@
     border: 1px solid transparent;
     border-radius: 18px;
     background: #ffffff;
-    color: #191c1f;
+    color:var(--site-ink, #191c1f);
     box-shadow: 0 12px 30px #25395c0b;
     cursor: grab;
     pointer-events: auto;
@@ -141,7 +141,7 @@
     grid-row: 1;
     align-self: center;
     min-width: 0;
-    color: #191c1f;
+    color:var(--site-ink, #191c1f);
     font-family: 'Inter Variable', sans-serif;
     font-size: 46px;
     font-weight: 600;

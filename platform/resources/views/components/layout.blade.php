@@ -2,13 +2,17 @@
 @php
     $introEligible = $lightTheme && ! request()->attributes->get('website.preview')
         && request()->routeIs('home', 'home.white') && ($site['site_intro']['enabled'] ?? false);
+    $defaultColorTheme = \App\Support\SiteAppearance::defaultTheme($site);
+    $initialColorTheme = $lightPreview ? 'light' : $defaultColorTheme;
+    $themeVariables = collect(\App\Support\SiteAppearance::cssVariables($site))->map(fn ($value, $name) => $name.':'.$value)->implode(';');
 @endphp
 <!doctype html>
-<html lang="en" @if($lightTheme) class="light-preview site-redesign" @endif><head>
+<html lang="en" @if($lightTheme) class="light-preview site-redesign" data-color-theme="{{ $initialColorTheme }}" data-default-theme="{{ $defaultColorTheme }}" data-theme-locked="{{ $lightPreview ? 'true' : 'false' }}" style="{{ $themeVariables }}" @endif><head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $description ?? $site['site_description'] }}">
-    <meta name="theme-color" content="{{ $lightTheme ? '#f5f6fa' : '#090d0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
+    <meta name="theme-color" content="{{ $lightTheme && $initialColorTheme === 'light' ? '#f5f6fa' : '#090a0c' }}"><title>{{ $title }} — {{ $site['brand_name'] }}</title>
+    @if($lightTheme)<x-color-theme-script/>@endif
     @if($lightPreview)<meta name="robots" content="noindex, nofollow">@endif
     @if($sensitive)<meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer">@endif
     <link rel="icon" href="/favicon.ico?v=2" sizes="any">

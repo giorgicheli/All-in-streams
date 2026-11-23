@@ -89,11 +89,13 @@ class WebsiteRenderingTest extends TestCase
 
         $this->get('/white')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow')
             ->assertSee('class="theme-white"', false)->assertSee('content="#f5f6fa"', false)
+            ->assertSee('data-color-theme="light"', false)->assertSee('data-theme-locked="true"', false)
             ->assertSee('Meet your')->assertSee('site-footer')->assertSee('data-network-count', false)
             ->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE')->assertDontSee('livewire.js')
             ->assertDontSee('network-stat-index')->assertDontSee('card-number')->assertDontSee('step-number');
         $this->get('/')->assertOk()->assertSee('class="theme-white"', false)
-            ->assertSee('content="#f5f6fa"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
+            ->assertSee('content="#090a0c"', false)->assertSee('data-color-theme="dark"', false)
+            ->assertSee('data-theme-locked="false"', false)->assertDontSee('UNPUBLISHED_WHITE_PREVIEW_HEADLINE');
         $this->assertSame($pagesBefore, \App\Models\SitePage::all()->toArray());
     }
 

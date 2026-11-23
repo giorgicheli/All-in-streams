@@ -78,6 +78,44 @@ class WebsiteEditorTest extends TestCase
         $this->assertSame(SiteContentDefaults::home(), app(SiteContent::class)->getPublished('home'));
     }
 
+    public function test_main_colors_can_be_previewed_then_published_by_an_administrator(): void
+    {
+        $this->staff();
+        $appearance = ['default_theme' => 'light', 'light_accent' => '#d93025', 'dark_accent' => '#ffffff'];
+        $editor = Livewire::test(WebsiteEditor::class)->call('selectPage', 'settings')
+            ->assertSee('Main colors')->assertSee('Light background accent')->assertSee('Dark background accent')
+            ->set('data.appearance.default_theme', $appearance['default_theme'])
+            ->set('data.appearance.light_accent', $appearance['light_accent'])
+            ->set('data.appearance.dark_accent', $appearance['dark_accent'])
+            ->call('saveDraft')->assertHasNoErrors();
+
+        $service = app(SiteContent::class);
+        $this->assertSame($appearance, $service->getDraft('settings')['appearance']);
+        $this->assertSame(SiteContentDefaults::settings()['appearance'], $service->getPublished('settings')['appearance']);
+        $editor->call('publish')->assertHasNoErrors();
+        $this->assertSame($appearance, $service->getPublished('settings')['appearance']);
+        $this->assertSame(SiteContentDefaults::home(), $service->getPublished('home'));
+    }
+
+    public function test_editor_rejects_invalid_color_picker_input_before_publication(): void
+    {
+        $this->staff();
+        Livewire::test(WebsiteEditor::class)->call('selectPage', 'settings')
+            ->set('data.appearance.light_accent', '#abc')->call('publish')
+            ->assertHasErrors(['data.appearance.light_accent']);
+        $this->assertDatabaseCount('site_pages', 0);
+    }
+
+    public function test_color_publishing_rechecks_the_administrator_role(): void
+    {
+        $staff = $this->staff();
+        $editor = Livewire::test(WebsiteEditor::class)->call('selectPage', 'settings')
+            ->set('data.appearance.dark_accent', '#ffffff');
+        $staff->update(['role' => 'business']);
+        $editor->call('publish')->assertForbidden();
+        $this->assertDatabaseCount('site_pages', 0);
+    }
+
     public function test_editor_rejects_executable_links_before_saving(): void
     {
         $this->staff();

@@ -5,9 +5,9 @@
 .site-redesign .theme-white .hero-reference .hero-grid { display:grid; grid-template-columns:minmax(0,.98fr) minmax(0,1.02fr); align-items:center; gap:48px; min-height:0; }
 .site-redesign .theme-white .hero-grid .hero-copy { display:block; padding:0; min-width:0; }
 .site-redesign .theme-white .hero-grid .hero-copy .hero-headline { max-width:none; margin:0; padding:0; font-size:clamp(56px,6.5vw,96px); font-weight:650; letter-spacing:-.06em; line-height:1.04; }
-.site-redesign .theme-white .hero-grid .hero-headline-line { display:block; white-space:normal; color:#191c1f; -webkit-text-fill-color:currentColor; background:none; }
-.site-redesign .theme-white .hero-grid .hero-headline-line:last-child { color:#0a5cff; -webkit-text-fill-color:currentColor; background:none; }
-.site-redesign .theme-white .hero-grid .hero-copy > .hero-description { max-width:440px; margin:24px 0 0; color:#606b83; font-size:17px; line-height:1.7; }
+.site-redesign .theme-white .hero-grid .hero-headline-line { display:block; white-space:normal; color:var(--site-ink, #191c1f); -webkit-text-fill-color:currentColor; background:none; }
+.site-redesign .theme-white .hero-grid .hero-headline-line:last-child { color:var(--site-accent, #0a5cff); -webkit-text-fill-color:currentColor; background:none; }
+.site-redesign .theme-white .hero-grid .hero-copy > .hero-description { max-width:440px; margin:24px 0 0; color:var(--site-muted, #606b83); font-size:17px; line-height:1.7; }
 .site-redesign .theme-white .hero-grid .hero-buttons { margin:28px 0 0; gap:12px; flex-wrap:nowrap; }
 .site-redesign .theme-white .hero-grid .hero-buttons > .btn { min-height:52px; font-size:14px; padding:15px 22px; }
 .site-redesign .theme-white .hero-grid .hero-art { position:relative; inset:auto; width:100%; max-width:none; min-width:0; margin:0; float:none; }
@@ -129,28 +129,28 @@
 .hero-stat-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .site-redesign .theme-white .hero-statistics .network-stat-value {
     margin:0;
-    color:#191c1f;
+    color:var(--site-ink, #191c1f);
     font-family:'Inter Variable',sans-serif;
     font-size:44px;
     font-weight:650;
     letter-spacing:-.06em;
     line-height:1.05;
 }
-.hero-statistics .network-stat-suffix { color:#0a5cff; font-size:.6em; margin-left:2px; }
+.hero-statistics .network-stat-suffix { color:var(--site-accent, #0a5cff); font-size:.6em; margin-left:2px; }
 .hero-stat-icon {
     display:grid;
     place-items:center;
     flex:none;
     width:36px;
     height:36px;
-    color:#0a5cff;
+    color:var(--site-accent, #0a5cff);
     background:#edf2ff;
     border-radius:12px;
 }
 .hero-stat-icon .icon { width:20px; height:20px; }
 .site-redesign .theme-white .hero-stat-card :is(h3,h4) {
     margin:12px 0 0;
-    color:#626c80;
+    color:var(--site-muted, #626c80);
     font-family:'Inter Variable',sans-serif;
     font-size:15px;
     font-weight:450;

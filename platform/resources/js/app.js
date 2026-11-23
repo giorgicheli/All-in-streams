@@ -1,4 +1,5 @@
 import './bootstrap';
+import { initializeColorTheme } from './theme';
 import { initializeMotion } from './motion';
 import { initializeSmoothScroll } from './smooth-scroll';
 import { initializeGeographyCarousels } from './geography';
@@ -22,8 +23,11 @@ let cleanup = () => {};
 let disposeIntro = () => {};
 let introReady;
 let pageGeneration = 0;
+let disposeTheme = () => {};
 
 function initializeAfterIntro() {
+    disposeTheme();
+    disposeTheme = initializeColorTheme();
     const generation = ++pageGeneration;
     if (!introReady) {
         try {
@@ -43,6 +47,7 @@ function initializeAfterIntro() {
 }
 
 function disposePage() {
+    disposeTheme();
     pageGeneration++;
     disposeIntro();
     cleanup();

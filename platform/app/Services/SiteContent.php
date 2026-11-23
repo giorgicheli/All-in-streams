@@ -9,6 +9,7 @@ use App\Rules\SiteLink;
 use App\Rules\PublicVideoSource;
 use App\Rules\LegalRichText;
 use App\Support\SiteContentDefaults;
+use App\Support\SiteAppearance;
 use App\Support\CreatorPreviewClips;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -80,6 +81,10 @@ class SiteContent
         $content = $this->normalizeContent($slug, $content);
         if ($slug === 'settings') {
             $this->objectRules($defaults, '', $rules);
+            $rules['appearance.default_theme'] = ['required', 'string', Rule::in(SiteAppearance::THEMES)];
+            foreach (['light_accent', 'dark_accent'] as $accent) {
+                $rules['appearance.'.$accent] = ['required', 'string', 'regex:'.SiteAppearance::HEX_PATTERN];
+            }
             $rules['contact.email'] = ['present', 'nullable', 'string', 'email:rfc', 'max:254'];
         } elseif (in_array($slug, ['privacy', 'terms'], true)) {
             $this->objectRules(['seo' => $defaults['seo'], 'title' => $defaults['title']], '', $rules);

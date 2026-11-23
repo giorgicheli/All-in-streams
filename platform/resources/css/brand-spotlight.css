@@ -1,6 +1,6 @@
 .ais-hero, .ais-hero * { box-sizing: border-box; }
 .ais-hero {
-  --ais-blue: #145bff;
+  --ais-blue: var(--site-accent, #0a5cff);
   --ais-text: #080a0d;
   --ais-muted: #556079;
   color: var(--ais-text);
@@ -55,7 +55,7 @@
   transition: transform .35s ease, background .35s ease;
 }
 .ais-hero__icon svg { width: 34px; height: 34px; }
-.ais-hero__audience--brands { --icon-color: #2563eb; --icon-bg: #eaf0ff; }
+.ais-hero__audience--brands { --icon-color: var(--site-accent, #0a5cff); --icon-bg: #eaf0ff; }
 .ais-hero__audience--agencies { --icon-color: #d47c2d; --icon-bg: #fff1e4; }
 .ais-hero__audience--creators { --icon-color: #168d72; --icon-bg: #e5f5ef; }
 .ais-hero__audience:hover .ais-hero__icon { transform: translateY(-3px); }
@@ -204,7 +204,7 @@
 
 .site-redesign .theme-white .audience-section:has(.ais-hero) { padding-block: 88px 96px; }
 .ais-hero__audience-copy { min-width: 0; }
-.ais-hero__audience:focus-visible { outline: 2px solid #145bff; outline-offset: 8px; border-radius: 10px; }
+.ais-hero__audience:focus-visible { outline: 2px solid var(--site-accent, #0a5cff); outline-offset: 8px; border-radius: 10px; }
 .ais-hero__campaign { max-width: calc(100% - 50px); pointer-events: none; }
 .ais-hero__campaign-card > div { min-width: 0; }
 .ais-hero__campaign-title, .ais-hero__campaign-status { overflow-wrap: anywhere; }

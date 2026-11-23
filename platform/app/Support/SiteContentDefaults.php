@@ -130,6 +130,7 @@ class SiteContentDefaults
     {
         return [
             'brand_name' => 'All In Streams', 'brand_tagline' => 'Creator partnerships', 'logo_path' => null,
+            'appearance' => SiteAppearance::DEFAULTS,
             'site_description' => 'All In Streams connects brands with gaming creators. From your first brief to the final campaign report, managed end to end.',
             'navigation' => [['label' => 'Platform', 'url' => '#platform'], ['label' => 'How it works', 'url' => '#how-it-works'], ['label' => 'Creator network', 'url' => '#creators'], ['label' => 'About us', 'url' => '#about']],
             'platform_menu' => [
