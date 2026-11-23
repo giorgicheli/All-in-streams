@@ -73,6 +73,10 @@
 }
 
 @media(max-width:700px) {
+    .site-redesign .theme-white [data-geo-carousel].geo-strip,
+    .site-redesign .theme-white .hero-stage > [data-geo-carousel].geo-strip {
+        background:transparent;
+    }
     .site-redesign .theme-white .network-showcase-card > [data-geo-carousel].geo-strip--embedded {
         margin-top:20px;
         padding-inline:0;
