@@ -23,7 +23,6 @@
     <div class="site-intro-top">
         <button type="button" class="site-intro-skip" data-site-intro-skip data-site-intro-focus>{{ $intro['skip_label'] }}<x-ui-icon name="arrow" size="16"/></button>
     </div>
-    <div class="site-intro-orbit" aria-hidden="true"></div>
     <div class="site-intro-deck" aria-hidden="true">
         @for($index = 0; $index < 6; $index++)
             @php $clip = $introClips[$index % count($introClips)]; @endphp
