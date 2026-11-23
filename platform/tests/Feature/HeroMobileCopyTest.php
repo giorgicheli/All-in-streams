@@ -36,7 +36,13 @@ class HeroMobileCopyTest extends TestCase
 
                 $this->assertSame(1, $paragraphs->length);
                 $this->assertSame($copy, $paragraphs->item(0)->textContent);
-                $this->assertSame(0, $xpath->query('./*', $paragraphs->item(0))->length, 'Authored markup must be escaped.');
+                $hasEmphasis = str_contains($copy, $base['body_emphasis']);
+                $this->assertSame($hasEmphasis ? 1 : 0, $xpath->query('./*', $paragraphs->item(0))->length, 'Only the configured phrase may receive formatting; authored markup must be escaped.');
+                if ($hasEmphasis) {
+                    $strong = $xpath->query('./strong', $paragraphs->item(0));
+                    $this->assertSame(1, $strong->length);
+                    $this->assertSame($base['body_emphasis'], $strong->item(0)->textContent);
+                }
                 $this->assertSame(0, $xpath->query('//h1')->length);
                 $this->assertSame(1, $xpath->query('//h2[contains(concat(" ", normalize-space(@class), " "), " hero-headline ")]')->length);
                 $headlineLines = $xpath->query('//h2/span');

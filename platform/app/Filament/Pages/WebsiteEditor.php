@@ -289,7 +289,8 @@ class WebsiteEditor extends Page
             $long = in_array($key, ['body', 'mobile_body', 'description', 'answer', 'privacy_note', 'channel_help', 'password_help', 'site_description'], true) || ($prefix === 'contact.' && $key === 'title');
             $field = $long ? Textarea::make($name)->rows(3)->columnSpanFull() : TextInput::make($name);
             $field->label($key === 'mobile_body' ? 'Mobile matching description' : $label)->default($value)->maxLength(5000);
-            if ($value !== '' && $value !== null && $key !== 'suffix') $field->required();
+            if ($value !== '' && $value !== null && ! in_array($key, ['suffix', 'body_emphasis'], true)) $field->required();
+            if ($key === 'body_emphasis') $field->helperText('An exact phrase from the description to show in bold. Leave empty for plain text.');
             if ($key === 'url' || str_ends_with($key, '_url')) $field->maxLength(2048)->rules([new SiteLink()]);
             if ($prefix === 'seo.') $field->maxLength($key === 'title' ? 200 : 500);
             $fields[] = $field;

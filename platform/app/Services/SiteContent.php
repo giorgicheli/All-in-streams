@@ -157,7 +157,7 @@ class SiteContent
                     }
                 }];
             } else {
-                $rules[$path] = array_merge($value === '' || $key === 'suffix' ? ['present', 'nullable'] : ['required'], ['string', 'max:5000', function (string $attribute, mixed $text, \Closure $fail): void {
+                $rules[$path] = array_merge($value === '' || in_array($key, ['suffix', 'body_emphasis'], true) ? ['present', 'nullable'] : ['required'], ['string', 'max:5000', function (string $attribute, mixed $text, \Closure $fail): void {
                     if (is_string($text) && (strip_tags($text) !== $text || preg_match('/[\x00-\x08\x0b\x0c\x0e-\x1f]/', $text))) $fail('Use plain text without HTML or executable markup.');
                 }]);
                 if ($key === 'icon') $rules[$path][] = Rule::in(SiteContentDefaults::ICONS);
@@ -195,6 +195,7 @@ class SiteContent
                     $block['data'] += [
                         'headlines' => [['line_1' => 'Flexible', 'line_2' => 'terms.'], ['line_1' => 'Faster', 'line_2' => 'deals.']],
                         'mobile_body' => SiteContentDefaults::home()['blocks'][0]['data']['mobile_body'],
+                        'body_emphasis' => '',
                         'market_label' => SiteContentDefaults::home()['blocks'][0]['data']['market_label'],
                         'benefits' => SiteContentDefaults::home()['blocks'][0]['data']['benefits'],
                     ];

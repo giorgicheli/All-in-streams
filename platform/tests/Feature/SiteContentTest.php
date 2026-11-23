@@ -27,7 +27,7 @@ class SiteContentTest extends TestCase
         $legacy = SiteContentDefaults::home();
         foreach ($legacy['blocks'] as &$block) {
             if ($block['type'] === 'hero') {
-                unset($block['data']['mobile_body'], $block['data']['market_label'], $block['data']['benefits']);
+                unset($block['data']['mobile_body'], $block['data']['market_label'], $block['data']['benefits'], $block['data']['body_emphasis']);
                 $block['data']['body'] = 'Previously authored desktop description.';
             }
             if ($block['type'] !== 'faq') continue;
@@ -41,6 +41,7 @@ class SiteContentTest extends TestCase
         foreach ([$service->getPublished('home'), $service->getDraft('home'), $service->validate('home', $legacy)] as $content) {
             $hero = collect($content['blocks'])->firstWhere('type', 'hero')['data'];
             $this->assertSame('Previously authored desktop description.', $hero['body']);
+            $this->assertSame('', $hero['body_emphasis']);
             $this->assertSame(SiteContentDefaults::home()['blocks'][0]['data']['mobile_body'], $hero['mobile_body']);
             $this->assertSame('Creator Marketplace × iGaming', $hero['market_label']);
             $this->assertSame(SiteContentDefaults::home()['blocks'][0]['data']['benefits'], $hero['benefits']);
